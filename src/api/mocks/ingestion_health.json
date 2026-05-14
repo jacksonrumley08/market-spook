@@ -1,0 +1,24 @@
+{
+  "sources": [
+    {
+      "name": "house_clerk",
+      "kind": "SCRAPER",
+      "health_status": "HEALTHY",
+      "consecutive_failures": 0,
+      "last_run_at": "2026-05-14T02:18:21.443482Z",
+      "last_success_at": "2026-05-14T02:18:21.443482Z",
+      "last_failure_at": "2026-05-14T02:20:33.599359Z",
+      "last_failure_reason": null
+    },
+    {
+      "name": "senate_efd",
+      "kind": "SCRAPER",
+      "health_status": "DISABLED",
+      "consecutive_failures": 0,
+      "last_run_at": null,
+      "last_success_at": null,
+      "last_failure_at": "2026-05-14T02:11:55.234470Z",
+      "last_failure_reason": "upstream-captcha-blocker; deferred to Slice 1.6"
+    }
+  ]
+}
