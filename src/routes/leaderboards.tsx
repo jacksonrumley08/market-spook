@@ -19,10 +19,11 @@ const TABS: { kind: LeaderboardKind; label: string; fmt: (v: number) => string; 
   { kind: 'filing_quality', label: 'Filing quality', fmt: v => `${(v * 100).toFixed(0)}` },
 ];
 
-const schema = z.object({ tab: fallback(z.enum(['alpha','hit_rate','vagueness','late_filer','options_conviction','filing_quality']), 'alpha').default('alpha') });
-
 export const Route = createFileRoute('/leaderboards')({
-  validateSearch: zodValidator(schema),
+  validateSearch: (s: Record<string, unknown>): { tab: LBKind } => {
+    const t = s.tab as LBKind;
+    return { tab: KINDS.includes(t) ? t : 'alpha' };
+  },
   head: () => ({
     meta: [
       { title: 'Leaderboards — CongressTrade Intelligence' },
