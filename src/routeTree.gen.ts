@@ -9,38 +9,187 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
+import { Route as ClustersRouteImport } from './routes/clusters'
+import { Route as BacktestRouteImport } from './routes/backtest'
+import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MembersIndexRouteImport } from './routes/members.index'
+import { Route as CommitteesIndexRouteImport } from './routes/committees.index'
+import { Route as TickersSymbolRouteImport } from './routes/tickers.$symbol'
+import { Route as MembersIdRouteImport } from './routes/members.$id'
+import { Route as CommitteesIdRouteImport } from './routes/committees.$id'
 
+const LeaderboardsRoute = LeaderboardsRouteImport.update({
+  id: '/leaderboards',
+  path: '/leaderboards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClustersRoute = ClustersRouteImport.update({
+  id: '/clusters',
+  path: '/clusters',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BacktestRoute = BacktestRouteImport.update({
+  id: '/backtest',
+  path: '/backtest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlertsRoute = AlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MembersIndexRoute = MembersIndexRouteImport.update({
+  id: '/members/',
+  path: '/members/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommitteesIndexRoute = CommitteesIndexRouteImport.update({
+  id: '/committees/',
+  path: '/committees/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TickersSymbolRoute = TickersSymbolRouteImport.update({
+  id: '/tickers/$symbol',
+  path: '/tickers/$symbol',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MembersIdRoute = MembersIdRouteImport.update({
+  id: '/members/$id',
+  path: '/members/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommitteesIdRoute = CommitteesIdRouteImport.update({
+  id: '/committees/$id',
+  path: '/committees/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/alerts': typeof AlertsRoute
+  '/backtest': typeof BacktestRoute
+  '/clusters': typeof ClustersRoute
+  '/leaderboards': typeof LeaderboardsRoute
+  '/committees/$id': typeof CommitteesIdRoute
+  '/members/$id': typeof MembersIdRoute
+  '/tickers/$symbol': typeof TickersSymbolRoute
+  '/committees/': typeof CommitteesIndexRoute
+  '/members/': typeof MembersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/alerts': typeof AlertsRoute
+  '/backtest': typeof BacktestRoute
+  '/clusters': typeof ClustersRoute
+  '/leaderboards': typeof LeaderboardsRoute
+  '/committees/$id': typeof CommitteesIdRoute
+  '/members/$id': typeof MembersIdRoute
+  '/tickers/$symbol': typeof TickersSymbolRoute
+  '/committees': typeof CommitteesIndexRoute
+  '/members': typeof MembersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/alerts': typeof AlertsRoute
+  '/backtest': typeof BacktestRoute
+  '/clusters': typeof ClustersRoute
+  '/leaderboards': typeof LeaderboardsRoute
+  '/committees/$id': typeof CommitteesIdRoute
+  '/members/$id': typeof MembersIdRoute
+  '/tickers/$symbol': typeof TickersSymbolRoute
+  '/committees/': typeof CommitteesIndexRoute
+  '/members/': typeof MembersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/alerts'
+    | '/backtest'
+    | '/clusters'
+    | '/leaderboards'
+    | '/committees/$id'
+    | '/members/$id'
+    | '/tickers/$symbol'
+    | '/committees/'
+    | '/members/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/alerts'
+    | '/backtest'
+    | '/clusters'
+    | '/leaderboards'
+    | '/committees/$id'
+    | '/members/$id'
+    | '/tickers/$symbol'
+    | '/committees'
+    | '/members'
+  id:
+    | '__root__'
+    | '/'
+    | '/alerts'
+    | '/backtest'
+    | '/clusters'
+    | '/leaderboards'
+    | '/committees/$id'
+    | '/members/$id'
+    | '/tickers/$symbol'
+    | '/committees/'
+    | '/members/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AlertsRoute: typeof AlertsRoute
+  BacktestRoute: typeof BacktestRoute
+  ClustersRoute: typeof ClustersRoute
+  LeaderboardsRoute: typeof LeaderboardsRoute
+  CommitteesIdRoute: typeof CommitteesIdRoute
+  MembersIdRoute: typeof MembersIdRoute
+  TickersSymbolRoute: typeof TickersSymbolRoute
+  CommitteesIndexRoute: typeof CommitteesIndexRoute
+  MembersIndexRoute: typeof MembersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/leaderboards': {
+      id: '/leaderboards'
+      path: '/leaderboards'
+      fullPath: '/leaderboards'
+      preLoaderRoute: typeof LeaderboardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clusters': {
+      id: '/clusters'
+      path: '/clusters'
+      fullPath: '/clusters'
+      preLoaderRoute: typeof ClustersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/backtest': {
+      id: '/backtest'
+      path: '/backtest'
+      fullPath: '/backtest'
+      preLoaderRoute: typeof BacktestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alerts': {
+      id: '/alerts'
+      path: '/alerts'
+      fullPath: '/alerts'
+      preLoaderRoute: typeof AlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +197,56 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/members/': {
+      id: '/members/'
+      path: '/members'
+      fullPath: '/members/'
+      preLoaderRoute: typeof MembersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/committees/': {
+      id: '/committees/'
+      path: '/committees'
+      fullPath: '/committees/'
+      preLoaderRoute: typeof CommitteesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tickers/$symbol': {
+      id: '/tickers/$symbol'
+      path: '/tickers/$symbol'
+      fullPath: '/tickers/$symbol'
+      preLoaderRoute: typeof TickersSymbolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/members/$id': {
+      id: '/members/$id'
+      path: '/members/$id'
+      fullPath: '/members/$id'
+      preLoaderRoute: typeof MembersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/committees/$id': {
+      id: '/committees/$id'
+      path: '/committees/$id'
+      fullPath: '/committees/$id'
+      preLoaderRoute: typeof CommitteesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AlertsRoute: AlertsRoute,
+  BacktestRoute: BacktestRoute,
+  ClustersRoute: ClustersRoute,
+  LeaderboardsRoute: LeaderboardsRoute,
+  CommitteesIdRoute: CommitteesIdRoute,
+  MembersIdRoute: MembersIdRoute,
+  TickersSymbolRoute: TickersSymbolRoute,
+  CommitteesIndexRoute: CommitteesIndexRoute,
+  MembersIndexRoute: MembersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
