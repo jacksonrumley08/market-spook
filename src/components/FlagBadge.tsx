@@ -26,7 +26,7 @@ function flagDetail(key: FlagKey, flags: DerivedFlags): React.ReactNode {
       return (
         <div className="space-y-1">
           <div className="text-xs font-medium uppercase text-[var(--text-secondary)]">Committees with overlapping jurisdiction</div>
-          {flags.jurisdiction_overlap?.map(j => (
+          {flags.jurisdiction_overlap?.map((j: import('@/api/types-ui').JurisdictionOverlapFlag) => (
             <div key={j.committee_id} className="text-sm">{j.committee_name}</div>
           ))}
         </div>
