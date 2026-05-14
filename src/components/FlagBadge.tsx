@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import type { DerivedFlags } from '@/api/types';
+import type { DerivedFlags } from '@/api/types-ui';
 
 type FlagKey = keyof DerivedFlags;
 
@@ -26,7 +26,7 @@ function flagDetail(key: FlagKey, flags: DerivedFlags): React.ReactNode {
       return (
         <div className="space-y-1">
           <div className="text-xs font-medium uppercase text-[var(--text-secondary)]">Committees with overlapping jurisdiction</div>
-          {flags.jurisdiction_overlap?.map(j => (
+          {flags.jurisdiction_overlap?.map((j: import('@/api/types-ui').JurisdictionOverlapFlag) => (
             <div key={j.committee_id} className="text-sm">{j.committee_name}</div>
           ))}
         </div>
@@ -125,7 +125,7 @@ export function FlagBadge({
 export function FlagRow({ flags }: { flags: DerivedFlags }) {
   return (
     <div className="flex flex-wrap gap-1">
-      {(Object.keys(META) as FlagKey[]).map(k => <FlagBadge key={k} flag={k} flags={flags} />)}
+      {(Object.keys(META) as (keyof typeof META)[]).map(k => <FlagBadge key={k} flag={k as FlagKey} flags={flags} />)}
     </div>
   );
 }
