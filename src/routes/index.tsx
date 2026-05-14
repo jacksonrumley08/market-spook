@@ -59,7 +59,7 @@ function Dashboard() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">Dashboard</h1>
-        <p className="num mt-0.5 text-[10px] text-[var(--text-tertiary)]">Last update: {new Date().toISOString().slice(0,16).replace('T',' ')}Z</p>
+        <p className="num mt-0.5 text-[10px] text-[var(--text-tertiary)]" suppressHydrationWarning>Last update: {new Date().toISOString().slice(0,16).replace('T',' ')}Z</p>
       </div>
 
       {/* Top row */}
