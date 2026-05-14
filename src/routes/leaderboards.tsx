@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { zodValidator, fallback } from '@tanstack/zod-adapter';
-import { z } from 'zod';
+type LBKind = 'alpha' | 'hit_rate' | 'vagueness' | 'late_filer' | 'options_conviction' | 'filing_quality';
+const KINDS: LBKind[] = ['alpha','hit_rate','vagueness','late_filer','options_conviction','filing_quality'];
 import { getLeaderboard } from '@/api/client';
 import type { LeaderboardKind } from '@/api/types';
 import { Sparkline } from '@/components/Sparkline';
