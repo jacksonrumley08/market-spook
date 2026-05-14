@@ -23,11 +23,11 @@ import type {
   LeaderboardEntry,
   LeaderboardKind,
   MemberOut,
-  Page,
+  Paginated,
   SignalFeedItem,
   TickerOut,
   TransactionOut,
-} from './types';
+} from './types-ui';
 
 // Centralised endpoint paths. Integration step swaps mock branches for real fetch().
 const ENDPOINTS = {
