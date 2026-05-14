@@ -9,10 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ClustersRouteImport } from './routes/clusters'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MembersIndexRouteImport } from './routes/members.index'
+import { Route as CommitteesIndexRouteImport } from './routes/committees.index'
 import { Route as MembersIdRouteImport } from './routes/members.$id'
+import { Route as CommitteesIdRouteImport } from './routes/committees.$id'
 
+const ClustersRoute = ClustersRouteImport.update({
+  id: '/clusters',
+  path: '/clusters',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -23,44 +31,92 @@ const MembersIndexRoute = MembersIndexRouteImport.update({
   path: '/members/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommitteesIndexRoute = CommitteesIndexRouteImport.update({
+  id: '/committees/',
+  path: '/committees/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MembersIdRoute = MembersIdRouteImport.update({
   id: '/members/$id',
   path: '/members/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommitteesIdRoute = CommitteesIdRouteImport.update({
+  id: '/committees/$id',
+  path: '/committees/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/clusters': typeof ClustersRoute
+  '/committees/$id': typeof CommitteesIdRoute
   '/members/$id': typeof MembersIdRoute
+  '/committees/': typeof CommitteesIndexRoute
   '/members/': typeof MembersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/clusters': typeof ClustersRoute
+  '/committees/$id': typeof CommitteesIdRoute
   '/members/$id': typeof MembersIdRoute
+  '/committees': typeof CommitteesIndexRoute
   '/members': typeof MembersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/clusters': typeof ClustersRoute
+  '/committees/$id': typeof CommitteesIdRoute
   '/members/$id': typeof MembersIdRoute
+  '/committees/': typeof CommitteesIndexRoute
   '/members/': typeof MembersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/members/$id' | '/members/'
+  fullPaths:
+    | '/'
+    | '/clusters'
+    | '/committees/$id'
+    | '/members/$id'
+    | '/committees/'
+    | '/members/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/members/$id' | '/members'
-  id: '__root__' | '/' | '/members/$id' | '/members/'
+  to:
+    | '/'
+    | '/clusters'
+    | '/committees/$id'
+    | '/members/$id'
+    | '/committees'
+    | '/members'
+  id:
+    | '__root__'
+    | '/'
+    | '/clusters'
+    | '/committees/$id'
+    | '/members/$id'
+    | '/committees/'
+    | '/members/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ClustersRoute: typeof ClustersRoute
+  CommitteesIdRoute: typeof CommitteesIdRoute
   MembersIdRoute: typeof MembersIdRoute
+  CommitteesIndexRoute: typeof CommitteesIndexRoute
   MembersIndexRoute: typeof MembersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/clusters': {
+      id: '/clusters'
+      path: '/clusters'
+      fullPath: '/clusters'
+      preLoaderRoute: typeof ClustersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -75,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MembersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/committees/': {
+      id: '/committees/'
+      path: '/committees'
+      fullPath: '/committees/'
+      preLoaderRoute: typeof CommitteesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/members/$id': {
       id: '/members/$id'
       path: '/members/$id'
@@ -82,12 +145,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MembersIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/committees/$id': {
+      id: '/committees/$id'
+      path: '/committees/$id'
+      fullPath: '/committees/$id'
+      preLoaderRoute: typeof CommitteesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ClustersRoute: ClustersRoute,
+  CommitteesIdRoute: CommitteesIdRoute,
   MembersIdRoute: MembersIdRoute,
+  CommitteesIndexRoute: CommitteesIndexRoute,
   MembersIndexRoute: MembersIndexRoute,
 }
 export const routeTree = rootRouteImport
