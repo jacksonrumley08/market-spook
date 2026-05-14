@@ -58,7 +58,7 @@ async function realFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json();
 }
 
-function paginate<T>(items: T[], limit = 25, offset = 0): Page<T> {
+function paginate<T>(items: T[], limit = 25, offset = 0): Paginated<T> {
   return { items: items.slice(offset, offset + limit), total: items.length, limit, offset };
 }
 
