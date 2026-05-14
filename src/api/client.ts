@@ -63,7 +63,7 @@ function paginate<T>(items: T[], limit = 25, offset = 0): Page<T> {
 }
 
 // ---------- Members ----------
-export async function listMembers(opts: { search?: string; chamber?: string; party?: string; limit?: number; offset?: number } = {}): Promise<Page<MemberOut>> {
+export async function listMembers(opts: { search?: string; chamber?: string; party?: string; limit?: number; offset?: number } = {}): Promise<Paginated<MemberOut>> {
   if (API_CONFIG.useMocks) {
     let items = mockMembers as unknown as MemberOut[];
     if (opts.search) {
@@ -95,7 +95,7 @@ export async function listTransactions(opts: {
   ticker?: string;
   limit?: number;
   offset?: number;
-} = {}): Promise<Page<TransactionOut>> {
+} = {}): Promise<Paginated<TransactionOut>> {
   if (API_CONFIG.useMocks) {
     let items = mockTransactions as unknown as TransactionOut[];
     if (opts.has_any_flag) items = items.filter(t => t.has_any_flag);
