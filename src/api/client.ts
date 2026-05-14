@@ -11,7 +11,14 @@ import mockSummary from './mocks/summary.json';
 import mockSignalPredictive from './mocks/signal_predictive.json';
 import mockSignalReactive from './mocks/signal_reactive.json';
 import mockCommitteeFlowTop from './mocks/committee_flow_top.json';
+import mockIngestionHealth from './mocks/ingestion_health.json';
 
+import type {
+  CommitteeOut as WireCommittee,
+  IngestionHealthResponse,
+  MemberOut as WireMember,
+  TransactionOut as WireTransaction,
+} from './types';
 import type {
   AlertOut,
   BacktestRequest,
@@ -28,6 +35,7 @@ import type {
   TickerOut,
   TransactionOut,
 } from './types-ui';
+import { adaptCommittee, adaptMember, adaptTicker, adaptTransaction } from './adapters';
 
 // Centralised endpoint paths. Integration step swaps mock branches for real fetch().
 const ENDPOINTS = {
@@ -47,6 +55,7 @@ const ENDPOINTS = {
   dashboardSummary: '/dashboard/summary',
   feedPredictive: '/feed/predictive',
   feedReactive: '/feed/reactive',
+  ingestionHealth: '/ingestion/health',
 };
 
 async function realFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -65,7 +74,7 @@ function paginate<T>(items: T[], limit = 25, offset = 0): Paginated<T> {
 // ---------- Members ----------
 export async function listMembers(opts: { search?: string; chamber?: string; party?: string; limit?: number; offset?: number } = {}): Promise<Paginated<MemberOut>> {
   if (API_CONFIG.useMocks) {
-    let items = mockMembers as unknown as MemberOut[];
+    let items = (mockMembers as unknown as WireMember[]).map(adaptMember);
     if (opts.search) {
       const q = opts.search.toLowerCase();
       items = items.filter(m => m.name.toLowerCase().includes(q) || m.bioguide_id.toLowerCase().includes(q));
@@ -80,9 +89,9 @@ export async function listMembers(opts: { search?: string; chamber?: string; par
 
 export async function getMember(id: string): Promise<MemberOut> {
   if (API_CONFIG.useMocks) {
-    const m = (mockMembers as unknown as MemberOut[]).find(x => x.id === id || x.bioguide_id === id);
-    if (!m) throw new Error(`Member ${id} not found in mocks`);
-    return m;
+    const wire = (mockMembers as unknown as WireMember[]).find(x => x.id === id);
+    if (!wire) throw new Error(`Member ${id} not found in mocks`);
+    return adaptMember(wire);
   }
   // TODO: replace with real API call
   return realFetch(ENDPOINTS.member(id));
@@ -97,7 +106,8 @@ export async function listTransactions(opts: {
   offset?: number;
 } = {}): Promise<Paginated<TransactionOut>> {
   if (API_CONFIG.useMocks) {
-    let items = mockTransactions as unknown as TransactionOut[];
+    const wireTx = (mockTransactions as unknown as { items: WireTransaction[] }).items;
+    let items = wireTx.map(adaptTransaction);
     if (opts.has_any_flag) items = items.filter(t => t.has_any_flag);
     if (opts.member_id) items = items.filter(t => t.member_id === opts.member_id);
     if (opts.ticker) items = items.filter(t => t.ticker === opts.ticker);
@@ -110,9 +120,10 @@ export async function listTransactions(opts: {
 
 export async function getTransaction(id: string): Promise<TransactionOut> {
   if (API_CONFIG.useMocks) {
-    const t = (mockTransactions as unknown as TransactionOut[]).find(x => x.id === id);
-    if (!t) throw new Error(`Transaction ${id} not found`);
-    return t;
+    const wireTx = (mockTransactions as unknown as { items: WireTransaction[] }).items;
+    const w = wireTx.find(x => String(x.id) === id);
+    if (!w) throw new Error(`Transaction ${id} not found`);
+    return adaptTransaction(w);
   }
   // TODO: replace with real API call
   return realFetch(ENDPOINTS.transaction(id));
@@ -120,16 +131,18 @@ export async function getTransaction(id: string): Promise<TransactionOut> {
 
 // ---------- Committees ----------
 export async function listCommittees(): Promise<CommitteeOut[]> {
-  if (API_CONFIG.useMocks) return mockCommittees as unknown as CommitteeOut[];
+  if (API_CONFIG.useMocks) {
+    return (mockCommittees as unknown as WireCommittee[]).map(adaptCommittee);
+  }
   // TODO: replace with real API call
   return realFetch(ENDPOINTS.committees);
 }
 
 export async function getCommittee(id: string): Promise<CommitteeOut> {
   if (API_CONFIG.useMocks) {
-    const c = (mockCommittees as unknown as CommitteeOut[]).find(x => x.id === id);
-    if (!c) throw new Error(`Committee ${id} not found`);
-    return c;
+    const w = (mockCommittees as unknown as WireCommittee[]).find(x => x.id === id);
+    if (!w) throw new Error(`Committee ${id} not found`);
+    return adaptCommittee(w);
   }
   // TODO: replace with real API call
   return realFetch(ENDPOINTS.committee(id));
@@ -154,11 +167,21 @@ export async function listClusters(opts: { limit?: number } = {}): Promise<Clust
 }
 
 // ---------- Tickers ----------
+type WireTickerFixture = {
+  id: string;
+  symbol: string;
+  exchange: string | null;
+  instrument_type: string;
+  company_name: string;
+  gics_sector: string;
+  gics_industry: string;
+};
+
 export async function getTicker(symbol: string): Promise<TickerOut> {
   if (API_CONFIG.useMocks) {
-    const t = (mockTickers as unknown as TickerOut[]).find(x => x.symbol === symbol.toUpperCase());
-    if (!t) throw new Error(`Ticker ${symbol} not found`);
-    return t;
+    const w = (mockTickers as unknown as WireTickerFixture[]).find(x => x.symbol === symbol.toUpperCase());
+    if (!w) throw new Error(`Ticker ${symbol} not found`);
+    return adaptTicker(w);
   }
   // TODO: replace with real API call
   return realFetch(ENDPOINTS.ticker(symbol));
@@ -166,7 +189,7 @@ export async function getTicker(symbol: string): Promise<TickerOut> {
 
 export async function listTickerSymbols(): Promise<{ symbol: string; company_name: string }[]> {
   if (API_CONFIG.useMocks)
-    return (mockTickers as unknown as TickerOut[]).map(t => ({ symbol: t.symbol, company_name: t.company_name }));
+    return (mockTickers as unknown as WireTickerFixture[]).map(t => ({ symbol: t.symbol, company_name: t.company_name }));
   // TODO: replace with real API call
   return realFetch('/tickers');
 }
@@ -231,4 +254,11 @@ export async function getReactiveFeed(): Promise<SignalFeedItem[]> {
   if (API_CONFIG.useMocks) return mockSignalReactive as unknown as SignalFeedItem[];
   // TODO: replace with real API call
   return realFetch(ENDPOINTS.feedReactive);
+}
+
+// ---------- Ingestion health ----------
+export async function getIngestionHealth(): Promise<IngestionHealthResponse> {
+  if (API_CONFIG.useMocks) return mockIngestionHealth as IngestionHealthResponse;
+  // TODO: replace with real API call
+  return realFetch(ENDPOINTS.ingestionHealth);
 }
