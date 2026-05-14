@@ -125,7 +125,7 @@ export function FlagBadge({
 export function FlagRow({ flags }: { flags: DerivedFlags }) {
   return (
     <div className="flex flex-wrap gap-1">
-      {(Object.keys(META) as FlagKey[]).map(k => <FlagBadge key={k} flag={k} flags={flags} />)}
+      {(Object.keys(META) as (keyof typeof META)[]).map(k => <FlagBadge key={k} flag={k as FlagKey} flags={flags} />)}
     </div>
   );
 }
