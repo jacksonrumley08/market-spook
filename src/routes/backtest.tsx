@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
 import { fmtPctRaw, signClass } from '@/lib/format';
-import type { BacktestResult } from '@/api/types';
+import type { BacktestResult } from '@/api/types-ui';
 
 export const Route = createFileRoute('/backtest')({
   head: () => ({

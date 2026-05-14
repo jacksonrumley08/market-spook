@@ -6,7 +6,7 @@ import { listAlerts } from '@/api/client';
 import { RelTime } from '@/components/RelTime';
 import { SkeletonRows } from '@/components/SkeletonRows';
 import { cn } from '@/lib/utils';
-import type { AlertOut } from '@/api/types';
+import type { AlertOut } from '@/api/types-ui';
 
 export const Route = createFileRoute('/alerts')({
   head: () => ({

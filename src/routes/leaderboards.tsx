@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 type LBKind = 'alpha' | 'hit_rate' | 'vagueness' | 'late_filer' | 'options_conviction' | 'filing_quality';
 const KINDS: LBKind[] = ['alpha','hit_rate','vagueness','late_filer','options_conviction','filing_quality'];
 import { getLeaderboard } from '@/api/client';
-import type { LeaderboardKind } from '@/api/types';
+import type { LeaderboardKind } from '@/api/types-ui';
 import { Sparkline } from '@/components/Sparkline';
 import { PartyChip } from '@/components/PartyChip';
 import { fmtPctRaw, signClass } from '@/lib/format';

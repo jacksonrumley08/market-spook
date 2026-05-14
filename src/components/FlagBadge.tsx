@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import type { DerivedFlags } from '@/api/types';
+import type { DerivedFlags } from '@/api/types-ui';
 
 type FlagKey = keyof DerivedFlags;
 

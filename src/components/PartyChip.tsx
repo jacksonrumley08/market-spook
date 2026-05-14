@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import type { Party } from '@/api/types';
+import type { Party } from '@/api/types-ui';
 
 export function PartyChip({ party, state, chamber, className }: { party: Party; state?: string; chamber?: string; className?: string }) {
   const color =
