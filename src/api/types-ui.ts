@@ -129,7 +129,7 @@ export interface CommitteeMemberSummary {
 
 export interface CommitteeWeeklyFlowRow {
   sector: string;
-  weeks: DatedValue[];
+  weeks: { w: string; net: number }[];
 }
 
 export interface CommitteeOut {
