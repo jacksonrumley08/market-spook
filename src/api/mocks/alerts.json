@@ -1,0 +1,1124 @@
+[
+  {
+    "id": "A00001",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (9h)",
+    "created_at": "2026-04-16T17:09:10.883Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0003",
+      "ticker": "RTX",
+      "window_days": 20,
+      "score": 0.77,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00002",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "warning",
+    "summary": "Watchlist hit: Patricia Kensington bought GOOGL",
+    "member_id": "M0016",
+    "ticker": "GOOGL",
+    "created_at": "2026-05-10T06:20:16.094Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0016",
+      "ticker": "GOOGL",
+      "window_days": 9,
+      "score": 0.65,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00003",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "critical",
+    "summary": "Watchlist hit: James Rutherford bought BAC",
+    "member_id": "M0006",
+    "ticker": "BAC",
+    "created_at": "2026-04-29T12:26:45.495Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0006",
+      "ticker": "BAC",
+      "window_days": 5,
+      "score": 0.49,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00004",
+    "kind": "NEWS_CATALYST",
+    "severity": "critical",
+    "summary": "AAPL mentioned in 14 news headlines within 72h of David Radcliffe trade",
+    "member_id": "M0004",
+    "ticker": "AAPL",
+    "created_at": "2026-04-28T04:11:39.082Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "NEWS_CATALYST",
+      "member_id": "M0004",
+      "ticker": "AAPL",
+      "window_days": 7,
+      "score": 0.46,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00005",
+    "kind": "NEWS_CATALYST",
+    "severity": "warning",
+    "summary": "MSFT mentioned in 14 news headlines within 72h of Nicholas Kingsley trade",
+    "member_id": "M0032",
+    "ticker": "MSFT",
+    "created_at": "2026-04-19T17:10:21.599Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "NEWS_CATALYST",
+      "member_id": "M0032",
+      "ticker": "MSFT",
+      "window_days": 11,
+      "score": 0.81,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00006",
+    "kind": "CONTRACT_PROXIMITY",
+    "severity": "warning",
+    "summary": "Nicholas Lockhart purchased MSFT 6 days before $177M DOE award",
+    "member_id": "M0019",
+    "ticker": "MSFT",
+    "created_at": "2026-05-01T21:35:22.990Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CONTRACT_PROXIMITY",
+      "member_id": "M0019",
+      "ticker": "MSFT",
+      "window_days": 18,
+      "score": 0.53,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00007",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "critical",
+    "summary": "Watchlist hit: Robert Crawford bought NVDA",
+    "member_id": "M0022",
+    "ticker": "NVDA",
+    "created_at": "2026-04-23T12:41:23.805Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0022",
+      "ticker": "NVDA",
+      "window_days": 4,
+      "score": 0.58,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00008",
+    "kind": "CONTRACT_PROXIMITY",
+    "severity": "warning",
+    "summary": "Kenneth Montgomery purchased UNH 2 days before $242M NASA award",
+    "member_id": "M0010",
+    "ticker": "UNH",
+    "created_at": "2026-05-02T16:51:59.489Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CONTRACT_PROXIMITY",
+      "member_id": "M0010",
+      "ticker": "UNH",
+      "window_days": 17,
+      "score": 0.54,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00009",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "critical",
+    "summary": "Watchlist hit: Robert Crawford bought PFE",
+    "member_id": "M0022",
+    "ticker": "PFE",
+    "created_at": "2026-04-30T22:18:57.384Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0022",
+      "ticker": "PFE",
+      "window_days": 16,
+      "score": 0.83,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00010",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "warning",
+    "summary": "Watchlist hit: James Rutherford bought JPM",
+    "member_id": "M0006",
+    "ticker": "JPM",
+    "created_at": "2026-05-05T21:18:31.937Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0006",
+      "ticker": "JPM",
+      "window_days": 12,
+      "score": 0.98,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00011",
+    "kind": "CONTRACT_PROXIMITY",
+    "severity": "warning",
+    "summary": "Andrew Lockhart purchased PFE 1 days before $647M DOE award",
+    "member_id": "M0046",
+    "ticker": "PFE",
+    "created_at": "2026-05-09T07:12:37.353Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "CONTRACT_PROXIMITY",
+      "member_id": "M0046",
+      "ticker": "PFE",
+      "window_days": 16,
+      "score": 0.79,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00012",
+    "kind": "CONTRACT_PROXIMITY",
+    "severity": "critical",
+    "summary": "Donna Ingram purchased BA 3 days before $213M DoD award",
+    "member_id": "M0027",
+    "ticker": "BA",
+    "created_at": "2026-05-14T00:52:50.387Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CONTRACT_PROXIMITY",
+      "member_id": "M0027",
+      "ticker": "BA",
+      "window_days": 5,
+      "score": 0.64,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00013",
+    "kind": "FOMC_BLACKOUT",
+    "severity": "warning",
+    "summary": "Helen Lockhart executed META trade during FOMC blackout window",
+    "member_id": "M0003",
+    "ticker": "META",
+    "created_at": "2026-05-09T18:13:33.072Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "FOMC_BLACKOUT",
+      "member_id": "M0003",
+      "ticker": "META",
+      "window_days": 10,
+      "score": 0.62,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00014",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "warning",
+    "summary": "11 members of Senate Intelligence bought AMZN within 14 days",
+    "member_id": "M0020",
+    "ticker": "AMZN",
+    "created_at": "2026-05-03T14:03:02.969Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0020",
+      "ticker": "AMZN",
+      "window_days": 12,
+      "score": 0.98,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00015",
+    "kind": "INGESTION_HEALTH",
+    "severity": "critical",
+    "summary": "STOCK Act feed lag exceeded threshold (10h)",
+    "created_at": "2026-05-07T12:18:18.440Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0023",
+      "ticker": "NVDA",
+      "window_days": 18,
+      "score": 0.52,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00016",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "warning",
+    "summary": "Watchlist hit: Sarah Osborne bought GE",
+    "member_id": "M0038",
+    "ticker": "GE",
+    "created_at": "2026-04-24T01:52:53.360Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0038",
+      "ticker": "GE",
+      "window_days": 3,
+      "score": 0.79,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00017",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "warning",
+    "summary": "Watchlist hit: David Radcliffe bought PFE",
+    "member_id": "M0004",
+    "ticker": "PFE",
+    "created_at": "2026-04-14T21:13:39.840Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0004",
+      "ticker": "PFE",
+      "window_days": 12,
+      "score": 0.79,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00018",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "critical",
+    "summary": "4 members of House Judiciary bought AMD within 14 days",
+    "member_id": "M0039",
+    "ticker": "AMD",
+    "created_at": "2026-05-09T12:36:54.723Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0039",
+      "ticker": "AMD",
+      "window_days": 10,
+      "score": 0.67,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00019",
+    "kind": "FOMC_BLACKOUT",
+    "severity": "critical",
+    "summary": "Sandra Montgomery executed JPM trade during FOMC blackout window",
+    "member_id": "M0035",
+    "ticker": "JPM",
+    "created_at": "2026-04-23T22:31:15.362Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "FOMC_BLACKOUT",
+      "member_id": "M0035",
+      "ticker": "JPM",
+      "window_days": 14,
+      "score": 0.8,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00020",
+    "kind": "NEWS_CATALYST",
+    "severity": "warning",
+    "summary": "NOC mentioned in 14 news headlines within 72h of Ryan Sinclair trade",
+    "member_id": "M0008",
+    "ticker": "NOC",
+    "created_at": "2026-04-21T19:52:02.854Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "NEWS_CATALYST",
+      "member_id": "M0008",
+      "ticker": "NOC",
+      "window_days": 18,
+      "score": 0.42,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00021",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (12h)",
+    "created_at": "2026-04-20T19:55:16.232Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0010",
+      "ticker": "AAPL",
+      "window_days": 7,
+      "score": 0.45,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00022",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (16h)",
+    "created_at": "2026-04-17T03:43:58.237Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0031",
+      "ticker": "BA",
+      "window_days": 12,
+      "score": 0.77,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00023",
+    "kind": "CONTRACT_PROXIMITY",
+    "severity": "warning",
+    "summary": "Patricia Kensington purchased CVX 2 days before $316M DOE award",
+    "member_id": "M0016",
+    "ticker": "CVX",
+    "created_at": "2026-05-02T21:52:54.366Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CONTRACT_PROXIMITY",
+      "member_id": "M0016",
+      "ticker": "CVX",
+      "window_days": 14,
+      "score": 0.7,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00024",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "critical",
+    "summary": "4 members of House Ways and Means bought RTX within 14 days",
+    "member_id": "M0033",
+    "ticker": "RTX",
+    "created_at": "2026-04-17T03:16:12.660Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0033",
+      "ticker": "RTX",
+      "window_days": 12,
+      "score": 0.47,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00025",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (16h)",
+    "created_at": "2026-04-21T20:09:38.508Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0004",
+      "ticker": "UNH",
+      "window_days": 3,
+      "score": 0.43,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00026",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "warning",
+    "summary": "10 members of Senate Armed Services bought BAC within 14 days",
+    "member_id": "M0025",
+    "ticker": "BAC",
+    "created_at": "2026-04-28T09:16:21.066Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0025",
+      "ticker": "BAC",
+      "window_days": 3,
+      "score": 0.66,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00027",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (11h)",
+    "created_at": "2026-05-07T12:49:23.232Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0045",
+      "ticker": "AMZN",
+      "window_days": 10,
+      "score": 0.57,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00028",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "critical",
+    "summary": "9 members of House Judiciary bought BAC within 14 days",
+    "member_id": "M0013",
+    "ticker": "BAC",
+    "created_at": "2026-05-09T23:49:16.038Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0013",
+      "ticker": "BAC",
+      "window_days": 3,
+      "score": 0.54,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00029",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (7h)",
+    "created_at": "2026-05-02T23:51:02.872Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0006",
+      "ticker": "AMD",
+      "window_days": 16,
+      "score": 0.99,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00030",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "warning",
+    "summary": "Watchlist hit: Sarah Fairchild bought BA",
+    "member_id": "M0040",
+    "ticker": "BA",
+    "created_at": "2026-04-21T01:12:05.490Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0040",
+      "ticker": "BA",
+      "window_days": 20,
+      "score": 0.65,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00031",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "warning",
+    "summary": "Watchlist hit: Sarah Eastwood bought UNH",
+    "member_id": "M0001",
+    "ticker": "UNH",
+    "created_at": "2026-04-17T17:31:33.921Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0001",
+      "ticker": "UNH",
+      "window_days": 13,
+      "score": 0.5,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00032",
+    "kind": "FOMC_BLACKOUT",
+    "severity": "warning",
+    "summary": "David Radcliffe executed AMD trade during FOMC blackout window",
+    "member_id": "M0004",
+    "ticker": "AMD",
+    "created_at": "2026-05-07T03:02:27.803Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "FOMC_BLACKOUT",
+      "member_id": "M0004",
+      "ticker": "AMD",
+      "window_days": 11,
+      "score": 0.82,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00033",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "warning",
+    "summary": "11 members of House Financial Services bought CVX within 14 days",
+    "member_id": "M0015",
+    "ticker": "CVX",
+    "created_at": "2026-04-16T20:24:03.694Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0015",
+      "ticker": "CVX",
+      "window_days": 13,
+      "score": 0.58,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00034",
+    "kind": "FOMC_BLACKOUT",
+    "severity": "warning",
+    "summary": "Kenneth Montgomery executed PFE trade during FOMC blackout window",
+    "member_id": "M0010",
+    "ticker": "PFE",
+    "created_at": "2026-05-07T14:17:42.534Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "FOMC_BLACKOUT",
+      "member_id": "M0010",
+      "ticker": "PFE",
+      "window_days": 10,
+      "score": 0.93,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00035",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "critical",
+    "summary": "7 members of Senate Health, Education, Labor and Pensions bought AAPL within 14 days",
+    "member_id": "M0018",
+    "ticker": "AAPL",
+    "created_at": "2026-04-30T08:16:35.450Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0018",
+      "ticker": "AAPL",
+      "window_days": 21,
+      "score": 0.53,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00036",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "warning",
+    "summary": "11 members of Senate Health, Education, Labor and Pensions bought CVX within 14 days",
+    "member_id": "M0030",
+    "ticker": "CVX",
+    "created_at": "2026-05-01T00:36:11.452Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0030",
+      "ticker": "CVX",
+      "window_days": 20,
+      "score": 0.95,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00037",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (18h)",
+    "created_at": "2026-04-24T14:47:20.881Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0013",
+      "ticker": "MSFT",
+      "window_days": 20,
+      "score": 0.62,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00038",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "warning",
+    "summary": "Watchlist hit: Andrew Lockhart bought JPM",
+    "member_id": "M0046",
+    "ticker": "JPM",
+    "created_at": "2026-04-18T15:45:56.066Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0046",
+      "ticker": "JPM",
+      "window_days": 4,
+      "score": 0.72,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00039",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "critical",
+    "summary": "7 members of House Ways and Means bought GOOGL within 14 days",
+    "member_id": "M0010",
+    "ticker": "GOOGL",
+    "created_at": "2026-05-05T12:08:34.127Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0010",
+      "ticker": "GOOGL",
+      "window_days": 7,
+      "score": 0.66,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00040",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "warning",
+    "summary": "5 members of House Energy & Commerce bought BAC within 14 days",
+    "member_id": "M0001",
+    "ticker": "BAC",
+    "created_at": "2026-05-03T13:52:39.478Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0001",
+      "ticker": "BAC",
+      "window_days": 9,
+      "score": 0.55,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00041",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "warning",
+    "summary": "Watchlist hit: Nicholas Lockhart bought AMZN",
+    "member_id": "M0019",
+    "ticker": "AMZN",
+    "created_at": "2026-04-15T05:52:02.630Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0019",
+      "ticker": "AMZN",
+      "window_days": 10,
+      "score": 0.68,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00042",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "warning",
+    "summary": "9 members of House Energy & Commerce bought NOC within 14 days",
+    "member_id": "M0043",
+    "ticker": "NOC",
+    "created_at": "2026-05-04T14:46:27.679Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0043",
+      "ticker": "NOC",
+      "window_days": 13,
+      "score": 0.72,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00043",
+    "kind": "FOMC_BLACKOUT",
+    "severity": "critical",
+    "summary": "James Rutherford executed NVDA trade during FOMC blackout window",
+    "member_id": "M0006",
+    "ticker": "NVDA",
+    "created_at": "2026-05-12T05:26:13.309Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "FOMC_BLACKOUT",
+      "member_id": "M0006",
+      "ticker": "NVDA",
+      "window_days": 16,
+      "score": 0.61,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00044",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "warning",
+    "summary": "7 members of Senate Health, Education, Labor and Pensions bought AMZN within 14 days",
+    "member_id": "M0010",
+    "ticker": "AMZN",
+    "created_at": "2026-04-15T18:23:15.762Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0010",
+      "ticker": "AMZN",
+      "window_days": 7,
+      "score": 0.72,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00045",
+    "kind": "INGESTION_HEALTH",
+    "severity": "critical",
+    "summary": "STOCK Act feed lag exceeded threshold (17h)",
+    "created_at": "2026-04-18T04:58:27.217Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0041",
+      "ticker": "RTX",
+      "window_days": 3,
+      "score": 0.66,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00046",
+    "kind": "NEWS_CATALYST",
+    "severity": "warning",
+    "summary": "META mentioned in 14 news headlines within 72h of James Rutherford trade",
+    "member_id": "M0006",
+    "ticker": "META",
+    "created_at": "2026-04-24T10:45:07.672Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "NEWS_CATALYST",
+      "member_id": "M0006",
+      "ticker": "META",
+      "window_days": 20,
+      "score": 0.91,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00047",
+    "kind": "FOMC_BLACKOUT",
+    "severity": "warning",
+    "summary": "Ryan Sinclair executed XOM trade during FOMC blackout window",
+    "member_id": "M0008",
+    "ticker": "XOM",
+    "created_at": "2026-04-22T12:37:25.624Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "FOMC_BLACKOUT",
+      "member_id": "M0008",
+      "ticker": "XOM",
+      "window_days": 13,
+      "score": 0.7,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00048",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "warning",
+    "summary": "Watchlist hit: Michael Galloway bought AMZN",
+    "member_id": "M0024",
+    "ticker": "AMZN",
+    "created_at": "2026-04-23T08:36:58.624Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0024",
+      "ticker": "AMZN",
+      "window_days": 8,
+      "score": 0.93,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00049",
+    "kind": "FOMC_BLACKOUT",
+    "severity": "critical",
+    "summary": "Patricia Kensington executed CVX trade during FOMC blackout window",
+    "member_id": "M0031",
+    "ticker": "CVX",
+    "created_at": "2026-05-04T04:07:47.289Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "FOMC_BLACKOUT",
+      "member_id": "M0031",
+      "ticker": "CVX",
+      "window_days": 5,
+      "score": 0.4,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00050",
+    "kind": "INGESTION_HEALTH",
+    "severity": "critical",
+    "summary": "STOCK Act feed lag exceeded threshold (3h)",
+    "created_at": "2026-04-23T10:05:16.366Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0001",
+      "ticker": "PLTR",
+      "window_days": 7,
+      "score": 0.85,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00051",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (18h)",
+    "created_at": "2026-05-04T12:13:30.352Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0004",
+      "ticker": "LMT",
+      "window_days": 11,
+      "score": 0.47,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00052",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (14h)",
+    "created_at": "2026-04-25T13:15:53.186Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0043",
+      "ticker": "META",
+      "window_days": 10,
+      "score": 0.89,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00053",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (8h)",
+    "created_at": "2026-04-24T10:14:04.050Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0030",
+      "ticker": "META",
+      "window_days": 17,
+      "score": 0.89,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00054",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (15h)",
+    "created_at": "2026-04-22T15:50:46.119Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0043",
+      "ticker": "UNH",
+      "window_days": 16,
+      "score": 0.94,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00055",
+    "kind": "NEWS_CATALYST",
+    "severity": "critical",
+    "summary": "BAC mentioned in 14 news headlines within 72h of Andrew Harrington trade",
+    "member_id": "M0026",
+    "ticker": "BAC",
+    "created_at": "2026-05-14T06:59:47.362Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "NEWS_CATALYST",
+      "member_id": "M0026",
+      "ticker": "BAC",
+      "window_days": 19,
+      "score": 0.73,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00056",
+    "kind": "WATCHLIST_MATCH",
+    "severity": "critical",
+    "summary": "Watchlist hit: Sandra Radcliffe bought UNH",
+    "member_id": "M0002",
+    "ticker": "UNH",
+    "created_at": "2026-04-24T20:39:48.133Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "WATCHLIST_MATCH",
+      "member_id": "M0002",
+      "ticker": "UNH",
+      "window_days": 19,
+      "score": 0.44,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00057",
+    "kind": "CONTRACT_PROXIMITY",
+    "severity": "critical",
+    "summary": "Sarah Eastwood purchased PFE 9 days before $459M DOE award",
+    "member_id": "M0001",
+    "ticker": "PFE",
+    "created_at": "2026-04-14T23:42:41.380Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CONTRACT_PROXIMITY",
+      "member_id": "M0001",
+      "ticker": "PFE",
+      "window_days": 14,
+      "score": 0.6,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00058",
+    "kind": "CONTRACT_PROXIMITY",
+    "severity": "warning",
+    "summary": "Patricia Kensington purchased MSFT 9 days before $444M DOE award",
+    "member_id": "M0031",
+    "ticker": "MSFT",
+    "created_at": "2026-05-05T07:24:20.264Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CONTRACT_PROXIMITY",
+      "member_id": "M0031",
+      "ticker": "MSFT",
+      "window_days": 7,
+      "score": 0.8,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00059",
+    "kind": "FOMC_BLACKOUT",
+    "severity": "warning",
+    "summary": "Linda Montgomery executed AMD trade during FOMC blackout window",
+    "member_id": "M0045",
+    "ticker": "AMD",
+    "created_at": "2026-04-23T13:58:02.193Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "FOMC_BLACKOUT",
+      "member_id": "M0045",
+      "ticker": "AMD",
+      "window_days": 10,
+      "score": 0.68,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00060",
+    "kind": "NEWS_CATALYST",
+    "severity": "warning",
+    "summary": "LMT mentioned in 14 news headlines within 72h of Donna Ingram trade",
+    "member_id": "M0027",
+    "ticker": "LMT",
+    "created_at": "2026-05-11T22:42:09.890Z",
+    "dismissed": true,
+    "payload": {
+      "kind": "NEWS_CATALYST",
+      "member_id": "M0027",
+      "ticker": "LMT",
+      "window_days": 20,
+      "score": 0.62,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00061",
+    "kind": "CONTRACT_PROXIMITY",
+    "severity": "warning",
+    "summary": "Michael Lockhart purchased AMD 9 days before $759M DOE award",
+    "member_id": "M0012",
+    "ticker": "AMD",
+    "created_at": "2026-04-20T13:02:19.660Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CONTRACT_PROXIMITY",
+      "member_id": "M0012",
+      "ticker": "AMD",
+      "window_days": 8,
+      "score": 0.45,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00062",
+    "kind": "INGESTION_HEALTH",
+    "severity": "warning",
+    "summary": "STOCK Act feed lag exceeded threshold (18h)",
+    "created_at": "2026-04-16T03:40:01.738Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "INGESTION_HEALTH",
+      "member_id": "M0031",
+      "ticker": "GOOGL",
+      "window_days": 16,
+      "score": 0.57,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00063",
+    "kind": "NEWS_CATALYST",
+    "severity": "warning",
+    "summary": "UNH mentioned in 14 news headlines within 72h of Susan Crawford trade",
+    "member_id": "M0023",
+    "ticker": "UNH",
+    "created_at": "2026-04-28T08:04:31.810Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "NEWS_CATALYST",
+      "member_id": "M0023",
+      "ticker": "UNH",
+      "window_days": 7,
+      "score": 0.56,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  },
+  {
+    "id": "A00064",
+    "kind": "CLUSTER_THRESHOLD",
+    "severity": "warning",
+    "summary": "9 members of House Judiciary bought MSFT within 14 days",
+    "member_id": "M0038",
+    "ticker": "MSFT",
+    "created_at": "2026-04-17T15:38:47.303Z",
+    "dismissed": false,
+    "payload": {
+      "kind": "CLUSTER_THRESHOLD",
+      "member_id": "M0038",
+      "ticker": "MSFT",
+      "window_days": 5,
+      "score": 0.59,
+      "detail": "See linked transaction(s) for full chain of evidence."
+    }
+  }
+]

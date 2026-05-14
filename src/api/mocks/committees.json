@@ -1,0 +1,4844 @@
+[
+  {
+    "id": "C001",
+    "name": "Senate Banking",
+    "chamber": "senate",
+    "jurisdiction_summary": "Oversight authority across Financials, Real Estate with subpoena power and budget review.",
+    "jurisdiction_sectors": [
+      "Financials",
+      "Real Estate"
+    ],
+    "member_count": 11,
+    "members": [
+      {
+        "member_id": "M0029",
+        "name": "Sarah Kensington",
+        "party": "D",
+        "state": "FL",
+        "alpha_180d": 21.468734823851257
+      },
+      {
+        "member_id": "M0034",
+        "name": "Margaret Ashworth",
+        "party": "D",
+        "state": "IN",
+        "alpha_180d": 19.134646996452773
+      },
+      {
+        "member_id": "M0040",
+        "name": "Sarah Fairchild",
+        "party": "I",
+        "state": "MN",
+        "alpha_180d": 12.40522269550954
+      },
+      {
+        "member_id": "M0047",
+        "name": "David Jameson",
+        "party": "I",
+        "state": "OH",
+        "alpha_180d": 11.385154001128466
+      },
+      {
+        "member_id": "M0013",
+        "name": "Joshua Thornton",
+        "party": "D",
+        "state": "MA",
+        "alpha_180d": 0.33209973775413815
+      },
+      {
+        "member_id": "M0016",
+        "name": "Patricia Kensington",
+        "party": "R",
+        "state": "MI",
+        "alpha_180d": -0.7617357581675677
+      },
+      {
+        "member_id": "M0001",
+        "name": "Sarah Eastwood",
+        "party": "D",
+        "state": "TN",
+        "alpha_180d": -4.148566968808215
+      },
+      {
+        "member_id": "M0014",
+        "name": "Susan Northrop",
+        "party": "R",
+        "state": "OR",
+        "alpha_180d": -4.856420871269155
+      },
+      {
+        "member_id": "M0004",
+        "name": "David Radcliffe",
+        "party": "I",
+        "state": "GA",
+        "alpha_180d": -10.907554130492525
+      },
+      {
+        "member_id": "M0043",
+        "name": "Steven Eastwood",
+        "party": "R",
+        "state": "CO",
+        "alpha_180d": -10.914462793112948
+      },
+      {
+        "member_id": "M0007",
+        "name": "Dorothy Osborne",
+        "party": "D",
+        "state": "LA",
+        "alpha_180d": -11.39977740840976
+      }
+    ],
+    "weekly_flow": [
+      {
+        "sector": "Financials",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 53898739
+          },
+          {
+            "w": "2025-11-27",
+            "net": 16101783
+          },
+          {
+            "w": "2025-12-04",
+            "net": 72674472
+          },
+          {
+            "w": "2025-12-11",
+            "net": 69855018
+          },
+          {
+            "w": "2025-12-18",
+            "net": 3285132
+          },
+          {
+            "w": "2025-12-25",
+            "net": 73213303
+          },
+          {
+            "w": "2026-01-01",
+            "net": 25983714
+          },
+          {
+            "w": "2026-01-08",
+            "net": 18279059
+          },
+          {
+            "w": "2026-01-15",
+            "net": 6142226
+          },
+          {
+            "w": "2026-01-22",
+            "net": -7614671
+          },
+          {
+            "w": "2026-01-29",
+            "net": 50225284
+          },
+          {
+            "w": "2026-02-05",
+            "net": 26347437
+          },
+          {
+            "w": "2026-02-12",
+            "net": 21377198
+          },
+          {
+            "w": "2026-02-19",
+            "net": 76559948
+          },
+          {
+            "w": "2026-02-26",
+            "net": -16949778
+          },
+          {
+            "w": "2026-03-05",
+            "net": 65077360
+          },
+          {
+            "w": "2026-03-12",
+            "net": 45196329
+          },
+          {
+            "w": "2026-03-19",
+            "net": 4709471
+          },
+          {
+            "w": "2026-03-26",
+            "net": -37924648
+          },
+          {
+            "w": "2026-04-02",
+            "net": -29560280
+          },
+          {
+            "w": "2026-04-09",
+            "net": 20368567
+          },
+          {
+            "w": "2026-04-16",
+            "net": 24511319
+          },
+          {
+            "w": "2026-04-23",
+            "net": -28264141
+          },
+          {
+            "w": "2026-04-30",
+            "net": -35419399
+          },
+          {
+            "w": "2026-05-07",
+            "net": -43842600
+          },
+          {
+            "w": "2026-05-14",
+            "net": -42585307
+          }
+        ]
+      },
+      {
+        "sector": "Real Estate",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 28751316
+          },
+          {
+            "w": "2025-11-27",
+            "net": -6627994
+          },
+          {
+            "w": "2025-12-04",
+            "net": -6702457
+          },
+          {
+            "w": "2025-12-11",
+            "net": 41809210
+          },
+          {
+            "w": "2025-12-18",
+            "net": 17389582
+          },
+          {
+            "w": "2025-12-25",
+            "net": 6707310
+          },
+          {
+            "w": "2026-01-01",
+            "net": -237624
+          },
+          {
+            "w": "2026-01-08",
+            "net": 16253386
+          },
+          {
+            "w": "2026-01-15",
+            "net": 20660119
+          },
+          {
+            "w": "2026-01-22",
+            "net": -15378383
+          },
+          {
+            "w": "2026-01-29",
+            "net": -44478700
+          },
+          {
+            "w": "2026-02-05",
+            "net": 56492855
+          },
+          {
+            "w": "2026-02-12",
+            "net": 65418017
+          },
+          {
+            "w": "2026-02-19",
+            "net": 50608615
+          },
+          {
+            "w": "2026-02-26",
+            "net": -31015598
+          },
+          {
+            "w": "2026-03-05",
+            "net": 840790
+          },
+          {
+            "w": "2026-03-12",
+            "net": 71154356
+          },
+          {
+            "w": "2026-03-19",
+            "net": 1260096
+          },
+          {
+            "w": "2026-03-26",
+            "net": -31566478
+          },
+          {
+            "w": "2026-04-02",
+            "net": -27800846
+          },
+          {
+            "w": "2026-04-09",
+            "net": -48814983
+          },
+          {
+            "w": "2026-04-16",
+            "net": -23416455
+          },
+          {
+            "w": "2026-04-23",
+            "net": 59640292
+          },
+          {
+            "w": "2026-04-30",
+            "net": 54392478
+          },
+          {
+            "w": "2026-05-07",
+            "net": -5617048
+          },
+          {
+            "w": "2026-05-14",
+            "net": -45724997
+          }
+        ]
+      }
+    ],
+    "recent_cluster_trades": [
+      {
+        "id": "T00012",
+        "member_id": "M0047",
+        "member_name": "David Jameson",
+        "ticker": "XOM",
+        "company_name": "Exxon Mobil",
+        "type": "option",
+        "amount_min": 250001,
+        "amount_max": 500000,
+        "owner_type": "dependent",
+        "transaction_date": "2025-11-20T12:00:00.000Z",
+        "filing_date": "2026-02-06T12:00:00.000Z",
+        "filing_lateness_days": 78,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ]
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.62,
+        "alpha_context_30d": -7.97
+      },
+      {
+        "id": "T00015",
+        "member_id": "M0004",
+        "member_name": "David Radcliffe",
+        "ticker": "GOOGL",
+        "company_name": "Alphabet",
+        "type": "option",
+        "amount_min": 1000,
+        "amount_max": 15000,
+        "owner_type": "dependent",
+        "transaction_date": "2025-11-24T12:00:00.000Z",
+        "filing_date": "2026-01-26T12:00:00.000Z",
+        "filing_lateness_days": 63,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ]
+        },
+        "signal_score": 0.63,
+        "alpha_context_30d": -1.14
+      },
+      {
+        "id": "T00021",
+        "member_id": "M0016",
+        "member_name": "Patricia Kensington",
+        "ticker": "AMD",
+        "company_name": "Advanced Micro Devices",
+        "type": "option",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "joint",
+        "transaction_date": "2026-02-18T12:00:00.000Z",
+        "filing_date": "2026-03-11T12:00:00.000Z",
+        "filing_lateness_days": 21,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_23tog3",
+            "topic": "Defense procurement review",
+            "days_delta": 6,
+            "date": "2025-12-16T12:00:00.000Z"
+          }
+        },
+        "signal_score": 0.98,
+        "alpha_context_30d": 3.54
+      },
+      {
+        "id": "T00045",
+        "member_id": "M0001",
+        "member_name": "Sarah Eastwood",
+        "ticker": "TSLA",
+        "company_name": "Tesla",
+        "type": "exchange",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "self",
+        "transaction_date": "2025-12-11T12:00:00.000Z",
+        "filing_date": "2026-02-14T12:00:00.000Z",
+        "filing_lateness_days": 65,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_aj4t3s",
+            "topic": "Healthcare pricing inquiry",
+            "days_delta": 12,
+            "date": "2026-01-29T12:00:00.000Z"
+          }
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.5,
+        "alpha_context_30d": -4.37
+      },
+      {
+        "id": "T00054",
+        "member_id": "M0034",
+        "member_name": "Margaret Ashworth",
+        "ticker": "AMZN",
+        "company_name": "Amazon.com",
+        "type": "exchange",
+        "amount_min": 15001,
+        "amount_max": 50000,
+        "owner_type": "joint",
+        "transaction_date": "2026-03-02T12:00:00.000Z",
+        "filing_date": "2026-03-14T12:00:00.000Z",
+        "filing_lateness_days": 12,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            },
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            },
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ],
+          "vote_trade_consistency": {
+            "bill_id": "H.R.2539",
+            "bill_title": "Defense Appropriations 2026",
+            "position": "nay",
+            "days_delta": -13
+          }
+        },
+        "signal_score": 0.84,
+        "alpha_context_30d": 5.37
+      },
+      {
+        "id": "T00059",
+        "member_id": "M0001",
+        "member_name": "Sarah Eastwood",
+        "ticker": "BAC",
+        "company_name": "Bank of America",
+        "type": "exchange",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-01-12T12:00:00.000Z",
+        "filing_date": "2026-02-28T12:00:00.000Z",
+        "filing_lateness_days": 47,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ],
+          "vote_trade_consistency": {
+            "bill_id": "H.R.7041",
+            "bill_title": "CHIPS Act Reauthorization",
+            "position": "yea",
+            "days_delta": 22
+          }
+        },
+        "signal_score": 0.93,
+        "alpha_context_30d": -11.54
+      },
+      {
+        "id": "T00060",
+        "member_id": "M0034",
+        "member_name": "Margaret Ashworth",
+        "ticker": "AMD",
+        "company_name": "Advanced Micro Devices",
+        "type": "exchange",
+        "amount_min": 1000,
+        "amount_max": 15000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-05-12T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 43,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            },
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            },
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_9c2wlp",
+            "topic": "AI regulation framework",
+            "days_delta": -7,
+            "date": "2026-04-17T12:00:00.000Z"
+          }
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.62,
+        "alpha_context_30d": -5.56
+      },
+      {
+        "id": "T00071",
+        "member_id": "M0013",
+        "member_name": "Joshua Thornton",
+        "ticker": "BAC",
+        "company_name": "Bank of America",
+        "type": "exchange",
+        "amount_min": 100001,
+        "amount_max": 250000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-03-06T12:00:00.000Z",
+        "filing_date": "2026-03-15T12:00:00.000Z",
+        "filing_lateness_days": 9,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ]
+        },
+        "signal_score": 0.39,
+        "alpha_context_30d": -9.9
+      }
+    ]
+  },
+  {
+    "id": "C002",
+    "name": "House Energy & Commerce",
+    "chamber": "house",
+    "jurisdiction_summary": "Oversight authority across Energy, Healthcare, Communication Services with subpoena power and budget review.",
+    "jurisdiction_sectors": [
+      "Energy",
+      "Healthcare",
+      "Communication Services"
+    ],
+    "member_count": 20,
+    "members": [
+      {
+        "member_id": "M0044",
+        "name": "Paul Kingsley",
+        "party": "R",
+        "state": "OH",
+        "alpha_180d": 21.606379215422265
+      },
+      {
+        "member_id": "M0033",
+        "name": "Sarah Radcliffe",
+        "party": "D",
+        "state": "MO",
+        "alpha_180d": 20.390336707416147
+      },
+      {
+        "member_id": "M0008",
+        "name": "Ryan Sinclair",
+        "party": "D",
+        "state": "NY",
+        "alpha_180d": 17.040547846369698
+      },
+      {
+        "member_id": "M0028",
+        "name": "Dorothy Radcliffe",
+        "party": "R",
+        "state": "FL",
+        "alpha_180d": 15.780707938494487
+      },
+      {
+        "member_id": "M0024",
+        "name": "Michael Galloway",
+        "party": "D",
+        "state": "SC",
+        "alpha_180d": 15.395322484614013
+      },
+      {
+        "member_id": "M0010",
+        "name": "Kenneth Montgomery",
+        "party": "R",
+        "state": "MA",
+        "alpha_180d": 14.66226337974065
+      },
+      {
+        "member_id": "M0030",
+        "name": "Sandra Ashworth",
+        "party": "R",
+        "state": "OR",
+        "alpha_180d": 12.547046993182526
+      },
+      {
+        "member_id": "M0018",
+        "name": "Susan Quincy",
+        "party": "I",
+        "state": "SC",
+        "alpha_180d": 11.7486299424193
+      },
+      {
+        "member_id": "M0037",
+        "name": "Joshua Hartman",
+        "party": "R",
+        "state": "WI",
+        "alpha_180d": 8.00294175930458
+      },
+      {
+        "member_id": "M0042",
+        "name": "Helen Thornton",
+        "party": "I",
+        "state": "MN",
+        "alpha_180d": 7.992101592939395
+      },
+      {
+        "member_id": "M0038",
+        "name": "Sarah Osborne",
+        "party": "D",
+        "state": "MO",
+        "alpha_180d": 7.9000259395223225
+      },
+      {
+        "member_id": "M0020",
+        "name": "Robert Vance",
+        "party": "D",
+        "state": "NY",
+        "alpha_180d": 5.47134857693284
+      },
+      {
+        "member_id": "M0023",
+        "name": "Susan Crawford",
+        "party": "R",
+        "state": "UT",
+        "alpha_180d": 3.831331934701341
+      },
+      {
+        "member_id": "M0022",
+        "name": "Robert Crawford",
+        "party": "R",
+        "state": "TX",
+        "alpha_180d": 3.3521439877115853
+      },
+      {
+        "member_id": "M0005",
+        "name": "Brian Sinclair",
+        "party": "D",
+        "state": "NY",
+        "alpha_180d": 2.3607803501006117
+      },
+      {
+        "member_id": "M0041",
+        "name": "Mark Quincy",
+        "party": "D",
+        "state": "MO",
+        "alpha_180d": 0.13354612334330795
+      },
+      {
+        "member_id": "M0036",
+        "name": "Margaret Montgomery",
+        "party": "D",
+        "state": "OK",
+        "alpha_180d": -1.785046405058841
+      },
+      {
+        "member_id": "M0011",
+        "name": "Barbara Fairchild",
+        "party": "D",
+        "state": "LA",
+        "alpha_180d": -3.9517658613397586
+      },
+      {
+        "member_id": "M0032",
+        "name": "Nicholas Kingsley",
+        "party": "R",
+        "state": "MD",
+        "alpha_180d": -8.92440595334601
+      },
+      {
+        "member_id": "M0048",
+        "name": "Paul Hartman",
+        "party": "D",
+        "state": "NC",
+        "alpha_180d": -11.190971292178599
+      }
+    ],
+    "weekly_flow": [
+      {
+        "sector": "Energy",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 39974064
+          },
+          {
+            "w": "2025-11-27",
+            "net": -15904741
+          },
+          {
+            "w": "2025-12-04",
+            "net": 79021435
+          },
+          {
+            "w": "2025-12-11",
+            "net": 13262076
+          },
+          {
+            "w": "2025-12-18",
+            "net": 55707769
+          },
+          {
+            "w": "2025-12-25",
+            "net": 471561
+          },
+          {
+            "w": "2026-01-01",
+            "net": -24473773
+          },
+          {
+            "w": "2026-01-08",
+            "net": -30696175
+          },
+          {
+            "w": "2026-01-15",
+            "net": 39385115
+          },
+          {
+            "w": "2026-01-22",
+            "net": -34365133
+          },
+          {
+            "w": "2026-01-29",
+            "net": -4796714
+          },
+          {
+            "w": "2026-02-05",
+            "net": -38364807
+          },
+          {
+            "w": "2026-02-12",
+            "net": -17315923
+          },
+          {
+            "w": "2026-02-19",
+            "net": 21285154
+          },
+          {
+            "w": "2026-02-26",
+            "net": -40420000
+          },
+          {
+            "w": "2026-03-05",
+            "net": 21055240
+          },
+          {
+            "w": "2026-03-12",
+            "net": -4589175
+          },
+          {
+            "w": "2026-03-19",
+            "net": 69735507
+          },
+          {
+            "w": "2026-03-26",
+            "net": 74661471
+          },
+          {
+            "w": "2026-04-02",
+            "net": 55339000
+          },
+          {
+            "w": "2026-04-09",
+            "net": 42575885
+          },
+          {
+            "w": "2026-04-16",
+            "net": 32904642
+          },
+          {
+            "w": "2026-04-23",
+            "net": -11686253
+          },
+          {
+            "w": "2026-04-30",
+            "net": -848832
+          },
+          {
+            "w": "2026-05-07",
+            "net": 13683699
+          },
+          {
+            "w": "2026-05-14",
+            "net": -8068974
+          }
+        ]
+      },
+      {
+        "sector": "Healthcare",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": -45240202
+          },
+          {
+            "w": "2025-11-27",
+            "net": -2082981
+          },
+          {
+            "w": "2025-12-04",
+            "net": 71331168
+          },
+          {
+            "w": "2025-12-11",
+            "net": -17058574
+          },
+          {
+            "w": "2025-12-18",
+            "net": 56544560
+          },
+          {
+            "w": "2025-12-25",
+            "net": 24426676
+          },
+          {
+            "w": "2026-01-01",
+            "net": -20862499
+          },
+          {
+            "w": "2026-01-08",
+            "net": -46016404
+          },
+          {
+            "w": "2026-01-15",
+            "net": -47697459
+          },
+          {
+            "w": "2026-01-22",
+            "net": 38799981
+          },
+          {
+            "w": "2026-01-29",
+            "net": 11283630
+          },
+          {
+            "w": "2026-02-05",
+            "net": -46030933
+          },
+          {
+            "w": "2026-02-12",
+            "net": -31887302
+          },
+          {
+            "w": "2026-02-19",
+            "net": 40110527
+          },
+          {
+            "w": "2026-02-26",
+            "net": 67630302
+          },
+          {
+            "w": "2026-03-05",
+            "net": 52481436
+          },
+          {
+            "w": "2026-03-12",
+            "net": -14512748
+          },
+          {
+            "w": "2026-03-19",
+            "net": 74244231
+          },
+          {
+            "w": "2026-03-26",
+            "net": 62793809
+          },
+          {
+            "w": "2026-04-02",
+            "net": 15548252
+          },
+          {
+            "w": "2026-04-09",
+            "net": -534580
+          },
+          {
+            "w": "2026-04-16",
+            "net": -34679658
+          },
+          {
+            "w": "2026-04-23",
+            "net": 38989235
+          },
+          {
+            "w": "2026-04-30",
+            "net": 72070833
+          },
+          {
+            "w": "2026-05-07",
+            "net": 64488250
+          },
+          {
+            "w": "2026-05-14",
+            "net": 24011265
+          }
+        ]
+      },
+      {
+        "sector": "Communication Services",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 17325758
+          },
+          {
+            "w": "2025-11-27",
+            "net": -25988400
+          },
+          {
+            "w": "2025-12-04",
+            "net": -7040900
+          },
+          {
+            "w": "2025-12-11",
+            "net": 73596127
+          },
+          {
+            "w": "2025-12-18",
+            "net": -39886037
+          },
+          {
+            "w": "2025-12-25",
+            "net": 25374585
+          },
+          {
+            "w": "2026-01-01",
+            "net": 50643780
+          },
+          {
+            "w": "2026-01-08",
+            "net": 40007312
+          },
+          {
+            "w": "2026-01-15",
+            "net": 22888085
+          },
+          {
+            "w": "2026-01-22",
+            "net": -9958134
+          },
+          {
+            "w": "2026-01-29",
+            "net": 53648042
+          },
+          {
+            "w": "2026-02-05",
+            "net": -37358564
+          },
+          {
+            "w": "2026-02-12",
+            "net": -5391602
+          },
+          {
+            "w": "2026-02-19",
+            "net": -26648114
+          },
+          {
+            "w": "2026-02-26",
+            "net": -44845123
+          },
+          {
+            "w": "2026-03-05",
+            "net": 8011323
+          },
+          {
+            "w": "2026-03-12",
+            "net": 76305165
+          },
+          {
+            "w": "2026-03-19",
+            "net": -9086516
+          },
+          {
+            "w": "2026-03-26",
+            "net": 12920330
+          },
+          {
+            "w": "2026-04-02",
+            "net": 31990937
+          },
+          {
+            "w": "2026-04-09",
+            "net": -28328413
+          },
+          {
+            "w": "2026-04-16",
+            "net": 54365080
+          },
+          {
+            "w": "2026-04-23",
+            "net": 53901142
+          },
+          {
+            "w": "2026-04-30",
+            "net": 56495710
+          },
+          {
+            "w": "2026-05-07",
+            "net": -16601096
+          },
+          {
+            "w": "2026-05-14",
+            "net": 75380250
+          }
+        ]
+      }
+    ],
+    "recent_cluster_trades": [
+      {
+        "id": "T00035",
+        "member_id": "M0018",
+        "member_name": "Susan Quincy",
+        "ticker": "BAC",
+        "company_name": "Bank of America",
+        "type": "option",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "joint",
+        "transaction_date": "2026-04-28T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 35,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.61,
+        "alpha_context_30d": 2.94
+      },
+      {
+        "id": "T00038",
+        "member_id": "M0038",
+        "member_name": "Sarah Osborne",
+        "ticker": "PLTR",
+        "company_name": "Palantir Technologies",
+        "type": "sell",
+        "amount_min": 100001,
+        "amount_max": 250000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-02-04T12:00:00.000Z",
+        "filing_date": "2026-04-03T12:00:00.000Z",
+        "filing_lateness_days": 58,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ]
+        },
+        "signal_score": 0.74,
+        "alpha_context_30d": -0.11
+      },
+      {
+        "id": "T00043",
+        "member_id": "M0041",
+        "member_name": "Mark Quincy",
+        "ticker": "PLTR",
+        "company_name": "Palantir Technologies",
+        "type": "exchange",
+        "amount_min": 15001,
+        "amount_max": 50000,
+        "owner_type": "joint",
+        "transaction_date": "2025-12-15T12:00:00.000Z",
+        "filing_date": "2026-02-25T12:00:00.000Z",
+        "filing_lateness_days": 72,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            },
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            },
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ],
+          "lobbying_overlay": {
+            "registrant": "Holland & Knight",
+            "client": "PLTR",
+            "topics": [
+              "Healthcare"
+            ]
+          },
+          "vote_trade_consistency": {
+            "bill_id": "H.R.1985",
+            "bill_title": "Defense Appropriations 2026",
+            "position": "nay",
+            "days_delta": 3
+          },
+          "fomc_blackout": true
+        },
+        "signal_score": 0.77,
+        "alpha_context_30d": 23
+      },
+      {
+        "id": "T00046",
+        "member_id": "M0005",
+        "member_name": "Brian Sinclair",
+        "ticker": "JPM",
+        "company_name": "JPMorgan Chase",
+        "type": "exchange",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-05-01T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 30,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ]
+        },
+        "signal_score": 0.86,
+        "alpha_context_30d": 16.68
+      },
+      {
+        "id": "T00047",
+        "member_id": "M0036",
+        "member_name": "Margaret Montgomery",
+        "ticker": "NOC",
+        "company_name": "Northrop Grumman",
+        "type": "sell",
+        "amount_min": 15001,
+        "amount_max": 50000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-05-11T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 27,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ]
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.42,
+        "alpha_context_30d": 22.51
+      },
+      {
+        "id": "T00049",
+        "member_id": "M0041",
+        "member_name": "Mark Quincy",
+        "ticker": "BAC",
+        "company_name": "Bank of America",
+        "type": "exchange",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-01-06T12:00:00.000Z",
+        "filing_date": "2026-02-04T12:00:00.000Z",
+        "filing_lateness_days": 29,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            },
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            },
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ],
+          "contract_proximity": {
+            "contract_id": "K_93mlrl",
+            "agency": "NASA",
+            "award_value": 4989281644,
+            "days_delta": 19
+          }
+        },
+        "signal_score": 0.57,
+        "alpha_context_30d": 19.2
+      },
+      {
+        "id": "T00051",
+        "member_id": "M0008",
+        "member_name": "Ryan Sinclair",
+        "ticker": "PFE",
+        "company_name": "Pfizer",
+        "type": "option",
+        "amount_min": 1000,
+        "amount_max": 15000,
+        "owner_type": "joint",
+        "transaction_date": "2025-11-22T12:00:00.000Z",
+        "filing_date": "2026-01-03T12:00:00.000Z",
+        "filing_lateness_days": 42,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ],
+          "lobbying_overlay": {
+            "registrant": "Brownstein Hyatt",
+            "client": "PFE",
+            "topics": [
+              "Healthcare"
+            ]
+          }
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.37,
+        "alpha_context_30d": 18.11
+      },
+      {
+        "id": "T00062",
+        "member_id": "M0044",
+        "member_name": "Paul Kingsley",
+        "ticker": "BAC",
+        "company_name": "Bank of America",
+        "type": "option",
+        "amount_min": 250001,
+        "amount_max": 500000,
+        "owner_type": "self",
+        "transaction_date": "2026-02-05T12:00:00.000Z",
+        "filing_date": "2026-02-15T12:00:00.000Z",
+        "filing_lateness_days": 10,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ]
+        },
+        "signal_score": 0.92,
+        "alpha_context_30d": 6
+      }
+    ]
+  },
+  {
+    "id": "C003",
+    "name": "Senate Armed Services",
+    "chamber": "senate",
+    "jurisdiction_summary": "Oversight authority across Industrials, Aerospace & Defense, Information Technology with subpoena power and budget review.",
+    "jurisdiction_sectors": [
+      "Industrials",
+      "Aerospace & Defense",
+      "Information Technology"
+    ],
+    "member_count": 4,
+    "members": [
+      {
+        "member_id": "M0034",
+        "name": "Margaret Ashworth",
+        "party": "D",
+        "state": "IN",
+        "alpha_180d": 19.134646996452773
+      },
+      {
+        "member_id": "M0016",
+        "name": "Patricia Kensington",
+        "party": "R",
+        "state": "MI",
+        "alpha_180d": -0.7617357581675677
+      },
+      {
+        "member_id": "M0045",
+        "name": "Linda Montgomery",
+        "party": "I",
+        "state": "GA",
+        "alpha_180d": -2.368878669277242
+      },
+      {
+        "member_id": "M0003",
+        "name": "Helen Lockhart",
+        "party": "R",
+        "state": "OK",
+        "alpha_180d": -9.23212744911766
+      }
+    ],
+    "weekly_flow": [
+      {
+        "sector": "Industrials",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 45865023
+          },
+          {
+            "w": "2025-11-27",
+            "net": 63445069
+          },
+          {
+            "w": "2025-12-04",
+            "net": 41273742
+          },
+          {
+            "w": "2025-12-11",
+            "net": -12225058
+          },
+          {
+            "w": "2025-12-18",
+            "net": 43450809
+          },
+          {
+            "w": "2025-12-25",
+            "net": 47752917
+          },
+          {
+            "w": "2026-01-01",
+            "net": 73281388
+          },
+          {
+            "w": "2026-01-08",
+            "net": 279903
+          },
+          {
+            "w": "2026-01-15",
+            "net": 4321697
+          },
+          {
+            "w": "2026-01-22",
+            "net": 74762224
+          },
+          {
+            "w": "2026-01-29",
+            "net": 58701403
+          },
+          {
+            "w": "2026-02-05",
+            "net": 4475850
+          },
+          {
+            "w": "2026-02-12",
+            "net": 65616183
+          },
+          {
+            "w": "2026-02-19",
+            "net": 1179533
+          },
+          {
+            "w": "2026-02-26",
+            "net": 44415916
+          },
+          {
+            "w": "2026-03-05",
+            "net": 18301335
+          },
+          {
+            "w": "2026-03-12",
+            "net": -9464618
+          },
+          {
+            "w": "2026-03-19",
+            "net": 28171849
+          },
+          {
+            "w": "2026-03-26",
+            "net": 4265257
+          },
+          {
+            "w": "2026-04-02",
+            "net": 36168312
+          },
+          {
+            "w": "2026-04-09",
+            "net": -19179822
+          },
+          {
+            "w": "2026-04-16",
+            "net": 24740000
+          },
+          {
+            "w": "2026-04-23",
+            "net": 45173921
+          },
+          {
+            "w": "2026-04-30",
+            "net": 18084077
+          },
+          {
+            "w": "2026-05-07",
+            "net": -20919102
+          },
+          {
+            "w": "2026-05-14",
+            "net": 42649751
+          }
+        ]
+      },
+      {
+        "sector": "Aerospace & Defense",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": -25642935
+          },
+          {
+            "w": "2025-11-27",
+            "net": 79196883
+          },
+          {
+            "w": "2025-12-04",
+            "net": -27983317
+          },
+          {
+            "w": "2025-12-11",
+            "net": 4391465
+          },
+          {
+            "w": "2025-12-18",
+            "net": 77356138
+          },
+          {
+            "w": "2025-12-25",
+            "net": -25390748
+          },
+          {
+            "w": "2026-01-01",
+            "net": 27703256
+          },
+          {
+            "w": "2026-01-08",
+            "net": 58627751
+          },
+          {
+            "w": "2026-01-15",
+            "net": 66602738
+          },
+          {
+            "w": "2026-01-22",
+            "net": 72225076
+          },
+          {
+            "w": "2026-01-29",
+            "net": 56852071
+          },
+          {
+            "w": "2026-02-05",
+            "net": -7240516
+          },
+          {
+            "w": "2026-02-12",
+            "net": -31355419
+          },
+          {
+            "w": "2026-02-19",
+            "net": 9480203
+          },
+          {
+            "w": "2026-02-26",
+            "net": 63770391
+          },
+          {
+            "w": "2026-03-05",
+            "net": 48958287
+          },
+          {
+            "w": "2026-03-12",
+            "net": 51925245
+          },
+          {
+            "w": "2026-03-19",
+            "net": -2411308
+          },
+          {
+            "w": "2026-03-26",
+            "net": 13154723
+          },
+          {
+            "w": "2026-04-02",
+            "net": 71435540
+          },
+          {
+            "w": "2026-04-09",
+            "net": 47114483
+          },
+          {
+            "w": "2026-04-16",
+            "net": 3112264
+          },
+          {
+            "w": "2026-04-23",
+            "net": 27823512
+          },
+          {
+            "w": "2026-04-30",
+            "net": -231172
+          },
+          {
+            "w": "2026-05-07",
+            "net": -5299980
+          },
+          {
+            "w": "2026-05-14",
+            "net": -46770830
+          }
+        ]
+      },
+      {
+        "sector": "Information Technology",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 12660985
+          },
+          {
+            "w": "2025-11-27",
+            "net": -36820193
+          },
+          {
+            "w": "2025-12-04",
+            "net": 73011764
+          },
+          {
+            "w": "2025-12-11",
+            "net": 18710515
+          },
+          {
+            "w": "2025-12-18",
+            "net": -22373686
+          },
+          {
+            "w": "2025-12-25",
+            "net": 35454218
+          },
+          {
+            "w": "2026-01-01",
+            "net": 69039013
+          },
+          {
+            "w": "2026-01-08",
+            "net": 68695463
+          },
+          {
+            "w": "2026-01-15",
+            "net": 14641980
+          },
+          {
+            "w": "2026-01-22",
+            "net": -22247773
+          },
+          {
+            "w": "2026-01-29",
+            "net": 71685134
+          },
+          {
+            "w": "2026-02-05",
+            "net": -47945411
+          },
+          {
+            "w": "2026-02-12",
+            "net": 31471854
+          },
+          {
+            "w": "2026-02-19",
+            "net": -42551745
+          },
+          {
+            "w": "2026-02-26",
+            "net": 72813402
+          },
+          {
+            "w": "2026-03-05",
+            "net": 64839060
+          },
+          {
+            "w": "2026-03-12",
+            "net": 70078784
+          },
+          {
+            "w": "2026-03-19",
+            "net": -5882803
+          },
+          {
+            "w": "2026-03-26",
+            "net": 37724352
+          },
+          {
+            "w": "2026-04-02",
+            "net": 3184348
+          },
+          {
+            "w": "2026-04-09",
+            "net": 69342186
+          },
+          {
+            "w": "2026-04-16",
+            "net": -35872480
+          },
+          {
+            "w": "2026-04-23",
+            "net": 11221575
+          },
+          {
+            "w": "2026-04-30",
+            "net": -48982135
+          },
+          {
+            "w": "2026-05-07",
+            "net": 27250149
+          },
+          {
+            "w": "2026-05-14",
+            "net": -16739463
+          }
+        ]
+      }
+    ],
+    "recent_cluster_trades": [
+      {
+        "id": "T00026",
+        "member_id": "M0045",
+        "member_name": "Linda Montgomery",
+        "ticker": "META",
+        "company_name": "Meta Platforms",
+        "type": "exchange",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "self",
+        "transaction_date": "2026-03-18T12:00:00.000Z",
+        "filing_date": "2026-04-17T12:00:00.000Z",
+        "filing_lateness_days": 30,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            }
+          ]
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.34,
+        "alpha_context_30d": 6.95
+      },
+      {
+        "id": "T00033",
+        "member_id": "M0003",
+        "member_name": "Helen Lockhart",
+        "ticker": "XOM",
+        "company_name": "Exxon Mobil",
+        "type": "buy",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "joint",
+        "transaction_date": "2026-04-13T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 37,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            }
+          ]
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.65,
+        "alpha_context_30d": -9.74
+      },
+      {
+        "id": "T00054",
+        "member_id": "M0034",
+        "member_name": "Margaret Ashworth",
+        "ticker": "AMZN",
+        "company_name": "Amazon.com",
+        "type": "exchange",
+        "amount_min": 15001,
+        "amount_max": 50000,
+        "owner_type": "joint",
+        "transaction_date": "2026-03-02T12:00:00.000Z",
+        "filing_date": "2026-03-14T12:00:00.000Z",
+        "filing_lateness_days": 12,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            },
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            },
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ],
+          "vote_trade_consistency": {
+            "bill_id": "H.R.2539",
+            "bill_title": "Defense Appropriations 2026",
+            "position": "nay",
+            "days_delta": -13
+          }
+        },
+        "signal_score": 0.84,
+        "alpha_context_30d": 5.37
+      },
+      {
+        "id": "T00060",
+        "member_id": "M0034",
+        "member_name": "Margaret Ashworth",
+        "ticker": "AMD",
+        "company_name": "Advanced Micro Devices",
+        "type": "exchange",
+        "amount_min": 1000,
+        "amount_max": 15000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-05-12T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 43,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            },
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            },
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_9c2wlp",
+            "topic": "AI regulation framework",
+            "days_delta": -7,
+            "date": "2026-04-17T12:00:00.000Z"
+          }
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.62,
+        "alpha_context_30d": -5.56
+      },
+      {
+        "id": "T00069",
+        "member_id": "M0003",
+        "member_name": "Helen Lockhart",
+        "ticker": "UNH",
+        "company_name": "UnitedHealth Group",
+        "type": "buy",
+        "amount_min": 15001,
+        "amount_max": 50000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-04-16T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 51,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            }
+          ],
+          "contract_proximity": {
+            "contract_id": "K_21q046",
+            "agency": "DoD",
+            "award_value": 4782806685,
+            "days_delta": -13
+          }
+        },
+        "signal_score": 0.53,
+        "alpha_context_30d": 12.79
+      },
+      {
+        "id": "T00103",
+        "member_id": "M0003",
+        "member_name": "Helen Lockhart",
+        "ticker": "TSLA",
+        "company_name": "Tesla",
+        "type": "option",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-05-11T12:00:00.000Z",
+        "filing_date": "2026-05-13T12:00:00.000Z",
+        "filing_lateness_days": 2,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            }
+          ]
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.71,
+        "alpha_context_30d": -6.94
+      },
+      {
+        "id": "T00110",
+        "member_id": "M0003",
+        "member_name": "Helen Lockhart",
+        "ticker": "PFE",
+        "company_name": "Pfizer",
+        "type": "buy",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-02-20T12:00:00.000Z",
+        "filing_date": "2026-03-14T12:00:00.000Z",
+        "filing_lateness_days": 22,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            }
+          ]
+        },
+        "signal_score": 0.57,
+        "alpha_context_30d": 3.55
+      },
+      {
+        "id": "T00119",
+        "member_id": "M0045",
+        "member_name": "Linda Montgomery",
+        "ticker": "LMT",
+        "company_name": "Lockheed Martin",
+        "type": "buy",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-03-02T12:00:00.000Z",
+        "filing_date": "2026-04-27T12:00:00.000Z",
+        "filing_lateness_days": 56,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            },
+            {
+              "committee_id": "C005",
+              "committee_name": "Senate Intelligence"
+            }
+          ],
+          "vote_trade_consistency": {
+            "bill_id": "H.R.5396",
+            "bill_title": "Healthcare Modernization Act",
+            "position": "yea",
+            "days_delta": -16
+          }
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.55,
+        "alpha_context_30d": 10.77
+      }
+    ]
+  },
+  {
+    "id": "C004",
+    "name": "House Ways and Means",
+    "chamber": "house",
+    "jurisdiction_summary": "Oversight authority across Financials, Healthcare, Consumer Discretionary with subpoena power and budget review.",
+    "jurisdiction_sectors": [
+      "Financials",
+      "Healthcare",
+      "Consumer Discretionary"
+    ],
+    "member_count": 7,
+    "members": [
+      {
+        "member_id": "M0031",
+        "name": "Patricia Kensington",
+        "party": "I",
+        "state": "PA",
+        "alpha_180d": 25.85430516947727
+      },
+      {
+        "member_id": "M0026",
+        "name": "Andrew Harrington",
+        "party": "I",
+        "state": "MA",
+        "alpha_180d": 24.983838806386963
+      },
+      {
+        "member_id": "M0027",
+        "name": "Donna Ingram",
+        "party": "I",
+        "state": "FL",
+        "alpha_180d": 19.09512691902701
+      },
+      {
+        "member_id": "M0024",
+        "name": "Michael Galloway",
+        "party": "D",
+        "state": "SC",
+        "alpha_180d": 15.395322484614013
+      },
+      {
+        "member_id": "M0041",
+        "name": "Mark Quincy",
+        "party": "D",
+        "state": "MO",
+        "alpha_180d": 0.13354612334330795
+      },
+      {
+        "member_id": "M0017",
+        "name": "Steven Radcliffe",
+        "party": "D",
+        "state": "NJ",
+        "alpha_180d": -1.3810478175902023
+      },
+      {
+        "member_id": "M0032",
+        "name": "Nicholas Kingsley",
+        "party": "R",
+        "state": "MD",
+        "alpha_180d": -8.92440595334601
+      }
+    ],
+    "weekly_flow": [
+      {
+        "sector": "Financials",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": -40156973
+          },
+          {
+            "w": "2025-11-27",
+            "net": 21758550
+          },
+          {
+            "w": "2025-12-04",
+            "net": -14054669
+          },
+          {
+            "w": "2025-12-11",
+            "net": -26825158
+          },
+          {
+            "w": "2025-12-18",
+            "net": -30436429
+          },
+          {
+            "w": "2025-12-25",
+            "net": -15063294
+          },
+          {
+            "w": "2026-01-01",
+            "net": 51214728
+          },
+          {
+            "w": "2026-01-08",
+            "net": 15941592
+          },
+          {
+            "w": "2026-01-15",
+            "net": -19663860
+          },
+          {
+            "w": "2026-01-22",
+            "net": 79508791
+          },
+          {
+            "w": "2026-01-29",
+            "net": 14244270
+          },
+          {
+            "w": "2026-02-05",
+            "net": 53440502
+          },
+          {
+            "w": "2026-02-12",
+            "net": -15484314
+          },
+          {
+            "w": "2026-02-19",
+            "net": -4866807
+          },
+          {
+            "w": "2026-02-26",
+            "net": -46419257
+          },
+          {
+            "w": "2026-03-05",
+            "net": 71546062
+          },
+          {
+            "w": "2026-03-12",
+            "net": -45331601
+          },
+          {
+            "w": "2026-03-19",
+            "net": 21784887
+          },
+          {
+            "w": "2026-03-26",
+            "net": 38602820
+          },
+          {
+            "w": "2026-04-02",
+            "net": 77587772
+          },
+          {
+            "w": "2026-04-09",
+            "net": -32314409
+          },
+          {
+            "w": "2026-04-16",
+            "net": 11735763
+          },
+          {
+            "w": "2026-04-23",
+            "net": 12970951
+          },
+          {
+            "w": "2026-04-30",
+            "net": -27219488
+          },
+          {
+            "w": "2026-05-07",
+            "net": -27931922
+          },
+          {
+            "w": "2026-05-14",
+            "net": -41821316
+          }
+        ]
+      },
+      {
+        "sector": "Healthcare",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": -865713
+          },
+          {
+            "w": "2025-11-27",
+            "net": -10038309
+          },
+          {
+            "w": "2025-12-04",
+            "net": 6142993
+          },
+          {
+            "w": "2025-12-11",
+            "net": 5283264
+          },
+          {
+            "w": "2025-12-18",
+            "net": -14184478
+          },
+          {
+            "w": "2025-12-25",
+            "net": 1474468
+          },
+          {
+            "w": "2026-01-01",
+            "net": 61381109
+          },
+          {
+            "w": "2026-01-08",
+            "net": 62294876
+          },
+          {
+            "w": "2026-01-15",
+            "net": 79978882
+          },
+          {
+            "w": "2026-01-22",
+            "net": -14924672
+          },
+          {
+            "w": "2026-01-29",
+            "net": 41038376
+          },
+          {
+            "w": "2026-02-05",
+            "net": 61979254
+          },
+          {
+            "w": "2026-02-12",
+            "net": -24685209
+          },
+          {
+            "w": "2026-02-19",
+            "net": 55698444
+          },
+          {
+            "w": "2026-02-26",
+            "net": -26256101
+          },
+          {
+            "w": "2026-03-05",
+            "net": 43711365
+          },
+          {
+            "w": "2026-03-12",
+            "net": 6919729
+          },
+          {
+            "w": "2026-03-19",
+            "net": 59889771
+          },
+          {
+            "w": "2026-03-26",
+            "net": -42626982
+          },
+          {
+            "w": "2026-04-02",
+            "net": -21688854
+          },
+          {
+            "w": "2026-04-09",
+            "net": -24560826
+          },
+          {
+            "w": "2026-04-16",
+            "net": 66198606
+          },
+          {
+            "w": "2026-04-23",
+            "net": 39973396
+          },
+          {
+            "w": "2026-04-30",
+            "net": -27130024
+          },
+          {
+            "w": "2026-05-07",
+            "net": 45687279
+          },
+          {
+            "w": "2026-05-14",
+            "net": 66104505
+          }
+        ]
+      },
+      {
+        "sector": "Consumer Discretionary",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 18410052
+          },
+          {
+            "w": "2025-11-27",
+            "net": -2249387
+          },
+          {
+            "w": "2025-12-04",
+            "net": 4554869
+          },
+          {
+            "w": "2025-12-11",
+            "net": -36318765
+          },
+          {
+            "w": "2025-12-18",
+            "net": 50510358
+          },
+          {
+            "w": "2025-12-25",
+            "net": 7592939
+          },
+          {
+            "w": "2026-01-01",
+            "net": 64529567
+          },
+          {
+            "w": "2026-01-08",
+            "net": 68440470
+          },
+          {
+            "w": "2026-01-15",
+            "net": 18975784
+          },
+          {
+            "w": "2026-01-22",
+            "net": 15998878
+          },
+          {
+            "w": "2026-01-29",
+            "net": 33147591
+          },
+          {
+            "w": "2026-02-05",
+            "net": 41566712
+          },
+          {
+            "w": "2026-02-12",
+            "net": -28279474
+          },
+          {
+            "w": "2026-02-19",
+            "net": -33114581
+          },
+          {
+            "w": "2026-02-26",
+            "net": -46770030
+          },
+          {
+            "w": "2026-03-05",
+            "net": 26105279
+          },
+          {
+            "w": "2026-03-12",
+            "net": -18576965
+          },
+          {
+            "w": "2026-03-19",
+            "net": 16946337
+          },
+          {
+            "w": "2026-03-26",
+            "net": -32919864
+          },
+          {
+            "w": "2026-04-02",
+            "net": -24157915
+          },
+          {
+            "w": "2026-04-09",
+            "net": 77923676
+          },
+          {
+            "w": "2026-04-16",
+            "net": 23221639
+          },
+          {
+            "w": "2026-04-23",
+            "net": 6083393
+          },
+          {
+            "w": "2026-04-30",
+            "net": 43593854
+          },
+          {
+            "w": "2026-05-07",
+            "net": -18097268
+          },
+          {
+            "w": "2026-05-14",
+            "net": 19223888
+          }
+        ]
+      }
+    ],
+    "recent_cluster_trades": [
+      {
+        "id": "T00005",
+        "member_id": "M0041",
+        "member_name": "Mark Quincy",
+        "ticker": "GE",
+        "company_name": "GE Aerospace",
+        "type": "buy",
+        "amount_min": 100001,
+        "amount_max": 250000,
+        "owner_type": "dependent",
+        "transaction_date": "2025-12-31T12:00:00.000Z",
+        "filing_date": "2026-01-16T12:00:00.000Z",
+        "filing_lateness_days": 16,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            }
+          ],
+          "lobbying_overlay": {
+            "registrant": "Brownstein Hyatt",
+            "client": "GE",
+            "topics": [
+              "Defense"
+            ]
+          }
+        },
+        "signal_score": 0.72,
+        "alpha_context_30d": 11.42
+      },
+      {
+        "id": "T00008",
+        "member_id": "M0017",
+        "member_name": "Steven Radcliffe",
+        "ticker": "PLTR",
+        "company_name": "Palantir Technologies",
+        "type": "option",
+        "amount_min": 100001,
+        "amount_max": 250000,
+        "owner_type": "self",
+        "transaction_date": "2025-12-31T12:00:00.000Z",
+        "filing_date": "2026-03-07T12:00:00.000Z",
+        "filing_lateness_days": 66,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            }
+          ]
+        },
+        "signal_score": 0.78,
+        "alpha_context_30d": 13.55
+      },
+      {
+        "id": "T00043",
+        "member_id": "M0041",
+        "member_name": "Mark Quincy",
+        "ticker": "PLTR",
+        "company_name": "Palantir Technologies",
+        "type": "exchange",
+        "amount_min": 15001,
+        "amount_max": 50000,
+        "owner_type": "joint",
+        "transaction_date": "2025-12-15T12:00:00.000Z",
+        "filing_date": "2026-02-25T12:00:00.000Z",
+        "filing_lateness_days": 72,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            },
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            },
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ],
+          "lobbying_overlay": {
+            "registrant": "Holland & Knight",
+            "client": "PLTR",
+            "topics": [
+              "Healthcare"
+            ]
+          },
+          "vote_trade_consistency": {
+            "bill_id": "H.R.1985",
+            "bill_title": "Defense Appropriations 2026",
+            "position": "nay",
+            "days_delta": 3
+          },
+          "fomc_blackout": true
+        },
+        "signal_score": 0.77,
+        "alpha_context_30d": 23
+      },
+      {
+        "id": "T00049",
+        "member_id": "M0041",
+        "member_name": "Mark Quincy",
+        "ticker": "BAC",
+        "company_name": "Bank of America",
+        "type": "exchange",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-01-06T12:00:00.000Z",
+        "filing_date": "2026-02-04T12:00:00.000Z",
+        "filing_lateness_days": 29,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            },
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            },
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ],
+          "contract_proximity": {
+            "contract_id": "K_93mlrl",
+            "agency": "NASA",
+            "award_value": 4989281644,
+            "days_delta": 19
+          }
+        },
+        "signal_score": 0.57,
+        "alpha_context_30d": 19.2
+      },
+      {
+        "id": "T00079",
+        "member_id": "M0027",
+        "member_name": "Donna Ingram",
+        "ticker": "GE",
+        "company_name": "GE Aerospace",
+        "type": "option",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "joint",
+        "transaction_date": "2026-01-16T12:00:00.000Z",
+        "filing_date": "2026-02-20T12:00:00.000Z",
+        "filing_lateness_days": 35,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            }
+          ]
+        },
+        "signal_score": 0.55,
+        "alpha_context_30d": -4.8
+      },
+      {
+        "id": "T00095",
+        "member_id": "M0031",
+        "member_name": "Patricia Kensington",
+        "ticker": "CVX",
+        "company_name": "Chevron",
+        "type": "exchange",
+        "amount_min": 250001,
+        "amount_max": 500000,
+        "owner_type": "joint",
+        "transaction_date": "2025-12-03T12:00:00.000Z",
+        "filing_date": "2025-12-22T12:00:00.000Z",
+        "filing_lateness_days": 19,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            }
+          ]
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.74,
+        "alpha_context_30d": -10.3
+      },
+      {
+        "id": "T00097",
+        "member_id": "M0017",
+        "member_name": "Steven Radcliffe",
+        "ticker": "AMD",
+        "company_name": "Advanced Micro Devices",
+        "type": "exchange",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "self",
+        "transaction_date": "2026-02-21T12:00:00.000Z",
+        "filing_date": "2026-03-19T12:00:00.000Z",
+        "filing_lateness_days": 26,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_todup",
+            "topic": "Healthcare pricing inquiry",
+            "days_delta": 8,
+            "date": "2026-04-19T12:00:00.000Z"
+          },
+          "vote_trade_consistency": {
+            "bill_id": "H.R.5913",
+            "bill_title": "Banking Reform Act",
+            "position": "yea",
+            "days_delta": -14
+          }
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.79,
+        "alpha_context_30d": 11.66
+      },
+      {
+        "id": "T00122",
+        "member_id": "M0032",
+        "member_name": "Nicholas Kingsley",
+        "ticker": "NVDA",
+        "company_name": "NVIDIA Corporation",
+        "type": "exchange",
+        "amount_min": 100001,
+        "amount_max": 250000,
+        "owner_type": "joint",
+        "transaction_date": "2026-01-19T12:00:00.000Z",
+        "filing_date": "2026-02-15T12:00:00.000Z",
+        "filing_lateness_days": 27,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            }
+          ],
+          "contract_proximity": {
+            "contract_id": "K_1chd15",
+            "agency": "NASA",
+            "award_value": 1018232340,
+            "days_delta": -9
+          }
+        },
+        "signal_score": 0.65,
+        "alpha_context_30d": 4.51
+      }
+    ]
+  },
+  {
+    "id": "C005",
+    "name": "Senate Intelligence",
+    "chamber": "senate",
+    "jurisdiction_summary": "Oversight authority across Information Technology, Aerospace & Defense, Communication Services with subpoena power and budget review.",
+    "jurisdiction_sectors": [
+      "Information Technology",
+      "Aerospace & Defense",
+      "Communication Services"
+    ],
+    "member_count": 3,
+    "members": [
+      {
+        "member_id": "M0045",
+        "name": "Linda Montgomery",
+        "party": "I",
+        "state": "GA",
+        "alpha_180d": -2.368878669277242
+      },
+      {
+        "member_id": "M0021",
+        "name": "Donna Kingsley",
+        "party": "R",
+        "state": "MA",
+        "alpha_180d": -8.002757435665819
+      },
+      {
+        "member_id": "M0035",
+        "name": "Sandra Montgomery",
+        "party": "D",
+        "state": "GA",
+        "alpha_180d": -8.436646430025178
+      }
+    ],
+    "weekly_flow": [
+      {
+        "sector": "Information Technology",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 25886854
+          },
+          {
+            "w": "2025-11-27",
+            "net": -49637287
+          },
+          {
+            "w": "2025-12-04",
+            "net": 66111161
+          },
+          {
+            "w": "2025-12-11",
+            "net": 279314
+          },
+          {
+            "w": "2025-12-18",
+            "net": -5574825
+          },
+          {
+            "w": "2025-12-25",
+            "net": 13913739
+          },
+          {
+            "w": "2026-01-01",
+            "net": -41784566
+          },
+          {
+            "w": "2026-01-08",
+            "net": -33202468
+          },
+          {
+            "w": "2026-01-15",
+            "net": 36116802
+          },
+          {
+            "w": "2026-01-22",
+            "net": 25098830
+          },
+          {
+            "w": "2026-01-29",
+            "net": -33971733
+          },
+          {
+            "w": "2026-02-05",
+            "net": -22921792
+          },
+          {
+            "w": "2026-02-12",
+            "net": 53437238
+          },
+          {
+            "w": "2026-02-19",
+            "net": 59658003
+          },
+          {
+            "w": "2026-02-26",
+            "net": -37946750
+          },
+          {
+            "w": "2026-03-05",
+            "net": -11028332
+          },
+          {
+            "w": "2026-03-12",
+            "net": 6830366
+          },
+          {
+            "w": "2026-03-19",
+            "net": -12039483
+          },
+          {
+            "w": "2026-03-26",
+            "net": 42401790
+          },
+          {
+            "w": "2026-04-02",
+            "net": -33107397
+          },
+          {
+            "w": "2026-04-09",
+            "net": 73973238
+          },
+          {
+            "w": "2026-04-16",
+            "net": 58216305
+          },
+          {
+            "w": "2026-04-23",
+            "net": 41432529
+          },
+          {
+            "w": "2026-04-30",
+            "net": 56519119
+          },
+          {
+            "w": "2026-05-07",
+            "net": -13172879
+          },
+          {
+            "w": "2026-05-14",
+            "net": -26571042
+          }
+        ]
+      },
+      {
+        "sector": "Aerospace & Defense",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": -49498521
+          },
+          {
+            "w": "2025-11-27",
+            "net": 58357304
+          },
+          {
+            "w": "2025-12-04",
+            "net": 71208539
+          },
+          {
+            "w": "2025-12-11",
+            "net": 1919205
+          },
+          {
+            "w": "2025-12-18",
+            "net": -3921273
+          },
+          {
+            "w": "2025-12-25",
+            "net": -14841941
+          },
+          {
+            "w": "2026-01-01",
+            "net": 1505339
+          },
+          {
+            "w": "2026-01-08",
+            "net": 60240903
+          },
+          {
+            "w": "2026-01-15",
+            "net": 8851219
+          },
+          {
+            "w": "2026-01-22",
+            "net": 22437040
+          },
+          {
+            "w": "2026-01-29",
+            "net": 79335373
+          },
+          {
+            "w": "2026-02-05",
+            "net": -40393942
+          },
+          {
+            "w": "2026-02-12",
+            "net": 69021368
+          },
+          {
+            "w": "2026-02-19",
+            "net": 32127409
+          },
+          {
+            "w": "2026-02-26",
+            "net": 55359244
+          },
+          {
+            "w": "2026-03-05",
+            "net": -7188051
+          },
+          {
+            "w": "2026-03-12",
+            "net": 70430101
+          },
+          {
+            "w": "2026-03-19",
+            "net": 48709745
+          },
+          {
+            "w": "2026-03-26",
+            "net": 34682282
+          },
+          {
+            "w": "2026-04-02",
+            "net": -34893592
+          },
+          {
+            "w": "2026-04-09",
+            "net": -46603365
+          },
+          {
+            "w": "2026-04-16",
+            "net": -32757725
+          },
+          {
+            "w": "2026-04-23",
+            "net": -29091976
+          },
+          {
+            "w": "2026-04-30",
+            "net": -38846041
+          },
+          {
+            "w": "2026-05-07",
+            "net": -45405623
+          },
+          {
+            "w": "2026-05-14",
+            "net": 77699360
+          }
+        ]
+      },
+      {
+        "sector": "Communication Services",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 23146241
+          },
+          {
+            "w": "2025-11-27",
+            "net": 38867658
+          },
+          {
+            "w": "2025-12-04",
+            "net": -21272559
+          },
+          {
+            "w": "2025-12-11",
+            "net": -47898703
+          },
+          {
+            "w": "2025-12-18",
+            "net": 36492848
+          },
+          {
+            "w": "2025-12-25",
+            "net": -24696405
+          },
+          {
+            "w": "2026-01-01",
+            "net": -2473848
+          },
+          {
+            "w": "2026-01-08",
+            "net": 2034591
+          },
+          {
+            "w": "2026-01-15",
+            "net": -14624139
+          },
+          {
+            "w": "2026-01-22",
+            "net": 22097345
+          },
+          {
+            "w": "2026-01-29",
+            "net": -39923208
+          },
+          {
+            "w": "2026-02-05",
+            "net": 50641233
+          },
+          {
+            "w": "2026-02-12",
+            "net": -2803006
+          },
+          {
+            "w": "2026-02-19",
+            "net": 59871564
+          },
+          {
+            "w": "2026-02-26",
+            "net": 41373406
+          },
+          {
+            "w": "2026-03-05",
+            "net": -27160081
+          },
+          {
+            "w": "2026-03-12",
+            "net": 60525119
+          },
+          {
+            "w": "2026-03-19",
+            "net": -24330408
+          },
+          {
+            "w": "2026-03-26",
+            "net": 38830747
+          },
+          {
+            "w": "2026-04-02",
+            "net": 8364960
+          },
+          {
+            "w": "2026-04-09",
+            "net": 39878433
+          },
+          {
+            "w": "2026-04-16",
+            "net": 66817440
+          },
+          {
+            "w": "2026-04-23",
+            "net": 40714593
+          },
+          {
+            "w": "2026-04-30",
+            "net": -49829045
+          },
+          {
+            "w": "2026-05-07",
+            "net": -36761951
+          },
+          {
+            "w": "2026-05-14",
+            "net": 11881281
+          }
+        ]
+      }
+    ],
+    "recent_cluster_trades": [
+      {
+        "id": "T00023",
+        "member_id": "M0035",
+        "member_name": "Sandra Montgomery",
+        "ticker": "AMZN",
+        "company_name": "Amazon.com",
+        "type": "exchange",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "self",
+        "transaction_date": "2026-01-13T12:00:00.000Z",
+        "filing_date": "2026-02-05T12:00:00.000Z",
+        "filing_lateness_days": 23,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C005",
+              "committee_name": "Senate Intelligence"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_15iy0c",
+            "topic": "AI regulation framework",
+            "days_delta": -1,
+            "date": "2025-11-27T12:00:00.000Z"
+          },
+          "lobbying_overlay": {
+            "registrant": "Akin Gump",
+            "client": "AMZN",
+            "topics": [
+              "Defense"
+            ]
+          }
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.86,
+        "alpha_context_30d": 2.55
+      },
+      {
+        "id": "T00056",
+        "member_id": "M0021",
+        "member_name": "Donna Kingsley",
+        "ticker": "PFE",
+        "company_name": "Pfizer",
+        "type": "buy",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-05-07T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 22,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C005",
+              "committee_name": "Senate Intelligence"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_99ociy",
+            "topic": "Defense procurement review",
+            "days_delta": -5,
+            "date": "2026-03-04T12:00:00.000Z"
+          },
+          "contract_proximity": {
+            "contract_id": "K_18k5kr",
+            "agency": "GSA",
+            "award_value": 3532336828,
+            "days_delta": 7
+          }
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.67,
+        "alpha_context_30d": -9.98
+      },
+      {
+        "id": "T00057",
+        "member_id": "M0035",
+        "member_name": "Sandra Montgomery",
+        "ticker": "CVX",
+        "company_name": "Chevron",
+        "type": "option",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "dependent",
+        "transaction_date": "2025-12-30T12:00:00.000Z",
+        "filing_date": "2026-01-18T12:00:00.000Z",
+        "filing_lateness_days": 19,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C005",
+              "committee_name": "Senate Intelligence"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.82,
+        "alpha_context_30d": 18.6
+      },
+      {
+        "id": "T00119",
+        "member_id": "M0045",
+        "member_name": "Linda Montgomery",
+        "ticker": "LMT",
+        "company_name": "Lockheed Martin",
+        "type": "buy",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-03-02T12:00:00.000Z",
+        "filing_date": "2026-04-27T12:00:00.000Z",
+        "filing_lateness_days": 56,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            },
+            {
+              "committee_id": "C005",
+              "committee_name": "Senate Intelligence"
+            }
+          ],
+          "vote_trade_consistency": {
+            "bill_id": "H.R.5396",
+            "bill_title": "Healthcare Modernization Act",
+            "position": "yea",
+            "days_delta": -16
+          }
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.55,
+        "alpha_context_30d": 10.77
+      },
+      {
+        "id": "T00173",
+        "member_id": "M0045",
+        "member_name": "Linda Montgomery",
+        "ticker": "BAC",
+        "company_name": "Bank of America",
+        "type": "buy",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "self",
+        "transaction_date": "2025-12-27T12:00:00.000Z",
+        "filing_date": "2026-01-26T12:00:00.000Z",
+        "filing_lateness_days": 30,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            },
+            {
+              "committee_id": "C005",
+              "committee_name": "Senate Intelligence"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.62,
+        "alpha_context_30d": 17.39
+      },
+      {
+        "id": "T00313",
+        "member_id": "M0021",
+        "member_name": "Donna Kingsley",
+        "ticker": "AAPL",
+        "company_name": "Apple Inc.",
+        "type": "buy",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-04-03T12:00:00.000Z",
+        "filing_date": "2026-04-16T12:00:00.000Z",
+        "filing_lateness_days": 13,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C005",
+              "committee_name": "Senate Intelligence"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.58,
+        "alpha_context_30d": 19.66
+      }
+    ]
+  },
+  {
+    "id": "C006",
+    "name": "House Financial Services",
+    "chamber": "house",
+    "jurisdiction_summary": "Oversight authority across Financials, Real Estate, Utilities with subpoena power and budget review.",
+    "jurisdiction_sectors": [
+      "Financials",
+      "Real Estate",
+      "Utilities"
+    ],
+    "member_count": 7,
+    "members": [
+      {
+        "member_id": "M0009",
+        "name": "Michael Holloway",
+        "party": "D",
+        "state": "MA",
+        "alpha_180d": 23.052579583158987
+      },
+      {
+        "member_id": "M0024",
+        "name": "Michael Galloway",
+        "party": "D",
+        "state": "SC",
+        "alpha_180d": 15.395322484614013
+      },
+      {
+        "member_id": "M0002",
+        "name": "Sandra Radcliffe",
+        "party": "R",
+        "state": "VA",
+        "alpha_180d": 3.251975066611532
+      },
+      {
+        "member_id": "M0041",
+        "name": "Mark Quincy",
+        "party": "D",
+        "state": "MO",
+        "alpha_180d": 0.13354612334330795
+      },
+      {
+        "member_id": "M0015",
+        "name": "Joshua Montgomery",
+        "party": "D",
+        "state": "VA",
+        "alpha_180d": -5.753170628917017
+      },
+      {
+        "member_id": "M0039",
+        "name": "Daniel Eastwood",
+        "party": "D",
+        "state": "CA",
+        "alpha_180d": -7.723654905205432
+      },
+      {
+        "member_id": "M0012",
+        "name": "Michael Lockhart",
+        "party": "R",
+        "state": "TN",
+        "alpha_180d": -10.68959721116796
+      }
+    ],
+    "weekly_flow": [
+      {
+        "sector": "Financials",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": -11313230
+          },
+          {
+            "w": "2025-11-27",
+            "net": 28546597
+          },
+          {
+            "w": "2025-12-04",
+            "net": 62653314
+          },
+          {
+            "w": "2025-12-11",
+            "net": -5756653
+          },
+          {
+            "w": "2025-12-18",
+            "net": 77936464
+          },
+          {
+            "w": "2025-12-25",
+            "net": -21842626
+          },
+          {
+            "w": "2026-01-01",
+            "net": -9010075
+          },
+          {
+            "w": "2026-01-08",
+            "net": -2330597
+          },
+          {
+            "w": "2026-01-15",
+            "net": 69648749
+          },
+          {
+            "w": "2026-01-22",
+            "net": 46520283
+          },
+          {
+            "w": "2026-01-29",
+            "net": 26400167
+          },
+          {
+            "w": "2026-02-05",
+            "net": -2401297
+          },
+          {
+            "w": "2026-02-12",
+            "net": 51407810
+          },
+          {
+            "w": "2026-02-19",
+            "net": 11058733
+          },
+          {
+            "w": "2026-02-26",
+            "net": 74120256
+          },
+          {
+            "w": "2026-03-05",
+            "net": 59137885
+          },
+          {
+            "w": "2026-03-12",
+            "net": 60429864
+          },
+          {
+            "w": "2026-03-19",
+            "net": 64717123
+          },
+          {
+            "w": "2026-03-26",
+            "net": -29320340
+          },
+          {
+            "w": "2026-04-02",
+            "net": 23051290
+          },
+          {
+            "w": "2026-04-09",
+            "net": 3031834
+          },
+          {
+            "w": "2026-04-16",
+            "net": -23963891
+          },
+          {
+            "w": "2026-04-23",
+            "net": -41120882
+          },
+          {
+            "w": "2026-04-30",
+            "net": 71342998
+          },
+          {
+            "w": "2026-05-07",
+            "net": 51759067
+          },
+          {
+            "w": "2026-05-14",
+            "net": 64637923
+          }
+        ]
+      },
+      {
+        "sector": "Real Estate",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 69565376
+          },
+          {
+            "w": "2025-11-27",
+            "net": 75282827
+          },
+          {
+            "w": "2025-12-04",
+            "net": -31534769
+          },
+          {
+            "w": "2025-12-11",
+            "net": -14870023
+          },
+          {
+            "w": "2025-12-18",
+            "net": 49530663
+          },
+          {
+            "w": "2025-12-25",
+            "net": 51850477
+          },
+          {
+            "w": "2026-01-01",
+            "net": 40972522
+          },
+          {
+            "w": "2026-01-08",
+            "net": -4823696
+          },
+          {
+            "w": "2026-01-15",
+            "net": 28146165
+          },
+          {
+            "w": "2026-01-22",
+            "net": -37396888
+          },
+          {
+            "w": "2026-01-29",
+            "net": 509322
+          },
+          {
+            "w": "2026-02-05",
+            "net": -39828637
+          },
+          {
+            "w": "2026-02-12",
+            "net": -49902217
+          },
+          {
+            "w": "2026-02-19",
+            "net": 33437210
+          },
+          {
+            "w": "2026-02-26",
+            "net": -30804379
+          },
+          {
+            "w": "2026-03-05",
+            "net": 40800726
+          },
+          {
+            "w": "2026-03-12",
+            "net": -32190767
+          },
+          {
+            "w": "2026-03-19",
+            "net": 9780572
+          },
+          {
+            "w": "2026-03-26",
+            "net": 42072130
+          },
+          {
+            "w": "2026-04-02",
+            "net": 16293062
+          },
+          {
+            "w": "2026-04-09",
+            "net": 37496677
+          },
+          {
+            "w": "2026-04-16",
+            "net": 76645766
+          },
+          {
+            "w": "2026-04-23",
+            "net": -4615352
+          },
+          {
+            "w": "2026-04-30",
+            "net": 19776237
+          },
+          {
+            "w": "2026-05-07",
+            "net": 79216381
+          },
+          {
+            "w": "2026-05-14",
+            "net": 39707860
+          }
+        ]
+      },
+      {
+        "sector": "Utilities",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 59996310
+          },
+          {
+            "w": "2025-11-27",
+            "net": 57981189
+          },
+          {
+            "w": "2025-12-04",
+            "net": -10156094
+          },
+          {
+            "w": "2025-12-11",
+            "net": -23478883
+          },
+          {
+            "w": "2025-12-18",
+            "net": 50413594
+          },
+          {
+            "w": "2025-12-25",
+            "net": 71269885
+          },
+          {
+            "w": "2026-01-01",
+            "net": -7038587
+          },
+          {
+            "w": "2026-01-08",
+            "net": -17534053
+          },
+          {
+            "w": "2026-01-15",
+            "net": -4830468
+          },
+          {
+            "w": "2026-01-22",
+            "net": 44319373
+          },
+          {
+            "w": "2026-01-29",
+            "net": -44303020
+          },
+          {
+            "w": "2026-02-05",
+            "net": 19147264
+          },
+          {
+            "w": "2026-02-12",
+            "net": 38066167
+          },
+          {
+            "w": "2026-02-19",
+            "net": 28069188
+          },
+          {
+            "w": "2026-02-26",
+            "net": -31158337
+          },
+          {
+            "w": "2026-03-05",
+            "net": 71826951
+          },
+          {
+            "w": "2026-03-12",
+            "net": -4430054
+          },
+          {
+            "w": "2026-03-19",
+            "net": 14089781
+          },
+          {
+            "w": "2026-03-26",
+            "net": 56955080
+          },
+          {
+            "w": "2026-04-02",
+            "net": 34022097
+          },
+          {
+            "w": "2026-04-09",
+            "net": 49383542
+          },
+          {
+            "w": "2026-04-16",
+            "net": 49193165
+          },
+          {
+            "w": "2026-04-23",
+            "net": -30475467
+          },
+          {
+            "w": "2026-04-30",
+            "net": -21170056
+          },
+          {
+            "w": "2026-05-07",
+            "net": -15132631
+          },
+          {
+            "w": "2026-05-14",
+            "net": 55862867
+          }
+        ]
+      }
+    ],
+    "recent_cluster_trades": [
+      {
+        "id": "T00004",
+        "member_id": "M0039",
+        "member_name": "Daniel Eastwood",
+        "ticker": "NOC",
+        "company_name": "Northrop Grumman",
+        "type": "option",
+        "amount_min": 1000,
+        "amount_max": 15000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-03-17T12:00:00.000Z",
+        "filing_date": "2026-04-17T12:00:00.000Z",
+        "filing_lateness_days": 31,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            }
+          ],
+          "lobbying_overlay": {
+            "registrant": "Akin Gump",
+            "client": "NOC",
+            "topics": [
+              "Defense"
+            ]
+          }
+        },
+        "signal_score": 0.52,
+        "alpha_context_30d": 6.8
+      },
+      {
+        "id": "T00006",
+        "member_id": "M0012",
+        "member_name": "Michael Lockhart",
+        "ticker": "META",
+        "company_name": "Meta Platforms",
+        "type": "buy",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "spouse",
+        "transaction_date": "2025-12-21T12:00:00.000Z",
+        "filing_date": "2026-01-28T12:00:00.000Z",
+        "filing_lateness_days": 38,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            }
+          ],
+          "contract_proximity": {
+            "contract_id": "K_clv5io",
+            "agency": "DOE",
+            "award_value": 4175048395,
+            "days_delta": -12
+          },
+          "vote_trade_consistency": {
+            "bill_id": "H.R.7537",
+            "bill_title": "Defense Appropriations 2026",
+            "position": "nay",
+            "days_delta": 20
+          }
+        },
+        "signal_score": 0.44,
+        "alpha_context_30d": 27.42
+      },
+      {
+        "id": "T00014",
+        "member_id": "M0015",
+        "member_name": "Joshua Montgomery",
+        "ticker": "LMT",
+        "company_name": "Lockheed Martin",
+        "type": "option",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "spouse",
+        "transaction_date": "2025-12-09T12:00:00.000Z",
+        "filing_date": "2025-12-28T12:00:00.000Z",
+        "filing_lateness_days": 19,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C008",
+              "committee_name": "House Judiciary"
+            },
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.92,
+        "alpha_context_30d": 3.07
+      },
+      {
+        "id": "T00018",
+        "member_id": "M0009",
+        "member_name": "Michael Holloway",
+        "ticker": "RTX",
+        "company_name": "RTX Corporation",
+        "type": "sell",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-03-22T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 60,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_3zmxwd",
+            "topic": "Healthcare pricing inquiry",
+            "days_delta": -6,
+            "date": "2026-04-22T12:00:00.000Z"
+          },
+          "contract_proximity": {
+            "contract_id": "K_bc57aa",
+            "agency": "NASA",
+            "award_value": 4685746729,
+            "days_delta": 5
+          }
+        },
+        "signal_score": 0.83,
+        "alpha_context_30d": 3.7
+      },
+      {
+        "id": "T00037",
+        "member_id": "M0012",
+        "member_name": "Michael Lockhart",
+        "ticker": "RTX",
+        "company_name": "RTX Corporation",
+        "type": "buy",
+        "amount_min": 250001,
+        "amount_max": 500000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-04-05T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 42,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.97,
+        "alpha_context_30d": 11.02
+      },
+      {
+        "id": "T00043",
+        "member_id": "M0041",
+        "member_name": "Mark Quincy",
+        "ticker": "PLTR",
+        "company_name": "Palantir Technologies",
+        "type": "exchange",
+        "amount_min": 15001,
+        "amount_max": 50000,
+        "owner_type": "joint",
+        "transaction_date": "2025-12-15T12:00:00.000Z",
+        "filing_date": "2026-02-25T12:00:00.000Z",
+        "filing_lateness_days": 72,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            },
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            },
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ],
+          "lobbying_overlay": {
+            "registrant": "Holland & Knight",
+            "client": "PLTR",
+            "topics": [
+              "Healthcare"
+            ]
+          },
+          "vote_trade_consistency": {
+            "bill_id": "H.R.1985",
+            "bill_title": "Defense Appropriations 2026",
+            "position": "nay",
+            "days_delta": 3
+          },
+          "fomc_blackout": true
+        },
+        "signal_score": 0.77,
+        "alpha_context_30d": 23
+      },
+      {
+        "id": "T00049",
+        "member_id": "M0041",
+        "member_name": "Mark Quincy",
+        "ticker": "BAC",
+        "company_name": "Bank of America",
+        "type": "exchange",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-01-06T12:00:00.000Z",
+        "filing_date": "2026-02-04T12:00:00.000Z",
+        "filing_lateness_days": 29,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C004",
+              "committee_name": "House Ways and Means"
+            },
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            },
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ],
+          "contract_proximity": {
+            "contract_id": "K_93mlrl",
+            "agency": "NASA",
+            "award_value": 4989281644,
+            "days_delta": 19
+          }
+        },
+        "signal_score": 0.57,
+        "alpha_context_30d": 19.2
+      },
+      {
+        "id": "T00075",
+        "member_id": "M0002",
+        "member_name": "Sandra Radcliffe",
+        "ticker": "UNH",
+        "company_name": "UnitedHealth Group",
+        "type": "sell",
+        "amount_min": 1000,
+        "amount_max": 15000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-01-10T12:00:00.000Z",
+        "filing_date": "2026-01-29T12:00:00.000Z",
+        "filing_lateness_days": 19,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            }
+          ]
+        },
+        "signal_score": 0.48,
+        "alpha_context_30d": -11.83
+      }
+    ]
+  },
+  {
+    "id": "C007",
+    "name": "Senate Health, Education, Labor and Pensions",
+    "chamber": "senate",
+    "jurisdiction_summary": "Oversight authority across Healthcare, Consumer Staples with subpoena power and budget review.",
+    "jurisdiction_sectors": [
+      "Healthcare",
+      "Consumer Staples"
+    ],
+    "member_count": 4,
+    "members": [
+      {
+        "member_id": "M0029",
+        "name": "Sarah Kensington",
+        "party": "D",
+        "state": "FL",
+        "alpha_180d": 21.468734823851257
+      },
+      {
+        "member_id": "M0034",
+        "name": "Margaret Ashworth",
+        "party": "D",
+        "state": "IN",
+        "alpha_180d": 19.134646996452773
+      },
+      {
+        "member_id": "M0014",
+        "name": "Susan Northrop",
+        "party": "R",
+        "state": "OR",
+        "alpha_180d": -4.856420871269155
+      },
+      {
+        "member_id": "M0046",
+        "name": "Andrew Lockhart",
+        "party": "R",
+        "state": "FL",
+        "alpha_180d": -9.705999891136774
+      }
+    ],
+    "weekly_flow": [
+      {
+        "sector": "Healthcare",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 7210623
+          },
+          {
+            "w": "2025-11-27",
+            "net": 8937574
+          },
+          {
+            "w": "2025-12-04",
+            "net": 43810297
+          },
+          {
+            "w": "2025-12-11",
+            "net": -20343469
+          },
+          {
+            "w": "2025-12-18",
+            "net": -32675181
+          },
+          {
+            "w": "2025-12-25",
+            "net": 58230118
+          },
+          {
+            "w": "2026-01-01",
+            "net": 13586199
+          },
+          {
+            "w": "2026-01-08",
+            "net": 43244187
+          },
+          {
+            "w": "2026-01-15",
+            "net": -44944554
+          },
+          {
+            "w": "2026-01-22",
+            "net": 26878705
+          },
+          {
+            "w": "2026-01-29",
+            "net": -19607491
+          },
+          {
+            "w": "2026-02-05",
+            "net": -13109054
+          },
+          {
+            "w": "2026-02-12",
+            "net": 6129756
+          },
+          {
+            "w": "2026-02-19",
+            "net": 42804317
+          },
+          {
+            "w": "2026-02-26",
+            "net": -27841978
+          },
+          {
+            "w": "2026-03-05",
+            "net": 39877281
+          },
+          {
+            "w": "2026-03-12",
+            "net": 47464942
+          },
+          {
+            "w": "2026-03-19",
+            "net": 43279718
+          },
+          {
+            "w": "2026-03-26",
+            "net": 32222604
+          },
+          {
+            "w": "2026-04-02",
+            "net": -34702663
+          },
+          {
+            "w": "2026-04-09",
+            "net": 42350315
+          },
+          {
+            "w": "2026-04-16",
+            "net": 11737961
+          },
+          {
+            "w": "2026-04-23",
+            "net": 49912745
+          },
+          {
+            "w": "2026-04-30",
+            "net": -26498028
+          },
+          {
+            "w": "2026-05-07",
+            "net": 7641743
+          },
+          {
+            "w": "2026-05-14",
+            "net": -25228115
+          }
+        ]
+      },
+      {
+        "sector": "Consumer Staples",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 31065303
+          },
+          {
+            "w": "2025-11-27",
+            "net": 14544221
+          },
+          {
+            "w": "2025-12-04",
+            "net": 24729110
+          },
+          {
+            "w": "2025-12-11",
+            "net": -7846116
+          },
+          {
+            "w": "2025-12-18",
+            "net": 60331460
+          },
+          {
+            "w": "2025-12-25",
+            "net": -29158899
+          },
+          {
+            "w": "2026-01-01",
+            "net": 6382214
+          },
+          {
+            "w": "2026-01-08",
+            "net": -4128180
+          },
+          {
+            "w": "2026-01-15",
+            "net": 17676642
+          },
+          {
+            "w": "2026-01-22",
+            "net": 21314276
+          },
+          {
+            "w": "2026-01-29",
+            "net": 59044264
+          },
+          {
+            "w": "2026-02-05",
+            "net": 46940828
+          },
+          {
+            "w": "2026-02-12",
+            "net": 74503031
+          },
+          {
+            "w": "2026-02-19",
+            "net": -7553948
+          },
+          {
+            "w": "2026-02-26",
+            "net": 30796123
+          },
+          {
+            "w": "2026-03-05",
+            "net": 40435633
+          },
+          {
+            "w": "2026-03-12",
+            "net": 71691786
+          },
+          {
+            "w": "2026-03-19",
+            "net": 63843473
+          },
+          {
+            "w": "2026-03-26",
+            "net": -22746669
+          },
+          {
+            "w": "2026-04-02",
+            "net": 6740466
+          },
+          {
+            "w": "2026-04-09",
+            "net": 37010746
+          },
+          {
+            "w": "2026-04-16",
+            "net": -30393295
+          },
+          {
+            "w": "2026-04-23",
+            "net": 59891803
+          },
+          {
+            "w": "2026-04-30",
+            "net": -8461750
+          },
+          {
+            "w": "2026-05-07",
+            "net": -16628493
+          },
+          {
+            "w": "2026-05-14",
+            "net": 4912684
+          }
+        ]
+      }
+    ],
+    "recent_cluster_trades": [
+      {
+        "id": "T00019",
+        "member_id": "M0046",
+        "member_name": "Andrew Lockhart",
+        "ticker": "JPM",
+        "company_name": "JPMorgan Chase",
+        "type": "sell",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "self",
+        "transaction_date": "2026-01-28T12:00:00.000Z",
+        "filing_date": "2026-03-11T12:00:00.000Z",
+        "filing_lateness_days": 42,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            }
+          ],
+          "contract_proximity": {
+            "contract_id": "K_8u0ak9",
+            "agency": "DoD",
+            "award_value": 1093470013,
+            "days_delta": -2
+          }
+        },
+        "signal_score": 0.9,
+        "alpha_context_30d": -7.75
+      },
+      {
+        "id": "T00054",
+        "member_id": "M0034",
+        "member_name": "Margaret Ashworth",
+        "ticker": "AMZN",
+        "company_name": "Amazon.com",
+        "type": "exchange",
+        "amount_min": 15001,
+        "amount_max": 50000,
+        "owner_type": "joint",
+        "transaction_date": "2026-03-02T12:00:00.000Z",
+        "filing_date": "2026-03-14T12:00:00.000Z",
+        "filing_lateness_days": 12,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            },
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            },
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ],
+          "vote_trade_consistency": {
+            "bill_id": "H.R.2539",
+            "bill_title": "Defense Appropriations 2026",
+            "position": "nay",
+            "days_delta": -13
+          }
+        },
+        "signal_score": 0.84,
+        "alpha_context_30d": 5.37
+      },
+      {
+        "id": "T00060",
+        "member_id": "M0034",
+        "member_name": "Margaret Ashworth",
+        "ticker": "AMD",
+        "company_name": "Advanced Micro Devices",
+        "type": "exchange",
+        "amount_min": 1000,
+        "amount_max": 15000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-05-12T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 43,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            },
+            {
+              "committee_id": "C003",
+              "committee_name": "Senate Armed Services"
+            },
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_9c2wlp",
+            "topic": "AI regulation framework",
+            "days_delta": -7,
+            "date": "2026-04-17T12:00:00.000Z"
+          }
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.62,
+        "alpha_context_30d": -5.56
+      },
+      {
+        "id": "T00068",
+        "member_id": "M0046",
+        "member_name": "Andrew Lockhart",
+        "ticker": "BA",
+        "company_name": "Boeing",
+        "type": "option",
+        "amount_min": 100001,
+        "amount_max": 250000,
+        "owner_type": "spouse",
+        "transaction_date": "2025-12-04T12:00:00.000Z",
+        "filing_date": "2025-12-18T12:00:00.000Z",
+        "filing_lateness_days": 14,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            }
+          ]
+        },
+        "signal_score": 0.33,
+        "alpha_context_30d": 7.72
+      },
+      {
+        "id": "T00077",
+        "member_id": "M0029",
+        "member_name": "Sarah Kensington",
+        "ticker": "PLTR",
+        "company_name": "Palantir Technologies",
+        "type": "buy",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-04-20T12:00:00.000Z",
+        "filing_date": "2026-05-04T12:00:00.000Z",
+        "filing_lateness_days": 14,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            },
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            }
+          ]
+        },
+        "signal_kind": "predictive",
+        "signal_score": 0.73,
+        "alpha_context_30d": 13.72
+      },
+      {
+        "id": "T00086",
+        "member_id": "M0014",
+        "member_name": "Susan Northrop",
+        "ticker": "RTX",
+        "company_name": "RTX Corporation",
+        "type": "buy",
+        "amount_min": 15001,
+        "amount_max": 50000,
+        "owner_type": "self",
+        "transaction_date": "2026-02-08T12:00:00.000Z",
+        "filing_date": "2026-03-07T12:00:00.000Z",
+        "filing_lateness_days": 27,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            },
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_mpbna",
+            "topic": "Energy infrastructure resilience",
+            "days_delta": 6,
+            "date": "2026-04-25T12:00:00.000Z"
+          },
+          "contract_proximity": {
+            "contract_id": "K_a8k2xs",
+            "agency": "DoD",
+            "award_value": 4984783117,
+            "days_delta": 13
+          }
+        },
+        "signal_score": 0.43,
+        "alpha_context_30d": -0.08
+      },
+      {
+        "id": "T00115",
+        "member_id": "M0029",
+        "member_name": "Sarah Kensington",
+        "ticker": "META",
+        "company_name": "Meta Platforms",
+        "type": "sell",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "dependent",
+        "transaction_date": "2026-05-03T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 71,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C001",
+              "committee_name": "Senate Banking"
+            },
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            }
+          ],
+          "fomc_blackout": true
+        },
+        "signal_score": 0.58,
+        "alpha_context_30d": 6.67
+      },
+      {
+        "id": "T00213",
+        "member_id": "M0046",
+        "member_name": "Andrew Lockhart",
+        "ticker": "PFE",
+        "company_name": "Pfizer",
+        "type": "exchange",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "joint",
+        "transaction_date": "2026-04-29T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 39,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C007",
+              "committee_name": "Senate Health, Education, Labor and Pensions"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.73,
+        "alpha_context_30d": 21.18
+      }
+    ]
+  },
+  {
+    "id": "C008",
+    "name": "House Judiciary",
+    "chamber": "house",
+    "jurisdiction_summary": "Oversight authority across Information Technology, Communication Services with subpoena power and budget review.",
+    "jurisdiction_sectors": [
+      "Information Technology",
+      "Communication Services"
+    ],
+    "member_count": 7,
+    "members": [
+      {
+        "member_id": "M0033",
+        "name": "Sarah Radcliffe",
+        "party": "D",
+        "state": "MO",
+        "alpha_180d": 20.390336707416147
+      },
+      {
+        "member_id": "M0006",
+        "name": "James Rutherford",
+        "party": "D",
+        "state": "OR",
+        "alpha_180d": 17.647166444755705
+      },
+      {
+        "member_id": "M0028",
+        "name": "Dorothy Radcliffe",
+        "party": "R",
+        "state": "FL",
+        "alpha_180d": 15.780707938494487
+      },
+      {
+        "member_id": "M0019",
+        "name": "Nicholas Lockhart",
+        "party": "D",
+        "state": "UT",
+        "alpha_180d": 7.298983262525397
+      },
+      {
+        "member_id": "M0025",
+        "name": "Ryan Galloway",
+        "party": "D",
+        "state": "TX",
+        "alpha_180d": -3.364941760601914
+      },
+      {
+        "member_id": "M0011",
+        "name": "Barbara Fairchild",
+        "party": "D",
+        "state": "LA",
+        "alpha_180d": -3.9517658613397586
+      },
+      {
+        "member_id": "M0015",
+        "name": "Joshua Montgomery",
+        "party": "D",
+        "state": "VA",
+        "alpha_180d": -5.753170628917017
+      }
+    ],
+    "weekly_flow": [
+      {
+        "sector": "Information Technology",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": -2515495
+          },
+          {
+            "w": "2025-11-27",
+            "net": -47928405
+          },
+          {
+            "w": "2025-12-04",
+            "net": 57301973
+          },
+          {
+            "w": "2025-12-11",
+            "net": 14254902
+          },
+          {
+            "w": "2025-12-18",
+            "net": -27860478
+          },
+          {
+            "w": "2025-12-25",
+            "net": -11059908
+          },
+          {
+            "w": "2026-01-01",
+            "net": -3881447
+          },
+          {
+            "w": "2026-01-08",
+            "net": 4523943
+          },
+          {
+            "w": "2026-01-15",
+            "net": -36088140
+          },
+          {
+            "w": "2026-01-22",
+            "net": 26632277
+          },
+          {
+            "w": "2026-01-29",
+            "net": -1315764
+          },
+          {
+            "w": "2026-02-05",
+            "net": -34048809
+          },
+          {
+            "w": "2026-02-12",
+            "net": -18335545
+          },
+          {
+            "w": "2026-02-19",
+            "net": 44497035
+          },
+          {
+            "w": "2026-02-26",
+            "net": -48339036
+          },
+          {
+            "w": "2026-03-05",
+            "net": 45829397
+          },
+          {
+            "w": "2026-03-12",
+            "net": -15329625
+          },
+          {
+            "w": "2026-03-19",
+            "net": -5006576
+          },
+          {
+            "w": "2026-03-26",
+            "net": 74483957
+          },
+          {
+            "w": "2026-04-02",
+            "net": 61866697
+          },
+          {
+            "w": "2026-04-09",
+            "net": 33579364
+          },
+          {
+            "w": "2026-04-16",
+            "net": 18366861
+          },
+          {
+            "w": "2026-04-23",
+            "net": 51832011
+          },
+          {
+            "w": "2026-04-30",
+            "net": -9385751
+          },
+          {
+            "w": "2026-05-07",
+            "net": 53680104
+          },
+          {
+            "w": "2026-05-14",
+            "net": -18483927
+          }
+        ]
+      },
+      {
+        "sector": "Communication Services",
+        "weeks": [
+          {
+            "w": "2025-11-20",
+            "net": 20642627
+          },
+          {
+            "w": "2025-11-27",
+            "net": -49363187
+          },
+          {
+            "w": "2025-12-04",
+            "net": -7083703
+          },
+          {
+            "w": "2025-12-11",
+            "net": 4201274
+          },
+          {
+            "w": "2025-12-18",
+            "net": 812027
+          },
+          {
+            "w": "2025-12-25",
+            "net": -22254177
+          },
+          {
+            "w": "2026-01-01",
+            "net": -35946539
+          },
+          {
+            "w": "2026-01-08",
+            "net": 66515417
+          },
+          {
+            "w": "2026-01-15",
+            "net": 34614686
+          },
+          {
+            "w": "2026-01-22",
+            "net": -972015
+          },
+          {
+            "w": "2026-01-29",
+            "net": 23346925
+          },
+          {
+            "w": "2026-02-05",
+            "net": 31766634
+          },
+          {
+            "w": "2026-02-12",
+            "net": -28183029
+          },
+          {
+            "w": "2026-02-19",
+            "net": 27830348
+          },
+          {
+            "w": "2026-02-26",
+            "net": -15339132
+          },
+          {
+            "w": "2026-03-05",
+            "net": -34785504
+          },
+          {
+            "w": "2026-03-12",
+            "net": -49968368
+          },
+          {
+            "w": "2026-03-19",
+            "net": -38364363
+          },
+          {
+            "w": "2026-03-26",
+            "net": -9842914
+          },
+          {
+            "w": "2026-04-02",
+            "net": 40142162
+          },
+          {
+            "w": "2026-04-09",
+            "net": 79321898
+          },
+          {
+            "w": "2026-04-16",
+            "net": -6866293
+          },
+          {
+            "w": "2026-04-23",
+            "net": 18207468
+          },
+          {
+            "w": "2026-04-30",
+            "net": -27085428
+          },
+          {
+            "w": "2026-05-07",
+            "net": 15213263
+          },
+          {
+            "w": "2026-05-14",
+            "net": -40686098
+          }
+        ]
+      }
+    ],
+    "recent_cluster_trades": [
+      {
+        "id": "T00010",
+        "member_id": "M0028",
+        "member_name": "Dorothy Radcliffe",
+        "ticker": "GOOGL",
+        "company_name": "Alphabet",
+        "type": "sell",
+        "amount_min": 250001,
+        "amount_max": 500000,
+        "owner_type": "self",
+        "transaction_date": "2026-05-10T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 17,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C008",
+              "committee_name": "House Judiciary"
+            }
+          ],
+          "hearing_proximity": {
+            "hearing_id": "H_7uh5rj",
+            "topic": "Semiconductor supply chain oversight",
+            "days_delta": 0,
+            "date": "2026-03-29T12:00:00.000Z"
+          }
+        },
+        "signal_score": 0.74,
+        "alpha_context_30d": 9.01
+      },
+      {
+        "id": "T00014",
+        "member_id": "M0015",
+        "member_name": "Joshua Montgomery",
+        "ticker": "LMT",
+        "company_name": "Lockheed Martin",
+        "type": "option",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "spouse",
+        "transaction_date": "2025-12-09T12:00:00.000Z",
+        "filing_date": "2025-12-28T12:00:00.000Z",
+        "filing_lateness_days": 19,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C008",
+              "committee_name": "House Judiciary"
+            },
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.92,
+        "alpha_context_30d": 3.07
+      },
+      {
+        "id": "T00027",
+        "member_id": "M0028",
+        "member_name": "Dorothy Radcliffe",
+        "ticker": "GE",
+        "company_name": "GE Aerospace",
+        "type": "exchange",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "joint",
+        "transaction_date": "2026-01-08T12:00:00.000Z",
+        "filing_date": "2026-01-30T12:00:00.000Z",
+        "filing_lateness_days": 22,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C008",
+              "committee_name": "House Judiciary"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.34,
+        "alpha_context_30d": -9.98
+      },
+      {
+        "id": "T00032",
+        "member_id": "M0006",
+        "member_name": "James Rutherford",
+        "ticker": "AAPL",
+        "company_name": "Apple Inc.",
+        "type": "option",
+        "amount_min": 1000001,
+        "amount_max": 5000000,
+        "owner_type": "self",
+        "transaction_date": "2026-04-20T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 59,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C008",
+              "committee_name": "House Judiciary"
+            }
+          ]
+        },
+        "signal_score": 0.58,
+        "alpha_context_30d": 21.24
+      },
+      {
+        "id": "T00065",
+        "member_id": "M0028",
+        "member_name": "Dorothy Radcliffe",
+        "ticker": "AAPL",
+        "company_name": "Apple Inc.",
+        "type": "sell",
+        "amount_min": 500001,
+        "amount_max": 1000000,
+        "owner_type": "joint",
+        "transaction_date": "2025-11-19T12:00:00.000Z",
+        "filing_date": "2026-01-13T12:00:00.000Z",
+        "filing_lateness_days": 55,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C008",
+              "committee_name": "House Judiciary"
+            }
+          ]
+        },
+        "signal_score": 0.47,
+        "alpha_context_30d": 17.96
+      },
+      {
+        "id": "T00076",
+        "member_id": "M0025",
+        "member_name": "Ryan Galloway",
+        "ticker": "GOOGL",
+        "company_name": "Alphabet",
+        "type": "sell",
+        "amount_min": 250001,
+        "amount_max": 500000,
+        "owner_type": "self",
+        "transaction_date": "2026-04-26T12:00:00.000Z",
+        "filing_date": "2026-05-14T12:00:00.000Z",
+        "filing_lateness_days": 21,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C008",
+              "committee_name": "House Judiciary"
+            }
+          ]
+        },
+        "signal_kind": "reactive",
+        "signal_score": 0.75,
+        "alpha_context_30d": 21.34
+      },
+      {
+        "id": "T00082",
+        "member_id": "M0015",
+        "member_name": "Joshua Montgomery",
+        "ticker": "LMT",
+        "company_name": "Lockheed Martin",
+        "type": "buy",
+        "amount_min": 50001,
+        "amount_max": 100000,
+        "owner_type": "spouse",
+        "transaction_date": "2025-11-23T12:00:00.000Z",
+        "filing_date": "2025-12-22T12:00:00.000Z",
+        "filing_lateness_days": 29,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C008",
+              "committee_name": "House Judiciary"
+            },
+            {
+              "committee_id": "C006",
+              "committee_name": "House Financial Services"
+            }
+          ],
+          "lobbying_overlay": {
+            "registrant": "Akin Gump",
+            "client": "LMT",
+            "topics": [
+              "Trade"
+            ]
+          }
+        },
+        "signal_score": 0.71,
+        "alpha_context_30d": 6.01
+      },
+      {
+        "id": "T00083",
+        "member_id": "M0011",
+        "member_name": "Barbara Fairchild",
+        "ticker": "MSFT",
+        "company_name": "Microsoft Corporation",
+        "type": "buy",
+        "amount_min": 1000,
+        "amount_max": 15000,
+        "owner_type": "spouse",
+        "transaction_date": "2026-03-13T12:00:00.000Z",
+        "filing_date": "2026-05-02T12:00:00.000Z",
+        "filing_lateness_days": 50,
+        "has_any_flag": true,
+        "flags": {
+          "jurisdiction_overlap": [
+            {
+              "committee_id": "C008",
+              "committee_name": "House Judiciary"
+            },
+            {
+              "committee_id": "C002",
+              "committee_name": "House Energy & Commerce"
+            }
+          ],
+          "vote_trade_consistency": {
+            "bill_id": "H.R.1563",
+            "bill_title": "CHIPS Act Reauthorization",
+            "position": "yea",
+            "days_delta": -18
+          }
+        },
+        "signal_score": 0.33,
+        "alpha_context_30d": 0.7
+      }
+    ]
+  }
+]
