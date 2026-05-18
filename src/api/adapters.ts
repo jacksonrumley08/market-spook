@@ -306,15 +306,36 @@ export function adaptAlert(w: WireAlert): UiAlert {
   const tickerRaw = (payload.ticker_symbol ?? payload.symbol ?? payload.company_name) as
     | string
     | undefined;
+  // score_v2 ships as a Decimal-string (e.g. "89.5414") or null when an alert
+  // pre-dates the Slice-11 composite scorer. Coerce to a number for sort/display
+  // and preserve null so the UI can flag legacy-unscored rows.
+  let score_v2: number | null = null;
+  if (w.score_v2 != null) {
+    const n = typeof w.score_v2 === "number" ? w.score_v2 : Number(w.score_v2);
+    score_v2 = Number.isFinite(n) ? n : null;
+  }
+  const rawStatus = (w.status ?? "OPEN").toUpperCase();
+  const status =
+    rawStatus === "OPEN" ||
+    rawStatus === "ACKNOWLEDGED" ||
+    rawStatus === "RESOLVED" ||
+    rawStatus === "EXPIRED"
+      ? (rawStatus as UiAlert["status"])
+      : "OPEN";
   return {
     id: String(w.id),
     kind: w.kind,
     severity: w.severity,
+    status,
     summary: alertSummary(w.kind, payload),
+    score_v2,
     member_id: w.official_id ?? memberIdRaw,
     ticker: tickerRaw,
     created_at: w.created_at,
-    dismissed: !!w.dismissed_at || w.status === "RESOLVED" || w.status === "EXPIRED",
+    acknowledged_at: w.acknowledged_at ?? null,
+    resolved_at: w.resolved_at ?? null,
+    expiry_at: w.expiry_at ?? null,
+    dismissed: !!w.dismissed_at || status === "RESOLVED" || status === "EXPIRED",
     payload,
   };
 }

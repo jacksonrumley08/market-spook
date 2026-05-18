@@ -245,23 +245,29 @@ export interface LeaderboardEntry {
 
 // ---------- Alerts ----------
 // kind and severity are typed as `string` because v1 backend ships an open set
-// (VOTE_TRADE_INCONSISTENCY, LOBBYING_TRADE_OVERLAP, STATEMENT_TRADE_CONTRADICTION,
-// SCOTUS_CONGRESSIONAL_OVERLAP, STAFFER_TRADE_PROXIMITY, STATE_OFFICIAL_TRADE_PROXIMITY,
-// NEWS_TRADE_PROXIMITY, CLUSTER_THRESHOLD, CONTRACT_AWARD_PROXIMITY,
-// HIGH_VALUE_CONTRACT, FOMC_BLACKOUT, INGESTION_HEALTH). The alerts page renders
-// unknown kinds with a neutral chip.
+// (see ALERT_KIND_ENUM in src/api/alertKinds.ts for the canonical 15-kind list
+// sourced from app/db/types.py:AlertKindEnum). The alerts page renders unknown
+// kinds with a neutral chip.
 export type AlertKind = string;
 
 export type AlertSeverity = string;
+
+// Lifecycle states from Slice 11. See app/alerts/lifecycle.py.
+export type AlertStatus = "OPEN" | "ACKNOWLEDGED" | "RESOLVED" | "EXPIRED";
 
 export interface AlertOut {
   id: string;
   kind: AlertKind;
   severity: AlertSeverity;
+  status: AlertStatus;
   summary: string;
+  score_v2: number | null;
   member_id?: string;
   ticker?: string;
   created_at: string;
+  acknowledged_at: string | null;
+  resolved_at: string | null;
+  expiry_at: string | null;
   dismissed: boolean;
   payload: Record<string, unknown>;
 }
@@ -320,9 +326,13 @@ export interface CommitteeFlowTop {
 }
 
 // ---------- Pagination wrapper used by mock endpoints ----------
+// `total` is the server count when available (e.g. /members). For cursor /
+// has-more feeds (e.g. /alerts) the backend ships null and we surface
+// `has_more` so the UI knows whether to render "next page".
 export interface Paginated<T> {
   items: T[];
   total: number;
   limit: number;
   offset: number;
+  has_more?: boolean;
 }

@@ -14,6 +14,7 @@ import mockCommitteeFlowTop from "./mocks/committee_flow_top.json";
 import mockIngestionHealth from "./mocks/ingestion_health.json";
 
 import type {
+  AcknowledgeAlertResponse,
   AlertOut as WireAlert,
   ClusterOut as WireCluster,
   CommitteeDetail as WireCommitteeDetail,
@@ -355,35 +356,78 @@ export async function getLeaderboard(kind: LeaderboardKind): Promise<Leaderboard
 }
 
 // ---------- Alerts (Slice 11) ----------
+// listAlerts now passes `status` + `kind` straight through to the backend so
+// the UI can wire its filter pills to real /alerts?status=&kind= queries
+// instead of client-side filtering on a 100-row window. Returns a Paginated
+// shape because /alerts ships `has_more` (total is null on this endpoint).
 export async function listAlerts(
-  opts: { dismissed?: boolean; kinds?: string[]; member_id?: string; ticker?: string } = {},
-): Promise<AlertOut[]> {
+  opts: {
+    status?: string;
+    kind?: string;
+    limit?: number;
+    offset?: number;
+    member_id?: string;
+    ticker?: string;
+    // Legacy: old call sites passed `dismissed: false` to mean "show OPEN".
+    // Preserved as a shim — translated to status=OPEN.
+    dismissed?: boolean;
+  } = {},
+): Promise<Paginated<AlertOut>> {
+  const limit = opts.limit ?? 50;
+  const offset = opts.offset ?? 0;
   if (API_CONFIG.useMocks) {
     let items = mockAlerts as unknown as AlertOut[];
-    if (opts.dismissed !== undefined) items = items.filter((a) => a.dismissed === opts.dismissed);
-    if (opts.kinds?.length) items = items.filter((a) => opts.kinds!.includes(a.kind));
+    const effectiveStatus = opts.status ?? (opts.dismissed === false ? "OPEN" : undefined);
+    if (effectiveStatus) items = items.filter((a) => a.status === effectiveStatus);
+    if (opts.kind) items = items.filter((a) => a.kind === opts.kind);
     if (opts.member_id) items = items.filter((a) => a.member_id === opts.member_id);
     if (opts.ticker) items = items.filter((a) => a.ticker === opts.ticker);
-    return [...items].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
+    items = [...items].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
+    const sliced = items.slice(offset, offset + limit);
+    return {
+      items: sliced,
+      total: items.length,
+      limit,
+      offset,
+      has_more: offset + limit < items.length,
+    };
   }
   const params = new URLSearchParams();
-  // Backend filter is `status`, not `dismissed`. Default to OPEN unless caller
-  // explicitly wants the full firehose (showDismissed → no status filter).
-  if (opts.dismissed === false) params.set("status", "OPEN");
-  params.set("limit", "100");
+  const effectiveStatus = opts.status ?? (opts.dismissed === false ? "OPEN" : undefined);
+  if (effectiveStatus) params.set("status", effectiveStatus);
+  if (opts.kind) params.set("kind", opts.kind);
+  params.set("limit", String(Math.min(limit, 200)));
+  params.set("offset", String(offset));
   const page = await safeFetch<WirePage | null>(`${ENDPOINTS.alerts}?${params}`, null);
   let items = ((page?.items ?? []) as WireAlert[]).map(adaptAlert);
-  if (opts.kinds?.length) items = items.filter((a) => opts.kinds!.includes(a.kind));
+  // member_id / ticker still get applied client-side — backend has no native
+  // filters for them on /alerts. Lossless because we already over-fetched
+  // with the server filters applied.
   if (opts.member_id) items = items.filter((a) => a.member_id === opts.member_id);
   if (opts.ticker) items = items.filter((a) => a.ticker === opts.ticker);
-  return items;
+  return {
+    items,
+    total: page?.page?.total ?? items.length,
+    limit,
+    offset,
+    has_more: page?.page?.has_more ?? false,
+  };
 }
 
-export async function dismissAlert(id: string): Promise<void> {
-  if (API_CONFIG.useMocks) return;
-  // Backend exposes /alerts/{id}/acknowledge; "dismiss" in the UI is acknowledge
-  // semantically (move OPEN → ACKNOWLEDGED).
-  await safeFetch(ENDPOINTS.alertAcknowledge(id), undefined, { method: "POST" });
+// Slice-11 lifecycle mutator. Flips OPEN → ACKNOWLEDGED on the server and
+// returns the canonical AcknowledgeAlertResponse so the UI can patch the row
+// optimistically and then reconcile with server timestamps.
+export async function acknowledgeAlert(id: number | string): Promise<AcknowledgeAlertResponse> {
+  if (API_CONFIG.useMocks) {
+    return {
+      id: typeof id === "number" ? id : Number(id),
+      status: "ACKNOWLEDGED",
+      acknowledged_at: new Date().toISOString(),
+    };
+  }
+  return realFetch<AcknowledgeAlertResponse>(ENDPOINTS.alertAcknowledge(String(id)), {
+    method: "POST",
+  });
 }
 
 // ---------- Backtest (Slice 10) ----------

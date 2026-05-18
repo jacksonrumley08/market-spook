@@ -9,6 +9,7 @@ import {
 
 import appCss from "../styles.css?url";
 import { TopNav } from "@/components/TopNav";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -94,6 +95,7 @@ function RootComponent() {
         <main className="mx-auto max-w-[1600px] px-4 py-4">
           <Outlet />
         </main>
+        <Toaster theme="dark" position="bottom-right" />
       </div>
     </QueryClientProvider>
   );

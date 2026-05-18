@@ -205,12 +205,12 @@ function AlertBell() {
   const navigate = useNavigate();
   const { data } = useQuery({
     queryKey: ['alerts-unread'],
-    queryFn: () => listAlerts({ dismissed: false }),
+    queryFn: () => listAlerts({ status: 'OPEN', limit: 100 }),
   });
-  const count = data?.length ?? 0;
+  const count = data?.items.length ?? 0;
   return (
     <button
-      onClick={() => navigate({ to: '/alerts' })}
+      onClick={() => navigate({ to: '/alerts', search: { status: 'OPEN', page: 1 } })}
       className="relative flex h-7 w-7 items-center justify-center rounded text-[var(--text-secondary)] hover:bg-[var(--bg-2)] hover:text-[var(--text-primary)]"
     >
       <Bell className="h-3.5 w-3.5" />
