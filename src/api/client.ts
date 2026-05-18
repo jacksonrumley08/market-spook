@@ -6,7 +6,6 @@ import mockClusters from "./mocks/clusters.json";
 import mockTickers from "./mocks/tickers.json";
 import mockLeaderboards from "./mocks/leaderboards.json";
 import mockAlerts from "./mocks/alerts.json";
-import mockBacktest from "./mocks/backtest.json";
 import mockSummary from "./mocks/summary.json";
 import mockSignalPredictive from "./mocks/signal_predictive.json";
 import mockSignalReactive from "./mocks/signal_reactive.json";
@@ -16,6 +15,11 @@ import mockIngestionHealth from "./mocks/ingestion_health.json";
 import type {
   AcknowledgeAlertResponse,
   AlertOut as WireAlert,
+  BacktestPreset,
+  BacktestPresetsResponse,
+  BacktestRunRequest,
+  BacktestRunResponse,
+  BacktestTradeOut,
   ClusterOut as WireCluster,
   CommitteeDetail as WireCommitteeDetail,
   CommitteeOut as WireCommittee,
@@ -33,8 +37,6 @@ import type {
 } from "./types";
 import type {
   AlertOut,
-  BacktestRequest,
-  BacktestResult,
   ClusterOut,
   CommitteeDetailOut,
   CommitteeFlowTop,
@@ -80,7 +82,10 @@ const ENDPOINTS = {
   leaderboard: "/leaderboard",
   alerts: "/alerts",
   alertAcknowledge: (id: string) => `/alerts/${id}/acknowledge`,
+  backtestPresets: "/backtest/presets",
   backtestRun: "/backtest/run",
+  backtestRunById: (id: string) => `/backtest/${id}`,
+  backtestRunTrades: (id: string) => `/backtest/${id}/trades`,
   dashboardSummary: "/dashboard/summary",
   feedPredictive: "/feed/predictive",
   feedReactive: "/feed/reactive",
@@ -443,22 +448,43 @@ export async function acknowledgeAlert(id: number | string): Promise<Acknowledge
 }
 
 // ---------- Backtest (Slice 10) ----------
-// The UI is built around a "replica trades" model (pick a member, set a lag,
-// get cumulative returns). The backend /backtest/run instead takes a named
-// strategy (q1_vote_trade_inconsistency / beyer_sector / cluster_fire /
-// null_baseline) and returns metrics from the Sharpe-0.678 reference suite.
-// Until the UI is rewritten to drive named strategies, the backtest fetcher
-// falls back to mock data even when API_CONFIG.useMocks is false.
-export async function runBacktest(req: BacktestRequest): Promise<BacktestResult | null> {
-  void req;
-  if (API_CONFIG.useMocks) {
-    await new Promise((r) => setTimeout(r, 350));
-    return mockBacktest as unknown as BacktestResult;
-  }
-  // Real backend can't satisfy the UI's per-member replica semantics yet —
-  // see /backtest/run docstring. Surface the deterministic mock so the page
-  // remains demoable without misleading users about real results.
-  return mockBacktest as unknown as BacktestResult;
+// Wired to the named-strategy backtester. Each preset reproduces a
+// Slice-10 reference result (Sharpe 0.678 for the headline q1_vote_trade
+// strategy). `runBacktest` is synchronous on the backend (in-process,
+// typically <5s per strategy). The UI page caches per-preset run_ids in
+// react-query so a re-render replays a finished run without re-executing.
+export async function listBacktestPresets(): Promise<BacktestPreset[]> {
+  const res = await realFetch<BacktestPresetsResponse>(ENDPOINTS.backtestPresets);
+  return res.presets;
+}
+
+export async function runBacktest(req: BacktestRunRequest): Promise<BacktestRunResponse> {
+  return realFetch<BacktestRunResponse>(ENDPOINTS.backtestRun, {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+}
+
+export async function getBacktestRun(runId: string): Promise<BacktestRunResponse> {
+  return realFetch<BacktestRunResponse>(ENDPOINTS.backtestRunById(runId));
+}
+
+export async function listBacktestTrades(
+  runId: string,
+  opts: { limit?: number; offset?: number } = {},
+): Promise<{ items: BacktestTradeOut[]; total: number; limit: number; offset: number }> {
+  const limit = opts.limit ?? 50;
+  const offset = opts.offset ?? 0;
+  const params = new URLSearchParams();
+  params.set("limit", String(Math.min(limit, 200)));
+  params.set("offset", String(offset));
+  const page = await realFetch<WirePage>(`${ENDPOINTS.backtestRunTrades(runId)}?${params}`);
+  return {
+    items: page.items as BacktestTradeOut[],
+    total: page.page.total ?? 0,
+    limit,
+    offset,
+  };
 }
 
 // ---------- Dashboard summary (real backend endpoint) ----------

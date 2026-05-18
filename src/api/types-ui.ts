@@ -301,30 +301,10 @@ export interface AlertOut {
 }
 
 // ---------- Backtest ----------
-export interface BacktestRequest {
-  member_id: string;
-  lag_days: number;
-  start_date: string;
-  end_date: string;
-}
-
-export interface BacktestPosition {
-  id: string;
-  ticker: string;
-  entry_date: string;
-  exit_date: string;
-  side: "long" | "short";
-  return_pct: number;
-}
-
-export interface BacktestResult {
-  cumulative: DatedValue[];
-  total_return: number;
-  sharpe: number;
-  max_drawdown: number;
-  win_rate: number;
-  positions: BacktestPosition[];
-}
+// Wire types live in ./types.ts: BacktestPreset, BacktestRunRequest,
+// BacktestRunResponse, BacktestMetricsOut, BacktestTradeOut. No UI-side
+// projection is needed — the backend returns shapes the page renders
+// directly.
 
 // ---------- Dashboard ----------
 export interface DashboardSummary {

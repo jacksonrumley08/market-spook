@@ -116,6 +116,8 @@ export interface BacktestTradeOut {
   entry_date: string;
   exit_date: string;
   ticker_id: string;
+  /** Resolved ticker symbol (e.g. 'MSFT'). NULL if the ticker row is missing. */
+  ticker_symbol?: string | null;
   position_size: string;
   entry_price: string;
   exit_price: string;
@@ -124,8 +126,49 @@ export interface BacktestTradeOut {
   source_alert_id?: number | null;
   source_transaction_id?: number | null;
   official_id?: string | null;
+  /** Resolved official.full_name for the trade's source member; NULL when the strategy is signal-only (e.g. ClusterFireSignal has no source official). */
+  official_name?: string | null;
   exit_reason: string;
   notes?: Record<string, unknown> | null;
+}
+
+export interface BacktestPresetReference {
+  /** Slice-10 measured trade count. */
+  n_trades: number;
+  /** Slice-10 measured total return as a decimal. */
+  total_return?: number | null;
+  /** Slice-10 measured annualized Sharpe; NULL when no trades (cluster_fire). */
+  sharpe?: number | null;
+  /** Slice-10 measured win rate; NULL when no trades or not measured. */
+  win_rate?: number | null;
+  /** Short human-readable annotation for the reference number. */
+  note: string;
+}
+
+export interface BacktestPreset {
+  /** Strategy identifier accepted by POST /backtest/run. */
+  key: string;
+  /** Human-readable strategy name. */
+  name: string;
+  /** One-line description suitable for a UI card. */
+  description: string;
+  /** True for the platform's load-bearing strategy (Q1 VOTE_TRADE_INCONSISTENCY); UIs should emphasize this preset. */
+  headline: boolean;
+  /** True for the null-baseline control. The headline strategy's edge is measured as the Sharpe gap vs this baseline. */
+  is_null_baseline: boolean;
+  /** Canonical Slice-10 window start. Re-running with this window reproduces the reference result. */
+  default_start_date: string;
+  /** Canonical Slice-10 window end. */
+  default_end_date: string;
+  /** Default hold period in days. */
+  default_hold_days: number;
+  /** Frozen Slice-10 reference numbers for this strategy. */
+  reference: BacktestPresetReference;
+}
+
+export interface BacktestPresetsResponse {
+  /** Ordered list of preset strategies; headline preset first. */
+  presets: BacktestPreset[];
 }
 
 export interface OfficialSummary {
