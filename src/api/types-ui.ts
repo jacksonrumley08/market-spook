@@ -3,9 +3,9 @@
 // Once the live API ships these endpoints (Slice 2+), migrate routes to the canonical
 // types and delete this file.
 
-export type Party = 'D' | 'R' | 'I';
+export type Party = "D" | "R" | "I";
 
-export type Chamber = 'senate' | 'house';
+export type Chamber = "senate" | "house";
 
 export interface DatedValue {
   d: string;
@@ -96,7 +96,7 @@ export interface DerivedFlags {
 }
 
 // ---------- Transactions ----------
-export type TransactionType = 'buy' | 'sell' | 'option' | 'exchange';
+export type TransactionType = "buy" | "sell" | "option" | "exchange";
 
 export interface TransactionOut {
   id: string;
@@ -144,6 +144,36 @@ export interface CommitteeOut {
   recent_cluster_trades: TransactionOut[];
 }
 
+export type CommitteeRole = "CHAIR" | "RANKING" | "MEMBER" | "EX_OFFICIO" | string;
+
+export interface CommitteeOfficial {
+  member_id: string;
+  bioguide_id: string | null;
+  name: string;
+  party: Party | null;
+  state: string | null;
+  role: CommitteeRole;
+}
+
+export type HearingStatus = "SCHEDULED" | "HELD" | "POSTPONED" | "CANCELLED" | string;
+
+export interface CommitteeHearing {
+  id: string;
+  scheduled_at: string;
+  topic: string;
+  status: HearingStatus;
+  location: string | null;
+}
+
+export interface CommitteeDetailOut {
+  id: string;
+  name: string;
+  code: string;
+  chamber: Chamber;
+  members: CommitteeOfficial[];
+  recent_hearings: CommitteeHearing[];
+}
+
 // ---------- Clusters ----------
 export interface ClusterMember {
   member_id: string;
@@ -163,7 +193,7 @@ export interface ClusterOut {
   company_name: string;
   committee_id: string;
   committee_name: string;
-  direction: 'buy' | 'sell';
+  direction: "buy" | "sell";
   window_start: string;
   window_end: string;
   member_count: number;
@@ -193,7 +223,13 @@ export interface TickerOut {
 }
 
 // ---------- Leaderboards ----------
-export type LeaderboardKind = 'alpha' | 'hit_rate' | 'vagueness' | 'late_filer' | 'options_conviction' | 'filing_quality';
+export type LeaderboardKind =
+  | "alpha"
+  | "hit_rate"
+  | "vagueness"
+  | "late_filer"
+  | "options_conviction"
+  | "filing_quality";
 
 export interface LeaderboardEntry {
   rank: number;
@@ -243,7 +279,7 @@ export interface BacktestPosition {
   ticker: string;
   entry_date: string;
   exit_date: string;
-  side: 'long' | 'short';
+  side: "long" | "short";
   return_pct: number;
 }
 
@@ -266,7 +302,7 @@ export interface DashboardSummary {
 // ---------- Signal feed ----------
 export interface SignalFeedItem {
   id: string;
-  kind: 'predictive' | 'reactive';
+  kind: "predictive" | "reactive";
   signal_type: string;
   member_id: string;
   member_name: string;

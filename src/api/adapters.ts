@@ -6,15 +6,17 @@
 import type {
   AlertOut as WireAlert,
   ClusterOut as WireCluster,
+  CommitteeDetail as WireCommitteeDetail,
   CommitteeOut as WireCommittee,
   LeaderboardItem as WireLeaderboardItem,
   MemberOut as WireMember,
   PredictiveFeedItem as WirePredictiveFeedItem,
   TransactionOut as WireTransaction,
-} from './types';
+} from "./types";
 import type {
   AlertOut as UiAlert,
   ClusterOut as UiCluster,
+  CommitteeDetailOut as UiCommitteeDetail,
   CommitteeOut as UiCommittee,
   DerivedFlags,
   LeaderboardEntry as UiLeaderboardEntry,
@@ -25,7 +27,7 @@ import type {
   TickerOut as UiTicker,
   TransactionOut as UiTransaction,
   Chamber,
-} from './types-ui';
+} from "./types-ui";
 
 // Mocks predate the nested wire schema and ship the overlap as flat fields.
 // Real API returns it under TransactionOut.jurisdiction_overlap (see types.ts).
@@ -59,25 +61,25 @@ const EMPTY_SCORES = {
 };
 
 function chamberToUi(c: string | null | undefined): Chamber {
-  return c && c.toUpperCase() === 'SENATE' ? 'senate' : 'house';
+  return c && c.toUpperCase() === "SENATE" ? "senate" : "house";
 }
 
 function partyToUi(p: string | null | undefined): Party {
-  if (p === 'D' || p === 'R' || p === 'I') return p;
-  return 'I';
+  if (p === "D" || p === "R" || p === "I") return p;
+  return "I";
 }
 
 export function adaptMember(w: WireMember): UiMember {
   return {
     id: w.id,
-    bioguide_id: w.bioguide_id ?? '',
+    bioguide_id: w.bioguide_id ?? "",
     name: w.full_name,
     party: partyToUi(w.party),
-    state: w.state ?? '',
+    state: w.state ?? "",
     chamber: chamberToUi(w.chamber),
     district: w.district ?? null,
     tenure_years: w.tenure_years ?? 0,
-    committees: (w.committees ?? []).map(c => c.committee.id),
+    committees: (w.committees ?? []).map((c) => c.committee.id),
     scores: { ...EMPTY_SCORES },
     alpha_series: [],
     sector_tilt: [],
@@ -108,7 +110,7 @@ function buildFlags(w: WireTransactionFixture): DerivedFlags {
   const flags: DerivedFlags = {};
   const { committees } = overlapFromWire(w);
   if (committees.length > 0) {
-    flags.jurisdiction_overlap = committees.map(name => ({
+    flags.jurisdiction_overlap = committees.map((name) => ({
       committee_id: name,
       committee_name: name,
     }));
@@ -118,20 +120,20 @@ function buildFlags(w: WireTransactionFixture): DerivedFlags {
 
 export function adaptTransaction(w: WireTransactionFixture): UiTransaction {
   const lateness = w.filed_at ? Math.max(0, daysBetween(w.transaction_date, w.filed_at)) : 0;
-  const tType = (w.transaction_type || '').toLowerCase();
+  const tType = (w.transaction_type || "").toLowerCase();
   const { flag: overlapFlag } = overlapFromWire(w);
   return {
     id: String(w.id),
     member_id: w.official.id,
     member_name: w.official.full_name,
-    ticker: w.ticker?.symbol ?? '—',
+    ticker: w.ticker?.symbol ?? "—",
     company_name: w.asset_description,
-    type: (tType === 'buy' || tType === 'sell' || tType === 'option' || tType === 'exchange'
+    type: (tType === "buy" || tType === "sell" || tType === "option" || tType === "exchange"
       ? tType
-      : 'buy') as UiTransaction['type'],
+      : "buy") as UiTransaction["type"],
     amount_min: Number(w.amount_min_usd ?? 0),
     amount_max: Number(w.amount_max_usd ?? 0),
-    owner_type: (w.owner_type ?? '').toLowerCase(),
+    owner_type: (w.owner_type ?? "").toLowerCase(),
     transaction_date: w.transaction_date,
     filing_date: w.filed_at ?? w.transaction_date,
     filing_lateness_days: lateness,
@@ -140,17 +142,50 @@ export function adaptTransaction(w: WireTransactionFixture): UiTransaction {
   };
 }
 
+// Mock-fed directory rows (Slice 1 fixtures); the real backend exposes no
+// /committees list endpoint yet, so the index page degrades to this shape.
 export function adaptCommittee(w: WireCommittee): UiCommittee {
   return {
     id: w.id,
     name: w.name,
     chamber: chamberToUi(w.chamber),
-    jurisdiction_summary: 'Jurisdiction details available in later slices.',
+    jurisdiction_summary: "",
     jurisdiction_sectors: [],
     member_count: 0,
     members: [],
     weekly_flow: [],
     recent_cluster_trades: [],
+  };
+}
+
+function partyOrNull(p: string | null | undefined): Party | null {
+  return p === "D" || p === "R" || p === "I" ? p : null;
+}
+
+// /committees/{id} → CommitteeDetail. Surfaces the real members roster and
+// recent_hearings; weekly_flow + recent_cluster_trades are not provided by
+// this endpoint and are documented as backend gaps on the detail page.
+export function adaptCommitteeDetail(w: WireCommitteeDetail): UiCommitteeDetail {
+  return {
+    id: w.id,
+    name: w.name,
+    code: w.code,
+    chamber: chamberToUi(w.chamber),
+    members: (w.members ?? []).map((m) => ({
+      member_id: m.id,
+      bioguide_id: m.bioguide_id ?? null,
+      name: m.full_name,
+      party: partyOrNull(m.party),
+      state: m.state ?? null,
+      role: m.role,
+    })),
+    recent_hearings: (w.recent_hearings ?? []).map((h) => ({
+      id: h.id,
+      scheduled_at: h.scheduled_at,
+      topic: h.topic,
+      status: h.status,
+      location: h.location ?? null,
+    })),
   };
 }
 
@@ -168,18 +203,18 @@ export function adaptTicker(w: WireTickerFixture): UiTicker {
 
 // ---------- Clusters ----------
 export function adaptCluster(w: WireCluster): UiCluster {
-  const dir = (w.direction || '').toLowerCase();
+  const dir = (w.direction || "").toLowerCase();
   return {
     id: w.id,
-    ticker: w.ticker?.symbol ?? '—',
-    company_name: w.ticker?.symbol ?? '',
+    ticker: w.ticker?.symbol ?? "—",
+    company_name: w.ticker?.symbol ?? "",
     committee_id: w.committee_id,
     committee_name: w.committee_name,
-    direction: dir === 'sell' ? 'sell' : 'buy',
+    direction: dir === "sell" ? "sell" : "buy",
     window_start: w.window_start,
     window_end: w.window_end,
     member_count: w.member_count,
-    members: (w.members ?? []).map(m => ({
+    members: (w.members ?? []).map((m) => ({
       member_id: m.official.id,
       name: m.official.full_name,
       party: partyToUi(m.official.party),
@@ -197,17 +232,17 @@ export function adaptLeaderboardEntry(
 ): UiLeaderboardEntry {
   const kindScore = (() => {
     switch (kind) {
-      case 'alpha':
+      case "alpha":
         return w.alpha_90d != null ? Number(w.alpha_90d) : 0;
-      case 'hit_rate':
+      case "hit_rate":
         return w.hit_rate_90d != null ? Number(w.hit_rate_90d) : 0;
-      case 'filing_quality':
+      case "filing_quality":
         return w.filing_quality_score ?? 0;
-      case 'late_filer':
+      case "late_filer":
         return w.late_filing_rate ?? 0;
-      case 'vagueness':
+      case "vagueness":
         return w.vagueness_score_avg ?? 0;
-      case 'options_conviction':
+      case "options_conviction":
         // Not directly exposed in LeaderboardItem; fall back to composite.
         return w.composite_score ?? 0;
       default:
@@ -220,7 +255,7 @@ export function adaptLeaderboardEntry(
     member_id: w.official_id,
     member_name: w.full_name,
     party: partyToUi(w.party),
-    state: w.state ?? '',
+    state: w.state ?? "",
     chamber: chamberToUi(w.chamber),
     score: Number(kindScore),
     series_30d: [],
@@ -237,29 +272,29 @@ function alertSummary(kind: string, payload: Record<string, unknown>): string {
   const companyName = (p.company_name ?? p.client_name) as string | undefined;
   const symbol = (p.ticker_symbol ?? p.symbol) as string | undefined;
   switch (kind) {
-    case 'VOTE_TRADE_INCONSISTENCY':
-      return `${officialName ?? 'Member'} traded ${companyName ?? symbol ?? 'a position'} near ${p.legis_num ?? 'a related vote'}`;
-    case 'CONTRACT_AWARD_PROXIMITY':
-    case 'HIGH_VALUE_CONTRACT':
-      return `${officialName ?? 'Member'} traded ${companyName ?? 'a contractor'} near a federal award`;
-    case 'LOBBYING_TRADE_OVERLAP':
-      return `${officialName ?? 'Member'} traded ${companyName ?? 'a lobbying client'}`;
-    case 'CLUSTER_THRESHOLD':
-      return `Cluster: ${p.member_count ?? '?'} members on ${symbol ?? p.ticker_symbol ?? 'a ticker'}`;
-    case 'FOMC_BLACKOUT':
-      return `${officialName ?? 'Fed official'} traded in the FOMC blackout window`;
-    case 'NEWS_TRADE_PROXIMITY':
-      return `${officialName ?? 'Member'} traded ${companyName ?? 'a company'} near a news event`;
-    case 'STATEMENT_TRADE_CONTRADICTION':
-      return `${officialName ?? 'Member'} traded against a recent statement`;
-    case 'SCOTUS_CONGRESSIONAL_OVERLAP':
-      return `Justice + member co-trading ${companyName ?? symbol ?? 'a ticker'}`;
-    case 'STAFFER_TRADE_PROXIMITY':
+    case "VOTE_TRADE_INCONSISTENCY":
+      return `${officialName ?? "Member"} traded ${companyName ?? symbol ?? "a position"} near ${p.legis_num ?? "a related vote"}`;
+    case "CONTRACT_AWARD_PROXIMITY":
+    case "HIGH_VALUE_CONTRACT":
+      return `${officialName ?? "Member"} traded ${companyName ?? "a contractor"} near a federal award`;
+    case "LOBBYING_TRADE_OVERLAP":
+      return `${officialName ?? "Member"} traded ${companyName ?? "a lobbying client"}`;
+    case "CLUSTER_THRESHOLD":
+      return `Cluster: ${p.member_count ?? "?"} members on ${symbol ?? p.ticker_symbol ?? "a ticker"}`;
+    case "FOMC_BLACKOUT":
+      return `${officialName ?? "Fed official"} traded in the FOMC blackout window`;
+    case "NEWS_TRADE_PROXIMITY":
+      return `${officialName ?? "Member"} traded ${companyName ?? "a company"} near a news event`;
+    case "STATEMENT_TRADE_CONTRADICTION":
+      return `${officialName ?? "Member"} traded against a recent statement`;
+    case "SCOTUS_CONGRESSIONAL_OVERLAP":
+      return `Justice + member co-trading ${companyName ?? symbol ?? "a ticker"}`;
+    case "STAFFER_TRADE_PROXIMITY":
       return `Staffer trade near member's committee jurisdiction`;
-    case 'STATE_OFFICIAL_TRADE_PROXIMITY':
+    case "STATE_OFFICIAL_TRADE_PROXIMITY":
       return `State official trade overlap`;
-    case 'INGESTION_HEALTH':
-      return `Ingestion health: ${p.source_name ?? 'a source'} ${p.event_type ?? 'event'}`;
+    case "INGESTION_HEALTH":
+      return `Ingestion health: ${p.source_name ?? "a source"} ${p.event_type ?? "event"}`;
     default:
       return kind;
   }
@@ -268,7 +303,9 @@ function alertSummary(kind: string, payload: Record<string, unknown>): string {
 export function adaptAlert(w: WireAlert): UiAlert {
   const payload = (w.payload ?? {}) as Record<string, unknown>;
   const memberIdRaw = (payload.official_id ?? payload.member_id) as string | undefined;
-  const tickerRaw = (payload.ticker_symbol ?? payload.symbol ?? payload.company_name) as string | undefined;
+  const tickerRaw = (payload.ticker_symbol ?? payload.symbol ?? payload.company_name) as
+    | string
+    | undefined;
   return {
     id: String(w.id),
     kind: w.kind,
@@ -277,7 +314,7 @@ export function adaptAlert(w: WireAlert): UiAlert {
     member_id: w.official_id ?? memberIdRaw,
     ticker: tickerRaw,
     created_at: w.created_at,
-    dismissed: !!w.dismissed_at || w.status === 'RESOLVED' || w.status === 'EXPIRED',
+    dismissed: !!w.dismissed_at || w.status === "RESOLVED" || w.status === "EXPIRED",
     payload,
   };
 }
@@ -300,18 +337,20 @@ export function adaptPredictiveFeedItem(w: WirePredictiveFeedItem): SignalFeedIt
     (r.scotus_overlap_member_official_id as string | null | undefined) ??
     (r.staffer_proximity_staffer_official_id as string | null | undefined) ??
     (r.state_official_proximity_state_official_id as string | null | undefined) ??
-    '';
+    "";
   const memberName =
     (r.vote_inconsistency_official_name as string | undefined) ??
     (r.contract_proximity_official_name as string | undefined) ??
     (r.lobbying_overlay_official_name as string | undefined) ??
-    'Member';
+    "Member";
   const ticker =
     (r.vote_inconsistency_company_name as string | undefined) ??
     (r.lobbying_overlay_client_name as string | undefined) ??
-    (r.contract_proximity_aggregated_count != null ? `${r.contract_proximity_aggregated_count} contracts` : undefined) ??
-    (w.cluster?.ticker?.symbol ?? undefined) ??
-    '—';
+    (r.contract_proximity_aggregated_count != null
+      ? `${r.contract_proximity_aggregated_count} contracts`
+      : undefined) ??
+    w.cluster?.ticker?.symbol ??
+    "—";
   const txnId =
     (r.vote_inconsistency_transaction_id as number | null | undefined) ??
     (r.hearing_proximity_transaction_id as number | null | undefined) ??
@@ -323,9 +362,9 @@ export function adaptPredictiveFeedItem(w: WirePredictiveFeedItem): SignalFeedIt
     null;
   return {
     id: `predictive:${k}:${w.occurred_at}:${txnId ?? Math.random().toString(36).slice(2, 8)}`,
-    kind: 'predictive',
+    kind: "predictive",
     signal_type: k,
-    member_id: officialId ?? '',
+    member_id: officialId ?? "",
     member_name: memberName,
     ticker,
     score: w.score,
@@ -340,11 +379,11 @@ export function adaptReactiveFeedItem(w: WireTransaction): SignalFeedItem {
   const overlap = w.jurisdiction_overlap?.flag ?? false;
   return {
     id: `reactive:${w.id}`,
-    kind: 'reactive',
-    signal_type: (overlap ? 'jurisdiction_overlap' : (w.transaction_type ?? 'TRADE')),
+    kind: "reactive",
+    signal_type: overlap ? "jurisdiction_overlap" : (w.transaction_type ?? "TRADE"),
     member_id: w.official.id,
     member_name: w.official.full_name,
-    ticker: w.ticker?.symbol ?? '—',
+    ticker: w.ticker?.symbol ?? "—",
     score: overlap ? 1 : 0,
     created_at: w.filed_at ?? w.transaction_date,
     transaction_id: String(w.id),
