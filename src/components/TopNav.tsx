@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
-import { Bell, Calendar, Search } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { listAlerts, listMembers, listTickerSymbols } from '@/api/client';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Activity, Bell, Calendar, Search } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getIngestionHealth, listAlerts, listMembers, listTickerSymbols } from "@/api/client";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   CommandDialog,
   CommandEmpty,
@@ -12,35 +12,36 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { useGlobalFilter, RANGE_LABEL, type DateRangePreset } from '@/lib/filter-store';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/command";
+import { useGlobalFilter, RANGE_LABEL, type DateRangePreset } from "@/lib/filter-store";
+import { cn } from "@/lib/utils";
 
 const NAV = [
-  { to: '/', label: 'Home' },
-  { to: '/members', label: 'Members' },
-  { to: '/committees', label: 'Committees' },
-  { to: '/clusters', label: 'Clusters' },
-  { to: '/leaderboards', label: 'Leaderboards' },
-  { to: '/backtest', label: 'Backtest' },
-  { to: '/alerts', label: 'Alerts' },
+  { to: "/", label: "Home" },
+  { to: "/members", label: "Members" },
+  { to: "/committees", label: "Committees" },
+  { to: "/clusters", label: "Clusters" },
+  { to: "/leaderboards", label: "Leaderboards" },
+  { to: "/backtest", label: "Backtest" },
+  { to: "/alerts", label: "Alerts" },
+  { to: "/news", label: "News" },
 ] as const;
 
 function NavLinks() {
-  const path = useRouterState({ select: s => s.location.pathname });
+  const path = useRouterState({ select: (s) => s.location.pathname });
   return (
     <nav className="flex items-center gap-1">
-      {NAV.map(item => {
-        const active = item.to === '/' ? path === '/' : path.startsWith(item.to);
+      {NAV.map((item) => {
+        const active = item.to === "/" ? path === "/" : path.startsWith(item.to);
         return (
           <Link
             key={item.to}
             to={item.to}
             className={cn(
-              'rounded px-2.5 py-1 text-xs uppercase tracking-wider transition-colors',
+              "rounded px-2.5 py-1 text-xs uppercase tracking-wider transition-colors",
               active
-                ? 'bg-[var(--bg-2)] text-[var(--text-primary)]'
-                : 'text-[var(--text-secondary)] hover:bg-[var(--bg-2)] hover:text-[var(--text-primary)]',
+                ? "bg-[var(--bg-2)] text-[var(--text-primary)]"
+                : "text-[var(--text-secondary)] hover:bg-[var(--bg-2)] hover:text-[var(--text-primary)]",
             )}
           >
             {item.label}
@@ -53,7 +54,7 @@ function NavLinks() {
 
 function FilterChip() {
   const f = useGlobalFilter();
-  const ranges: DateRangePreset[] = ['7d', '30d', '90d', '180d', '365d'];
+  const ranges: DateRangePreset[] = ["7d", "30d", "90d", "180d", "365d"];
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -64,26 +65,33 @@ function FilterChip() {
         >
           <Calendar className="h-3 w-3" />
           <span className="num">{RANGE_LABEL[f.range]}</span>
-          {(f.chamber !== 'all' || f.owner !== 'all') && (
+          {(f.chamber !== "all" || f.owner !== "all") && (
             <span className="ml-1 rounded bg-[var(--cyan)]/20 px-1 text-[10px] text-[var(--cyan)]">
-              {[f.chamber !== 'all' && 'chmbr', f.owner !== 'all' && 'ownr'].filter(Boolean).join(' ')}
+              {[f.chamber !== "all" && "chmbr", f.owner !== "all" && "ownr"]
+                .filter(Boolean)
+                .join(" ")}
             </span>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-72 bg-[var(--bg-2)] border-[var(--border)] p-3 space-y-3">
+      <PopoverContent
+        align="end"
+        className="w-72 bg-[var(--bg-2)] border-[var(--border)] p-3 space-y-3"
+      >
         <div>
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">Range</div>
+          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+            Range
+          </div>
           <div className="flex flex-wrap gap-1">
-            {ranges.map(r => (
+            {ranges.map((r) => (
               <button
                 key={r}
                 onClick={() => f.set({ range: r })}
                 className={cn(
-                  'num rounded px-2 py-1 text-xs ring-1',
+                  "num rounded px-2 py-1 text-xs ring-1",
                   f.range === r
-                    ? 'bg-[var(--cyan)]/20 text-[var(--cyan)] ring-[var(--cyan)]/30'
-                    : 'bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)] hover:text-[var(--text-primary)]',
+                    ? "bg-[var(--cyan)]/20 text-[var(--cyan)] ring-[var(--cyan)]/30"
+                    : "bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)] hover:text-[var(--text-primary)]",
                 )}
               >
                 {r}
@@ -92,17 +100,19 @@ function FilterChip() {
           </div>
         </div>
         <div>
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">Chamber</div>
+          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+            Chamber
+          </div>
           <div className="flex gap-1">
-            {(['all', 'house', 'senate'] as const).map(c => (
+            {(["all", "house", "senate"] as const).map((c) => (
               <button
                 key={c}
                 onClick={() => f.set({ chamber: c })}
                 className={cn(
-                  'rounded px-2 py-1 text-xs uppercase ring-1',
+                  "rounded px-2 py-1 text-xs uppercase ring-1",
                   f.chamber === c
-                    ? 'bg-[var(--cyan)]/20 text-[var(--cyan)] ring-[var(--cyan)]/30'
-                    : 'bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)] hover:text-[var(--text-primary)]',
+                    ? "bg-[var(--cyan)]/20 text-[var(--cyan)] ring-[var(--cyan)]/30"
+                    : "bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)] hover:text-[var(--text-primary)]",
                 )}
               >
                 {c}
@@ -111,17 +121,19 @@ function FilterChip() {
           </div>
         </div>
         <div>
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">Owner</div>
+          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+            Owner
+          </div>
           <div className="flex flex-wrap gap-1">
-            {(['all', 'self', 'spouse', 'dependent', 'joint'] as const).map(o => (
+            {(["all", "self", "spouse", "dependent", "joint"] as const).map((o) => (
               <button
                 key={o}
                 onClick={() => f.set({ owner: o })}
                 className={cn(
-                  'rounded px-2 py-1 text-xs uppercase ring-1',
+                  "rounded px-2 py-1 text-xs uppercase ring-1",
                   f.owner === o
-                    ? 'bg-[var(--cyan)]/20 text-[var(--cyan)] ring-[var(--cyan)]/30'
-                    : 'bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)] hover:text-[var(--text-primary)]',
+                    ? "bg-[var(--cyan)]/20 text-[var(--cyan)] ring-[var(--cyan)]/30"
+                    : "bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)] hover:text-[var(--text-primary)]",
                 )}
               >
                 {o}
@@ -137,18 +149,24 @@ function FilterChip() {
 function CmdK() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const { data: members } = useQuery({ queryKey: ['members-cmdk'], queryFn: () => listMembers({ limit: 999 }) });
-  const { data: tickers } = useQuery({ queryKey: ['tickers-cmdk'], queryFn: () => listTickerSymbols() });
+  const { data: members } = useQuery({
+    queryKey: ["members-cmdk"],
+    queryFn: () => listMembers({ limit: 999 }),
+  });
+  const { data: tickers } = useQuery({
+    queryKey: ["tickers-cmdk"],
+    queryFn: () => listTickerSymbols(),
+  });
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setOpen(o => !o);
+        setOpen((o) => !o);
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   return (
@@ -166,28 +184,30 @@ function CmdK() {
         <CommandList>
           <CommandEmpty>No results.</CommandEmpty>
           <CommandGroup heading="Members">
-            {members?.items.slice(0, 30).map(m => (
+            {members?.items.slice(0, 30).map((m) => (
               <CommandItem
                 key={m.id}
                 value={`${m.name} ${m.state} ${m.chamber}`}
                 onSelect={() => {
                   setOpen(false);
-                  navigate({ to: '/members/$id', params: { id: m.id } });
+                  navigate({ to: "/members/$id", params: { id: m.id } });
                 }}
               >
                 <span>{m.name}</span>
-                <span className="ml-auto text-[10px] text-[var(--text-secondary)] num">{m.party}·{m.state}</span>
+                <span className="ml-auto text-[10px] text-[var(--text-secondary)] num">
+                  {m.party}·{m.state}
+                </span>
               </CommandItem>
             ))}
           </CommandGroup>
           <CommandGroup heading="Tickers">
-            {tickers?.map(t => (
+            {tickers?.map((t) => (
               <CommandItem
                 key={t.symbol}
                 value={`${t.symbol} ${t.company_name}`}
                 onSelect={() => {
                   setOpen(false);
-                  navigate({ to: '/tickers/$symbol', params: { symbol: t.symbol } });
+                  navigate({ to: "/tickers/$symbol", params: { symbol: t.symbol } });
                 }}
               >
                 <span className="num">{t.symbol}</span>
@@ -204,13 +224,13 @@ function CmdK() {
 function AlertBell() {
   const navigate = useNavigate();
   const { data } = useQuery({
-    queryKey: ['alerts-unread'],
-    queryFn: () => listAlerts({ status: 'OPEN', limit: 100 }),
+    queryKey: ["alerts-unread"],
+    queryFn: () => listAlerts({ status: "OPEN", limit: 100 }),
   });
   const count = data?.items.length ?? 0;
   return (
     <button
-      onClick={() => navigate({ to: '/alerts', search: { status: 'OPEN', page: 1 } })}
+      onClick={() => navigate({ to: "/alerts", search: { status: "OPEN", page: 1 } })}
       className="relative flex h-7 w-7 items-center justify-center rounded text-[var(--text-secondary)] hover:bg-[var(--bg-2)] hover:text-[var(--text-primary)]"
     >
       <Bell className="h-3.5 w-3.5" />
@@ -223,6 +243,36 @@ function AlertBell() {
   );
 }
 
+// Small ops indicator. Pings /admin/ingestion/health every 60s in the
+// background (cached by react-query so /admin/health reuses the same query).
+// Renders an amber dot when any source is DEGRADED so operators can see
+// trouble without opening the page.
+function HealthDot() {
+  const { data } = useQuery({
+    queryKey: ["admin-health"],
+    queryFn: getIngestionHealth,
+    refetchInterval: 60_000,
+  });
+  const sources = data?.sources ?? [];
+  const degraded = sources.filter((s) => s.health_status === "DEGRADED").length;
+  const tone = degraded > 0 ? "text-[var(--warning)]" : "text-[var(--text-secondary)]";
+  return (
+    <Link
+      to="/admin/health"
+      title={`Ingestion health · ${sources.length} sources${degraded ? ` · ${degraded} degraded` : ""}`}
+      className={cn(
+        "relative flex h-7 w-7 items-center justify-center rounded hover:bg-[var(--bg-2)] hover:text-[var(--text-primary)]",
+        tone,
+      )}
+    >
+      <Activity className="h-3.5 w-3.5" />
+      {degraded > 0 && (
+        <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[var(--warning)]" />
+      )}
+    </Link>
+  );
+}
+
 export function TopNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--bg-0)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--bg-0)]/80">
@@ -232,10 +282,13 @@ export function TopNav() {
           <span className="text-xs font-semibold uppercase tracking-[0.18em]">CongressTrade</span>
           <span className="num text-[10px] text-[var(--text-tertiary)]">v0.1</span>
         </Link>
-        <div className="ml-2"><NavLinks /></div>
+        <div className="ml-2">
+          <NavLinks />
+        </div>
         <div className="ml-auto flex items-center gap-2">
           <CmdK />
           <FilterChip />
+          <HealthDot />
           <AlertBell />
         </div>
       </div>

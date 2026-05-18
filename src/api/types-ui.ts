@@ -36,6 +36,11 @@ export interface HearingProximityBucket {
   count: number;
 }
 
+export interface MemberCommitteeRef {
+  id: string;
+  name: string;
+}
+
 export interface MemberOut {
   id: string;
   bioguide_id: string;
@@ -45,7 +50,7 @@ export interface MemberOut {
   chamber: Chamber;
   district: number | null;
   tenure_years: number;
-  committees: string[];
+  committees: MemberCommitteeRef[];
   scores: MemberScores;
   alpha_series: DatedValue[];
   sector_tilt: SectorTiltSlice[];

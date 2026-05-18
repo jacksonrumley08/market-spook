@@ -31,6 +31,7 @@ import type {
   MemberAlphaResponse,
   MemberDistrictConcentration,
   MemberOut as WireMember,
+  NewsEventOut,
   Page as WirePage,
   PredictiveFeedItem as WirePredictiveFeedItem,
   TransactionOut as WireTransaction,
@@ -90,6 +91,7 @@ const ENDPOINTS = {
   feedPredictive: "/feed/predictive",
   feedReactive: "/feed/reactive",
   ingestionHealth: "/admin/ingestion/health",
+  newsRecent: "/news/recent",
 };
 
 async function realFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -523,4 +525,32 @@ export async function getReactiveFeed(): Promise<ReactiveFeedItem[]> {
 export async function getIngestionHealth(): Promise<IngestionHealthResponse> {
   if (API_CONFIG.useMocks) return mockIngestionHealth as IngestionHealthResponse;
   return realFetch(ENDPOINTS.ingestionHealth);
+}
+
+// ---------- News (Slice 11 — GDELT) ----------
+// Offset-paginated; backend returns Page<NewsEventOut>. Wire shape is what
+// the page renders directly — no adapter needed.
+export async function listNews(
+  opts: {
+    limit?: number;
+    offset?: number;
+    company_id?: string;
+    official_id?: string;
+    since?: string;
+  } = {},
+): Promise<{ items: NewsEventOut[]; total: number; hasMore: boolean }> {
+  const limit = opts.limit ?? 50;
+  const offset = opts.offset ?? 0;
+  const params = new URLSearchParams();
+  params.set("limit", String(Math.min(limit, 200)));
+  params.set("offset", String(offset));
+  if (opts.company_id) params.set("company_id", opts.company_id);
+  if (opts.official_id) params.set("official_id", opts.official_id);
+  if (opts.since) params.set("since", opts.since);
+  const page = await realFetch<WirePage>(`${ENDPOINTS.newsRecent}?${params}`);
+  return {
+    items: page.items as NewsEventOut[],
+    total: page.page.total ?? 0,
+    hasMore: page.page.has_more,
+  };
 }

@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { acknowledgeAlert, listAlerts } from "@/api/client";
 import {
@@ -282,6 +283,7 @@ function AlertsPage() {
                 </span>
                 <span className="flex-1 truncate text-[var(--text-primary)]">{a.summary}</span>
               </button>
+              <NewsLink alert={a} />
               {a.member_id && (
                 <Link
                   onClick={(e) => e.stopPropagation()}
@@ -363,4 +365,50 @@ function AlertsPage() {
       )}
     </div>
   );
+}
+
+// Drill-through link for alert kinds whose payload carries a source URL —
+// NEWS_TRADE_PROXIMITY (GDELT article), STATEMENT_TRADE_CONTRADICTION (member
+// statement page). Renders an external-link icon with the headline as the
+// tooltip + tone color for news. No-op for alert kinds without source_url.
+function NewsLink({ alert }: { alert: AlertOut }) {
+  const url = pickStr(alert.payload, "source_url");
+  if (!url) return null;
+  const headline = pickStr(alert.payload, "headline") ?? url;
+  const tone = pickNum(alert.payload, "tone");
+  const toneColor =
+    tone == null
+      ? "text-[var(--text-tertiary)] hover:text-[var(--cyan)]"
+      : tone < -1
+        ? "text-[var(--negative)] hover:text-[var(--cyan)]"
+        : tone > 1
+          ? "text-[var(--positive)] hover:text-[var(--cyan)]"
+          : "text-[var(--text-secondary)] hover:text-[var(--cyan)]";
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer noopener"
+      onClick={(e) => e.stopPropagation()}
+      title={headline}
+      className={cn("flex h-4 w-4 items-center justify-center", toneColor)}
+    >
+      <ExternalLink className="h-3 w-3" />
+    </a>
+  );
+}
+
+function pickStr(o: Record<string, unknown>, k: string): string | null {
+  const v = o[k];
+  return typeof v === "string" && v.length > 0 ? v : null;
+}
+
+function pickNum(o: Record<string, unknown>, k: string): number | null {
+  const v = o[k];
+  if (typeof v === "number") return v;
+  if (typeof v === "string") {
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
 }

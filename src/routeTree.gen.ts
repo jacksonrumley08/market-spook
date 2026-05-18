@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as NewsRouteImport } from './routes/news'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
 import { Route as ClustersRouteImport } from './routes/clusters'
 import { Route as BacktestRouteImport } from './routes/backtest'
@@ -19,7 +20,13 @@ import { Route as CommitteesIndexRouteImport } from './routes/committees.index'
 import { Route as TickersSymbolRouteImport } from './routes/tickers.$symbol'
 import { Route as MembersIdRouteImport } from './routes/members.$id'
 import { Route as CommitteesIdRouteImport } from './routes/committees.$id'
+import { Route as AdminHealthRouteImport } from './routes/admin.health'
 
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaderboardsRoute = LeaderboardsRouteImport.update({
   id: '/leaderboards',
   path: '/leaderboards',
@@ -70,6 +77,11 @@ const CommitteesIdRoute = CommitteesIdRouteImport.update({
   path: '/committees/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminHealthRoute = AdminHealthRouteImport.update({
+  id: '/admin/health',
+  path: '/admin/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -77,6 +89,8 @@ export interface FileRoutesByFullPath {
   '/backtest': typeof BacktestRoute
   '/clusters': typeof ClustersRoute
   '/leaderboards': typeof LeaderboardsRoute
+  '/news': typeof NewsRoute
+  '/admin/health': typeof AdminHealthRoute
   '/committees/$id': typeof CommitteesIdRoute
   '/members/$id': typeof MembersIdRoute
   '/tickers/$symbol': typeof TickersSymbolRoute
@@ -89,6 +103,8 @@ export interface FileRoutesByTo {
   '/backtest': typeof BacktestRoute
   '/clusters': typeof ClustersRoute
   '/leaderboards': typeof LeaderboardsRoute
+  '/news': typeof NewsRoute
+  '/admin/health': typeof AdminHealthRoute
   '/committees/$id': typeof CommitteesIdRoute
   '/members/$id': typeof MembersIdRoute
   '/tickers/$symbol': typeof TickersSymbolRoute
@@ -102,6 +118,8 @@ export interface FileRoutesById {
   '/backtest': typeof BacktestRoute
   '/clusters': typeof ClustersRoute
   '/leaderboards': typeof LeaderboardsRoute
+  '/news': typeof NewsRoute
+  '/admin/health': typeof AdminHealthRoute
   '/committees/$id': typeof CommitteesIdRoute
   '/members/$id': typeof MembersIdRoute
   '/tickers/$symbol': typeof TickersSymbolRoute
@@ -116,6 +134,8 @@ export interface FileRouteTypes {
     | '/backtest'
     | '/clusters'
     | '/leaderboards'
+    | '/news'
+    | '/admin/health'
     | '/committees/$id'
     | '/members/$id'
     | '/tickers/$symbol'
@@ -128,6 +148,8 @@ export interface FileRouteTypes {
     | '/backtest'
     | '/clusters'
     | '/leaderboards'
+    | '/news'
+    | '/admin/health'
     | '/committees/$id'
     | '/members/$id'
     | '/tickers/$symbol'
@@ -140,6 +162,8 @@ export interface FileRouteTypes {
     | '/backtest'
     | '/clusters'
     | '/leaderboards'
+    | '/news'
+    | '/admin/health'
     | '/committees/$id'
     | '/members/$id'
     | '/tickers/$symbol'
@@ -153,6 +177,8 @@ export interface RootRouteChildren {
   BacktestRoute: typeof BacktestRoute
   ClustersRoute: typeof ClustersRoute
   LeaderboardsRoute: typeof LeaderboardsRoute
+  NewsRoute: typeof NewsRoute
+  AdminHealthRoute: typeof AdminHealthRoute
   CommitteesIdRoute: typeof CommitteesIdRoute
   MembersIdRoute: typeof MembersIdRoute
   TickersSymbolRoute: typeof TickersSymbolRoute
@@ -162,6 +188,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leaderboards': {
       id: '/leaderboards'
       path: '/leaderboards'
@@ -232,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommitteesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/health': {
+      id: '/admin/health'
+      path: '/admin/health'
+      fullPath: '/admin/health'
+      preLoaderRoute: typeof AdminHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -241,6 +281,8 @@ const rootRouteChildren: RootRouteChildren = {
   BacktestRoute: BacktestRoute,
   ClustersRoute: ClustersRoute,
   LeaderboardsRoute: LeaderboardsRoute,
+  NewsRoute: NewsRoute,
+  AdminHealthRoute: AdminHealthRoute,
   CommitteesIdRoute: CommitteesIdRoute,
   MembersIdRoute: MembersIdRoute,
   TickersSymbolRoute: TickersSymbolRoute,

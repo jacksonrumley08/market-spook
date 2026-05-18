@@ -104,7 +104,8 @@ function MemberDetail() {
     );
   }
 
-  const cmtNames = (committees ?? []).filter((c) => member.committees.includes(c.id));
+  const committeeIds = new Set(member.committees.map((c) => c.id));
+  const cmtNames = (committees ?? []).filter((c) => committeeIds.has(c.id));
   const alphaByHorizon = new Map((alphaQuery.data?.points ?? []).map((p) => [p.horizon_days, p]));
   const alpha90 = alphaByHorizon.get(90);
   const alpha180 = alphaByHorizon.get(180);

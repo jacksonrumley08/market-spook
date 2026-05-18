@@ -81,7 +81,10 @@ export function adaptMember(w: WireMember): UiMember {
     chamber: chamberToUi(w.chamber),
     district: w.district ?? null,
     tenure_years: w.tenure_years ?? 0,
-    committees: (w.committees ?? []).map((c) => c.committee.id),
+    committees: (w.committees ?? []).map((c) => ({
+      id: c.committee.id,
+      name: c.committee.name ?? c.committee.id,
+    })),
     scores: { ...EMPTY_SCORES },
     alpha_series: [],
     sector_tilt: [],
