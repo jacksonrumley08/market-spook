@@ -36,7 +36,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <div className="text-xs uppercase tracking-wider text-[var(--negative)]">runtime error</div>
         <div className="mt-2 font-mono text-xs text-[var(--text-secondary)]">{error.message}</div>
         <button
-          onClick={() => { router.invalidate(); reset(); }}
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
           className="mt-4 rounded bg-[var(--bg-2)] px-3 py-1 text-xs text-[var(--text-primary)] hover:bg-[var(--border)]"
         >
           retry
@@ -52,7 +55,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "CongressTrade Intelligence" },
-      { name: "description", content: "Internal: signals from US government officials' stock trades." },
+      {
+        name: "description",
+        content: "Internal: signals from US government officials' stock trades.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
     links: [

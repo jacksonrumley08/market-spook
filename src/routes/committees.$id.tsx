@@ -130,8 +130,8 @@ function CommitteeDetail() {
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-3">
-        <div className="col-span-7 rounded border border-[var(--border)] bg-[var(--bg-1)]">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
+        <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] lg:col-span-7">
           <div className="flex items-center justify-between border-b border-[var(--border)] px-3 py-2 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
             <span>Active roster</span>
             <span className="num text-[var(--text-tertiary)]">{sortedMembers.length}</span>
@@ -141,57 +141,59 @@ function CommitteeDetail() {
               No active members on file.
             </div>
           ) : (
-            <table className="w-full text-xs">
-              <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
-                <tr className="border-b border-[var(--border)]">
-                  <th className="px-3 py-1.5 text-left">Member</th>
-                  <th className="px-3 py-1.5 text-left">Role</th>
-                  <th className="px-3 py-1.5 text-left">Aff.</th>
-                  <th className="px-3 py-1.5 text-left">Bioguide</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedMembers.map((m) => (
-                  <tr
-                    key={m.member_id}
-                    className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
-                  >
-                    <td className="px-3 py-1.5">
-                      <Link
-                        to="/members/$id"
-                        params={{ id: m.member_id }}
-                        className="text-[var(--text-primary)] hover:underline"
-                      >
-                        {m.name}
-                      </Link>
-                    </td>
-                    <td className="px-3 py-1.5">
-                      <span
-                        className={
-                          "rounded px-1.5 py-0.5 text-[10px] uppercase " + roleClass(m.role)
-                        }
-                      >
-                        {roleLabel(m.role)}
-                      </span>
-                    </td>
-                    <td className="px-3 py-1.5">
-                      {m.party ? (
-                        <PartyChip party={m.party} state={m.state ?? undefined} />
-                      ) : (
-                        <span className="text-[10px] text-[var(--text-tertiary)]">—</span>
-                      )}
-                    </td>
-                    <td className="num px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
-                      {m.bioguide_id ?? "—"}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
+                  <tr className="border-b border-[var(--border)]">
+                    <th className="px-3 py-1.5 text-left">Member</th>
+                    <th className="px-3 py-1.5 text-left">Role</th>
+                    <th className="px-3 py-1.5 text-left">Aff.</th>
+                    <th className="px-3 py-1.5 text-left">Bioguide</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {sortedMembers.map((m) => (
+                    <tr
+                      key={m.member_id}
+                      className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
+                    >
+                      <td className="px-3 py-1.5">
+                        <Link
+                          to="/members/$id"
+                          params={{ id: m.member_id }}
+                          className="text-[var(--text-primary)] hover:underline"
+                        >
+                          {m.name}
+                        </Link>
+                      </td>
+                      <td className="px-3 py-1.5">
+                        <span
+                          className={
+                            "rounded px-1.5 py-0.5 text-[10px] uppercase " + roleClass(m.role)
+                          }
+                        >
+                          {roleLabel(m.role)}
+                        </span>
+                      </td>
+                      <td className="px-3 py-1.5">
+                        {m.party ? (
+                          <PartyChip party={m.party} state={m.state ?? undefined} />
+                        ) : (
+                          <span className="text-[10px] text-[var(--text-tertiary)]">—</span>
+                        )}
+                      </td>
+                      <td className="num px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
+                        {m.bioguide_id ?? "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
-        <div className="col-span-5 space-y-3">
+        <div className="space-y-3 lg:col-span-5">
           <div className="rounded border border-[var(--border)] bg-[var(--bg-1)]">
             <div className="flex items-center justify-between border-b border-[var(--border)] px-3 py-2 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
               <span>Recent hearings</span>

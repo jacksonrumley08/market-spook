@@ -108,124 +108,126 @@ function HealthPage() {
       )}
 
       <div className="rounded border border-[var(--border)] bg-[var(--bg-1)]">
-        <table className="w-full text-xs">
-          <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
-            <tr className="border-b border-[var(--border)]">
-              <th className="px-3 py-1.5 text-left">Source</th>
-              <th className="px-3 py-1.5 text-left">Kind</th>
-              <th className="px-3 py-1.5 text-left">Status</th>
-              <th className="px-3 py-1.5 text-right">Failures</th>
-              <th className="px-3 py-1.5 text-left">Last run</th>
-              <th className="px-3 py-1.5 text-left">Last success</th>
-              <th className="px-3 py-1.5 text-left">Last failure</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={7} className="p-3">
-                  <SkeletonRows rows={8} cols={7} />
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
+              <tr className="border-b border-[var(--border)]">
+                <th className="px-3 py-1.5 text-left">Source</th>
+                <th className="px-3 py-1.5 text-left">Kind</th>
+                <th className="px-3 py-1.5 text-left">Status</th>
+                <th className="px-3 py-1.5 text-right">Failures</th>
+                <th className="px-3 py-1.5 text-left">Last run</th>
+                <th className="px-3 py-1.5 text-left">Last success</th>
+                <th className="px-3 py-1.5 text-left">Last failure</th>
               </tr>
-            )}
-            {!isLoading && sorted.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-3 py-8 text-center text-[var(--text-tertiary)]">
-                  No sources reporting.
-                </td>
-              </tr>
-            )}
-            {sorted.map((s) => {
-              const isExpanded = expanded === s.name;
-              return (
-                <Fragment key={s.name}>
-                  <tr
-                    onClick={() => setExpanded(isExpanded ? null : s.name)}
-                    className="cursor-pointer border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
-                  >
-                    <td className="num px-3 py-1.5 text-[var(--text-primary)]">{s.name}</td>
-                    <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                      {s.kind}
-                    </td>
-                    <td className="px-3 py-1.5">
-                      <span
+            </thead>
+            <tbody>
+              {isLoading && (
+                <tr>
+                  <td colSpan={7} className="p-3">
+                    <SkeletonRows rows={8} cols={7} />
+                  </td>
+                </tr>
+              )}
+              {!isLoading && sorted.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-3 py-8 text-center text-[var(--text-tertiary)]">
+                    No sources reporting.
+                  </td>
+                </tr>
+              )}
+              {sorted.map((s) => {
+                const isExpanded = expanded === s.name;
+                return (
+                  <Fragment key={s.name}>
+                    <tr
+                      onClick={() => setExpanded(isExpanded ? null : s.name)}
+                      className="cursor-pointer border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
+                    >
+                      <td className="num px-3 py-1.5 text-[var(--text-primary)]">{s.name}</td>
+                      <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
+                        {s.kind}
+                      </td>
+                      <td className="px-3 py-1.5">
+                        <span
+                          className={cn(
+                            "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider ring-1",
+                            statusClass(s.health_status),
+                          )}
+                        >
+                          {s.health_status}
+                        </span>
+                      </td>
+                      <td
                         className={cn(
-                          "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider ring-1",
-                          statusClass(s.health_status),
+                          "num px-3 py-1.5 text-right",
+                          s.consecutive_failures > 0
+                            ? "text-[var(--warning)]"
+                            : "text-[var(--text-tertiary)]",
                         )}
                       >
-                        {s.health_status}
-                      </span>
-                    </td>
-                    <td
-                      className={cn(
-                        "num px-3 py-1.5 text-right",
-                        s.consecutive_failures > 0
-                          ? "text-[var(--warning)]"
-                          : "text-[var(--text-tertiary)]",
-                      )}
-                    >
-                      {s.consecutive_failures}
-                    </td>
-                    <td className="px-3 py-1.5">
-                      {s.last_run_at ? (
-                        <RelTime iso={s.last_run_at} />
-                      ) : (
-                        <span className="text-[var(--text-tertiary)]">—</span>
-                      )}
-                    </td>
-                    <td className="px-3 py-1.5">
-                      {s.last_success_at ? (
-                        <RelTime iso={s.last_success_at} />
-                      ) : (
-                        <span className="text-[var(--text-tertiary)]">—</span>
-                      )}
-                    </td>
-                    <td className="px-3 py-1.5">
-                      {s.last_failure_at ? (
-                        <RelTime iso={s.last_failure_at} />
-                      ) : (
-                        <span className="text-[var(--text-tertiary)]">—</span>
-                      )}
-                    </td>
-                  </tr>
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.tr
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className="border-b border-[var(--border)]/40 bg-[var(--bg-0)]"
-                      >
-                        <td colSpan={7} className="p-3">
-                          <div className="grid grid-cols-1 gap-2 text-[11px] md:grid-cols-2">
-                            <div>
-                              <div className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)]">
-                                Last failure reason
+                        {s.consecutive_failures}
+                      </td>
+                      <td className="px-3 py-1.5">
+                        {s.last_run_at ? (
+                          <RelTime iso={s.last_run_at} />
+                        ) : (
+                          <span className="text-[var(--text-tertiary)]">—</span>
+                        )}
+                      </td>
+                      <td className="px-3 py-1.5">
+                        {s.last_success_at ? (
+                          <RelTime iso={s.last_success_at} />
+                        ) : (
+                          <span className="text-[var(--text-tertiary)]">—</span>
+                        )}
+                      </td>
+                      <td className="px-3 py-1.5">
+                        {s.last_failure_at ? (
+                          <RelTime iso={s.last_failure_at} />
+                        ) : (
+                          <span className="text-[var(--text-tertiary)]">—</span>
+                        )}
+                      </td>
+                    </tr>
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.tr
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="border-b border-[var(--border)]/40 bg-[var(--bg-0)]"
+                        >
+                          <td colSpan={7} className="p-3">
+                            <div className="grid grid-cols-1 gap-2 text-[11px] md:grid-cols-2">
+                              <div>
+                                <div className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)]">
+                                  Last failure reason
+                                </div>
+                                <div className="num mt-1 text-[var(--text-secondary)]">
+                                  {s.last_failure_reason ?? "—"}
+                                </div>
                               </div>
-                              <div className="num mt-1 text-[var(--text-secondary)]">
-                                {s.last_failure_reason ?? "—"}
+                              <div>
+                                <div className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)]">
+                                  Raw payload
+                                </div>
+                                <pre className="num mt-1 overflow-auto text-[10px] text-[var(--text-tertiary)]">
+                                  {JSON.stringify(s, null, 2)}
+                                </pre>
                               </div>
                             </div>
-                            <div>
-                              <div className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)]">
-                                Raw payload
-                              </div>
-                              <pre className="num mt-1 overflow-auto text-[10px] text-[var(--text-tertiary)]">
-                                {JSON.stringify(s, null, 2)}
-                              </pre>
-                            </div>
-                          </div>
-                        </td>
-                      </motion.tr>
-                    )}
-                  </AnimatePresence>
-                </Fragment>
-              );
-            })}
-          </tbody>
-        </table>
+                          </td>
+                        </motion.tr>
+                      )}
+                    </AnimatePresence>
+                  </Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

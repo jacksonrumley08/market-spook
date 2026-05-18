@@ -98,7 +98,7 @@ function Dashboard() {
       </div>
 
       {/* Top row */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         <StatCard
           accent="text-[var(--cyan)]"
           icon={<Activity className="h-3 w-3" />}
@@ -178,7 +178,7 @@ function Dashboard() {
       </div>
 
       {/* Two-column feeds */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         <FeedColumn
           title="Predictive feed"
           accent="text-[var(--predictive)]"
@@ -198,75 +198,77 @@ function Dashboard() {
         <div className="border-b border-[var(--border)] px-3 py-2 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
           Recent flagged trades
         </div>
-        <table className="w-full text-xs">
-          <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
-            <tr className="border-b border-[var(--border)]">
-              <th className="px-3 py-1.5 text-left">Member</th>
-              <th className="px-3 py-1.5 text-left">Ticker</th>
-              <th className="px-3 py-1.5 text-left">Type</th>
-              <th className="px-3 py-1.5 text-right">Amount</th>
-              <th className="px-3 py-1.5 text-left">Owner</th>
-              <th className="px-3 py-1.5 text-left">Flags</th>
-              <th className="px-3 py-1.5 text-right">When</th>
-            </tr>
-          </thead>
-          <tbody>
-            {flagged?.items.map((t) => (
-              <motion.tr
-                key={t.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.08 }}
-                className="border-b border-[var(--border)]/50 hover:bg-[var(--bg-2)]"
-              >
-                <td className="px-3 py-1.5">
-                  <Link
-                    to="/members/$id"
-                    params={{ id: t.member_id }}
-                    className="text-[var(--text-primary)] hover:underline"
-                  >
-                    {t.member_name}
-                  </Link>
-                </td>
-                <td className="px-3 py-1.5">
-                  <Link
-                    to="/tickers/$symbol"
-                    params={{ symbol: t.ticker }}
-                    className="num text-[var(--cyan)] hover:underline"
-                  >
-                    {t.ticker}
-                  </Link>
-                </td>
-                <td className="px-3 py-1.5">
-                  <span
-                    className={
-                      "num text-[10px] uppercase " +
-                      (t.type === "buy"
-                        ? "text-[var(--positive)]"
-                        : t.type === "sell"
-                          ? "text-[var(--negative)]"
-                          : "text-[var(--text-secondary)]")
-                    }
-                  >
-                    {t.type}
-                  </span>
-                </td>
-                <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                  {fmtUSDRange(t.amount_min, t.amount_max)}
-                </td>
-                <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                  {t.owner_type}
-                </td>
-                <td className="px-3 py-1.5">
-                  <FlagRow flags={t.flags} />
-                </td>
-                <td className="px-3 py-1.5 text-right">
-                  <RelTime iso={t.transaction_date} />
-                </td>
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-xs">
+            <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
+              <tr className="border-b border-[var(--border)]">
+                <th className="px-3 py-1.5 text-left">Member</th>
+                <th className="px-3 py-1.5 text-left">Ticker</th>
+                <th className="px-3 py-1.5 text-left">Type</th>
+                <th className="px-3 py-1.5 text-right">Amount</th>
+                <th className="px-3 py-1.5 text-left">Owner</th>
+                <th className="px-3 py-1.5 text-left">Flags</th>
+                <th className="px-3 py-1.5 text-right">When</th>
+              </tr>
+            </thead>
+            <tbody>
+              {flagged?.items.map((t) => (
+                <motion.tr
+                  key={t.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.08 }}
+                  className="border-b border-[var(--border)]/50 hover:bg-[var(--bg-2)]"
+                >
+                  <td className="px-3 py-1.5">
+                    <Link
+                      to="/members/$id"
+                      params={{ id: t.member_id }}
+                      className="text-[var(--text-primary)] hover:underline"
+                    >
+                      {t.member_name}
+                    </Link>
+                  </td>
+                  <td className="px-3 py-1.5">
+                    <Link
+                      to="/tickers/$symbol"
+                      params={{ symbol: t.ticker }}
+                      className="num text-[var(--cyan)] hover:underline"
+                    >
+                      {t.ticker}
+                    </Link>
+                  </td>
+                  <td className="px-3 py-1.5">
+                    <span
+                      className={
+                        "num text-[10px] uppercase " +
+                        (t.type === "buy"
+                          ? "text-[var(--positive)]"
+                          : t.type === "sell"
+                            ? "text-[var(--negative)]"
+                            : "text-[var(--text-secondary)]")
+                      }
+                    >
+                      {t.type}
+                    </span>
+                  </td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                    {fmtUSDRange(t.amount_min, t.amount_max)}
+                  </td>
+                  <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
+                    {t.owner_type}
+                  </td>
+                  <td className="px-3 py-1.5">
+                    <FlagRow flags={t.flags} />
+                  </td>
+                  <td className="px-3 py-1.5 text-right">
+                    <RelTime iso={t.transaction_date} />
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -118,6 +118,22 @@ const FEED_TO_ALERT_KIND: Record<string, string> = {
   // hearing_proximity has no alert enum — falls through to a neutral chip.
 };
 
+/**
+ * Bridge the case + naming drift between the two kind enums the backend
+ * ships. This is the permanent client-side normalizer; a backend rewrite to
+ * unify the enums was rejected as more invasive than the gain.
+ *
+ * Drift summary (as of 2026-05-18):
+ * - `/feed/predictive` items ship lowercase, sometimes-shortened discriminators
+ *   (e.g. `vote_trade_inconsistency`, `cluster`).
+ * - `/alerts` rows ship the canonical AlertKindEnum string (uppercase, full,
+ *   e.g. `VOTE_TRADE_INCONSISTENCY`, `CLUSTER_THRESHOLD`).
+ *
+ * The two enums were defined independently in different slices (Slice 3 for
+ * the predictive feed, Slice 11 for the alert engine) and the gap predates
+ * v1's freeze. FEED_TO_ALERT_KIND maps the asymmetric cases; everything
+ * else is a simple toUpperCase().
+ */
 export function normalizeKind(kind: string): string {
   if (kind in FEED_TO_ALERT_KIND) return FEED_TO_ALERT_KIND[kind];
   return kind.toUpperCase();

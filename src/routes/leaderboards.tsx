@@ -177,132 +177,134 @@ function LeaderboardsPage() {
       </div>
 
       <div className="rounded border border-[var(--border)] bg-[var(--bg-1)]">
-        <table className="w-full text-xs">
-          <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
-            <tr className="border-b border-[var(--border)]">
-              <th className="px-3 py-1.5 text-left">#</th>
-              <th className="px-3 py-1.5 text-left">Member</th>
-              <th className="px-3 py-1.5 text-left">Aff.</th>
-              <th className="px-3 py-1.5 text-right" title="Active tab metric">
-                {meta.label}
-              </th>
-              <th className="px-3 py-1.5 text-right" title="Composite score (Slice-9)">
-                Composite
-              </th>
-              <th className="px-3 py-1.5 text-right" title="Lifetime trades">
-                n
-              </th>
-              <th className="px-3 py-1.5 text-right" title="Alerts (lifetime / critical)">
-                Alerts
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={7} className="p-3">
-                  <SkeletonRows rows={12} cols={7} />
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
+              <tr className="border-b border-[var(--border)]">
+                <th className="px-3 py-1.5 text-left">#</th>
+                <th className="px-3 py-1.5 text-left">Member</th>
+                <th className="px-3 py-1.5 text-left">Aff.</th>
+                <th className="px-3 py-1.5 text-right" title="Active tab metric">
+                  {meta.label}
+                </th>
+                <th className="px-3 py-1.5 text-right" title="Composite score (Slice-9)">
+                  Composite
+                </th>
+                <th className="px-3 py-1.5 text-right" title="Lifetime trades">
+                  n
+                </th>
+                <th className="px-3 py-1.5 text-right" title="Alerts (lifetime / critical)">
+                  Alerts
+                </th>
               </tr>
-            )}
-            {!isLoading && rows.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-[var(--text-tertiary)]">
-                  No leaderboard data.
-                </td>
-              </tr>
-            )}
-            {rows.map((r) => {
-              const insufficient = !r.has_sufficient_sample;
-              const score = meta.select(r);
-              const q1 = inQ1(r);
-              return (
-                <tr
-                  key={r.member_id}
-                  className={cn(
-                    "border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]",
-                    insufficient && "opacity-60",
-                    q1 && "bg-[var(--cyan)]/[0.04]",
-                  )}
-                >
-                  <td className="num px-3 py-1.5 text-[var(--text-tertiary)]">
-                    {insufficient ? "—" : (r.rank_overall ?? r.rank)}
-                  </td>
-                  <td className="px-3 py-1.5">
-                    <Link
-                      to="/members/$id"
-                      params={{ id: r.member_id }}
-                      className="text-[var(--text-primary)] hover:underline"
-                    >
-                      {r.member_name}
-                    </Link>
-                    {insufficient && (
-                      <span
-                        className="num ml-2 text-[9px] uppercase text-[var(--text-tertiary)]"
-                        title="Insufficient sample (n < 10 lifetime trades). Rank suppressed."
-                      >
-                        small n={r.n_trades_lifetime}
-                      </span>
-                    )}
-                    {q1 && (
-                      <span
-                        className="num ml-2 rounded bg-[var(--cyan)]/15 px-1 py-0.5 text-[8px] font-mono uppercase text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30"
-                        title="Top quartile on this metric — Slice-7 analysis: ~66% of critical signals concentrate here."
-                      >
-                        Q1
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-3 py-1.5">
-                    <PartyChip party={r.party} state={r.state} chamber={r.chamber} />
-                  </td>
-                  <td
-                    className={cn(
-                      "num px-3 py-1.5 text-right",
-                      score == null
-                        ? "text-[var(--text-tertiary)]"
-                        : (meta.cls?.(score) ?? "text-[var(--text-primary)]"),
-                    )}
-                  >
-                    {score == null ? "—" : meta.fmt(score)}
-                  </td>
-                  <td
-                    className={cn(
-                      "num px-3 py-1.5 text-right",
-                      r.composite_score == null
-                        ? "text-[var(--text-tertiary)]"
-                        : "text-[var(--text-secondary)]",
-                    )}
-                  >
-                    {r.composite_score == null ? "—" : r.composite_score.toFixed(3)}
-                  </td>
-                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                    {r.n_trades_lifetime}
-                    {r.n_trades_90d > 0 && (
-                      <span
-                        className="num ml-1 text-[9px] text-[var(--text-tertiary)]"
-                        title="trailing 90d"
-                      >
-                        +{r.n_trades_90d}
-                      </span>
-                    )}
-                  </td>
-                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                    {r.alert_count_lifetime}
-                    {r.critical_alert_count_lifetime > 0 && (
-                      <span
-                        className="num ml-1 rounded bg-[var(--red)]/15 px-1 text-[9px] text-[var(--red)] ring-1 ring-[var(--red)]/30"
-                        title="critical-severity alerts (lifetime)"
-                      >
-                        {r.critical_alert_count_lifetime}
-                      </span>
-                    )}
+            </thead>
+            <tbody>
+              {isLoading && (
+                <tr>
+                  <td colSpan={7} className="p-3">
+                    <SkeletonRows rows={12} cols={7} />
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              )}
+              {!isLoading && rows.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-3 py-6 text-center text-[var(--text-tertiary)]">
+                    No leaderboard data.
+                  </td>
+                </tr>
+              )}
+              {rows.map((r) => {
+                const insufficient = !r.has_sufficient_sample;
+                const score = meta.select(r);
+                const q1 = inQ1(r);
+                return (
+                  <tr
+                    key={r.member_id}
+                    className={cn(
+                      "border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]",
+                      insufficient && "opacity-60",
+                      q1 && "bg-[var(--cyan)]/[0.04]",
+                    )}
+                  >
+                    <td className="num px-3 py-1.5 text-[var(--text-tertiary)]">
+                      {insufficient ? "—" : (r.rank_overall ?? r.rank)}
+                    </td>
+                    <td className="px-3 py-1.5">
+                      <Link
+                        to="/members/$id"
+                        params={{ id: r.member_id }}
+                        className="text-[var(--text-primary)] hover:underline"
+                      >
+                        {r.member_name}
+                      </Link>
+                      {insufficient && (
+                        <span
+                          className="num ml-2 text-[9px] uppercase text-[var(--text-tertiary)]"
+                          title="Insufficient sample (n < 10 lifetime trades). Rank suppressed."
+                        >
+                          small n={r.n_trades_lifetime}
+                        </span>
+                      )}
+                      {q1 && (
+                        <span
+                          className="num ml-2 rounded bg-[var(--cyan)]/15 px-1 py-0.5 text-[8px] font-mono uppercase text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30"
+                          title="Top quartile on this metric — Slice-7 analysis: ~66% of critical signals concentrate here."
+                        >
+                          Q1
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-3 py-1.5">
+                      <PartyChip party={r.party} state={r.state} chamber={r.chamber} />
+                    </td>
+                    <td
+                      className={cn(
+                        "num px-3 py-1.5 text-right",
+                        score == null
+                          ? "text-[var(--text-tertiary)]"
+                          : (meta.cls?.(score) ?? "text-[var(--text-primary)]"),
+                      )}
+                    >
+                      {score == null ? "—" : meta.fmt(score)}
+                    </td>
+                    <td
+                      className={cn(
+                        "num px-3 py-1.5 text-right",
+                        r.composite_score == null
+                          ? "text-[var(--text-tertiary)]"
+                          : "text-[var(--text-secondary)]",
+                      )}
+                    >
+                      {r.composite_score == null ? "—" : r.composite_score.toFixed(3)}
+                    </td>
+                    <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                      {r.n_trades_lifetime}
+                      {r.n_trades_90d > 0 && (
+                        <span
+                          className="num ml-1 text-[9px] text-[var(--text-tertiary)]"
+                          title="trailing 90d"
+                        >
+                          +{r.n_trades_90d}
+                        </span>
+                      )}
+                    </td>
+                    <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                      {r.alert_count_lifetime}
+                      {r.critical_alert_count_lifetime > 0 && (
+                        <span
+                          className="num ml-1 rounded bg-[var(--red)]/15 px-1 text-[9px] text-[var(--red)] ring-1 ring-[var(--red)]/30"
+                          title="critical-severity alerts (lifetime)"
+                        >
+                          {r.critical_alert_count_lifetime}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

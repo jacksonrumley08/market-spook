@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Activity, Bell, Calendar, Search } from "lucide-react";
+import { Activity, Bell, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getIngestionHealth, listAlerts, listMembers, listTickerSymbols } from "@/api/client";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   CommandDialog,
   CommandEmpty,
@@ -13,7 +11,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { useGlobalFilter, RANGE_LABEL, type DateRangePreset } from "@/lib/filter-store";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -29,8 +26,10 @@ const NAV = [
 
 function NavLinks() {
   const path = useRouterState({ select: (s) => s.location.pathname });
+  // Horizontal-scroll on small viewports so all nav entries remain reachable;
+  // at md+ the row fits without scrolling.
   return (
-    <nav className="flex items-center gap-1">
+    <nav className="flex items-center gap-1 overflow-x-auto whitespace-nowrap">
       {NAV.map((item) => {
         const active = item.to === "/" ? path === "/" : path.startsWith(item.to);
         return (
@@ -49,100 +48,6 @@ function NavLinks() {
         );
       })}
     </nav>
-  );
-}
-
-function FilterChip() {
-  const f = useGlobalFilter();
-  const ranges: DateRangePreset[] = ["7d", "30d", "90d", "180d", "365d"];
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-7 gap-1.5 border-[var(--border)] bg-[var(--bg-1)] text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-2)] hover:text-[var(--text-primary)]"
-        >
-          <Calendar className="h-3 w-3" />
-          <span className="num">{RANGE_LABEL[f.range]}</span>
-          {(f.chamber !== "all" || f.owner !== "all") && (
-            <span className="ml-1 rounded bg-[var(--cyan)]/20 px-1 text-[10px] text-[var(--cyan)]">
-              {[f.chamber !== "all" && "chmbr", f.owner !== "all" && "ownr"]
-                .filter(Boolean)
-                .join(" ")}
-            </span>
-          )}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="end"
-        className="w-72 bg-[var(--bg-2)] border-[var(--border)] p-3 space-y-3"
-      >
-        <div>
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-            Range
-          </div>
-          <div className="flex flex-wrap gap-1">
-            {ranges.map((r) => (
-              <button
-                key={r}
-                onClick={() => f.set({ range: r })}
-                className={cn(
-                  "num rounded px-2 py-1 text-xs ring-1",
-                  f.range === r
-                    ? "bg-[var(--cyan)]/20 text-[var(--cyan)] ring-[var(--cyan)]/30"
-                    : "bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)] hover:text-[var(--text-primary)]",
-                )}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div>
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-            Chamber
-          </div>
-          <div className="flex gap-1">
-            {(["all", "house", "senate"] as const).map((c) => (
-              <button
-                key={c}
-                onClick={() => f.set({ chamber: c })}
-                className={cn(
-                  "rounded px-2 py-1 text-xs uppercase ring-1",
-                  f.chamber === c
-                    ? "bg-[var(--cyan)]/20 text-[var(--cyan)] ring-[var(--cyan)]/30"
-                    : "bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)] hover:text-[var(--text-primary)]",
-                )}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div>
-          <div className="mb-1.5 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-            Owner
-          </div>
-          <div className="flex flex-wrap gap-1">
-            {(["all", "self", "spouse", "dependent", "joint"] as const).map((o) => (
-              <button
-                key={o}
-                onClick={() => f.set({ owner: o })}
-                className={cn(
-                  "rounded px-2 py-1 text-xs uppercase ring-1",
-                  f.owner === o
-                    ? "bg-[var(--cyan)]/20 text-[var(--cyan)] ring-[var(--cyan)]/30"
-                    : "bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)] hover:text-[var(--text-primary)]",
-                )}
-              >
-                {o}
-              </button>
-            ))}
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
   );
 }
 
@@ -287,7 +192,6 @@ export function TopNav() {
         </div>
         <div className="ml-auto flex items-center gap-2">
           <CmdK />
-          <FilterChip />
           <HealthDot />
           <AlertBell />
         </div>

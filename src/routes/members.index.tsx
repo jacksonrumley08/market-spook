@@ -166,124 +166,128 @@ function MembersIndex() {
       </div>
 
       <div className="rounded border border-[var(--border)] bg-[var(--bg-1)]">
-        <table className="w-full text-xs">
-          <thead className="sticky top-12 z-10 bg-[var(--bg-1)]">
-            <tr className="border-b border-[var(--border)]">
-              <Th sort={sort} asc={asc} k="name" onClick={onSort}>
-                Member
-              </Th>
-              <Th sort={sort} asc={asc} k="party" onClick={onSort}>
-                Party
-              </Th>
-              <Th sort={sort} asc={asc} k="state" onClick={onSort}>
-                State
-              </Th>
-              <Th sort={sort} asc={asc} k="alpha_90d" onClick={onSort} align="right">
-                α 90d
-              </Th>
-              <Th sort={sort} asc={asc} k="composite_score" onClick={onSort} align="right">
-                Composite
-              </Th>
-              <Th sort={sort} asc={asc} k="n_trades_lifetime" onClick={onSort} align="right">
-                n_trades
-              </Th>
-              <Th sort={sort} asc={asc} k="alert_count_lifetime" onClick={onSort} align="right">
-                Alerts
-              </Th>
-              <th className="px-3 py-1.5 text-left text-[10px] uppercase text-[var(--text-tertiary)]">
-                Committees
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={8} className="p-3">
-                  <SkeletonRows rows={10} cols={8} />
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="sticky top-12 z-10 bg-[var(--bg-1)]">
+              <tr className="border-b border-[var(--border)]">
+                <Th sort={sort} asc={asc} k="name" onClick={onSort}>
+                  Member
+                </Th>
+                <Th sort={sort} asc={asc} k="party" onClick={onSort}>
+                  Party
+                </Th>
+                <Th sort={sort} asc={asc} k="state" onClick={onSort}>
+                  State
+                </Th>
+                <Th sort={sort} asc={asc} k="alpha_90d" onClick={onSort} align="right">
+                  α 90d
+                </Th>
+                <Th sort={sort} asc={asc} k="composite_score" onClick={onSort} align="right">
+                  Composite
+                </Th>
+                <Th sort={sort} asc={asc} k="n_trades_lifetime" onClick={onSort} align="right">
+                  n_trades
+                </Th>
+                <Th sort={sort} asc={asc} k="alert_count_lifetime" onClick={onSort} align="right">
+                  Alerts
+                </Th>
+                <th className="px-3 py-1.5 text-left text-[10px] uppercase text-[var(--text-tertiary)]">
+                  Committees
+                </th>
               </tr>
-            )}
-            {!isLoading && sortedItems.length === 0 && (
-              <tr>
-                <td colSpan={8} className="px-3 py-8 text-center text-[var(--text-tertiary)]">
-                  No members match this search.
-                </td>
-              </tr>
-            )}
-            {sortedItems.map(({ m, lb }) => {
-              const alpha90: number | null = lb?.alpha_90d ?? null;
-              const composite = lb?.composite_score ?? null;
-              const nTrades = lb?.n_trades_lifetime ?? 0;
-              const alertCount = lb?.alert_count_lifetime ?? 0;
-              const insufficient = lb != null && !lb.has_sufficient_sample;
-              return (
-                <tr
-                  key={m.id}
-                  className="border-b border-[var(--border)]/50 hover:bg-[var(--bg-2)]"
-                >
-                  <td className="px-3 py-1.5">
-                    <Link
-                      to="/members/$id"
-                      params={{ id: m.id }}
-                      className="text-[var(--text-primary)] hover:underline"
-                    >
-                      {m.name}
-                    </Link>
-                    {insufficient && (
-                      <span
-                        className="ml-1.5 text-[9px] text-[var(--text-tertiary)]"
-                        title="Insufficient sample (n_trades_lifetime < 10) — scores may be unreliable."
-                      >
-                        small-n
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-3 py-1.5">
-                    <PartyChip party={m.party} state={m.state} chamber={m.chamber} />
-                  </td>
-                  <td className="num px-3 py-1.5 text-[var(--text-secondary)]">
-                    {m.state}
-                    {m.district != null && `-${m.district}`}
-                  </td>
-                  <td
-                    className={cn(
-                      "num px-3 py-1.5 text-right",
-                      alpha90 == null ? "text-[var(--text-tertiary)]" : signClass(alpha90),
-                    )}
-                  >
-                    {alpha90 == null ? "—" : fmtPctRaw(alpha90 * 100, 2)}
-                  </td>
-                  <td
-                    className={cn(
-                      "num px-3 py-1.5 text-right",
-                      composite == null
-                        ? "text-[var(--text-tertiary)]"
-                        : "text-[var(--text-primary)]",
-                    )}
-                  >
-                    {composite == null ? "—" : composite.toFixed(3)}
-                  </td>
-                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                    {nTrades.toLocaleString()}
-                  </td>
-                  <td
-                    className={cn(
-                      "num px-3 py-1.5 text-right",
-                      alertCount > 0
-                        ? "text-[var(--text-secondary)]"
-                        : "text-[var(--text-tertiary)]",
-                    )}
-                  >
-                    {alertCount.toLocaleString()}
-                  </td>
-                  <td className="max-w-[260px] truncate px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
-                    {m.committees.length === 0 ? "—" : m.committees.map((c) => c.name).join(" · ")}
+            </thead>
+            <tbody>
+              {isLoading && (
+                <tr>
+                  <td colSpan={8} className="p-3">
+                    <SkeletonRows rows={10} cols={8} />
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              )}
+              {!isLoading && sortedItems.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-3 py-8 text-center text-[var(--text-tertiary)]">
+                    No members match this search.
+                  </td>
+                </tr>
+              )}
+              {sortedItems.map(({ m, lb }) => {
+                const alpha90: number | null = lb?.alpha_90d ?? null;
+                const composite = lb?.composite_score ?? null;
+                const nTrades = lb?.n_trades_lifetime ?? 0;
+                const alertCount = lb?.alert_count_lifetime ?? 0;
+                const insufficient = lb != null && !lb.has_sufficient_sample;
+                return (
+                  <tr
+                    key={m.id}
+                    className="border-b border-[var(--border)]/50 hover:bg-[var(--bg-2)]"
+                  >
+                    <td className="px-3 py-1.5">
+                      <Link
+                        to="/members/$id"
+                        params={{ id: m.id }}
+                        className="text-[var(--text-primary)] hover:underline"
+                      >
+                        {m.name}
+                      </Link>
+                      {insufficient && (
+                        <span
+                          className="ml-1.5 text-[9px] text-[var(--text-tertiary)]"
+                          title="Insufficient sample (n_trades_lifetime < 10) — scores may be unreliable."
+                        >
+                          small-n
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-3 py-1.5">
+                      <PartyChip party={m.party} state={m.state} chamber={m.chamber} />
+                    </td>
+                    <td className="num px-3 py-1.5 text-[var(--text-secondary)]">
+                      {m.state}
+                      {m.district != null && `-${m.district}`}
+                    </td>
+                    <td
+                      className={cn(
+                        "num px-3 py-1.5 text-right",
+                        alpha90 == null ? "text-[var(--text-tertiary)]" : signClass(alpha90),
+                      )}
+                    >
+                      {alpha90 == null ? "—" : fmtPctRaw(alpha90 * 100, 2)}
+                    </td>
+                    <td
+                      className={cn(
+                        "num px-3 py-1.5 text-right",
+                        composite == null
+                          ? "text-[var(--text-tertiary)]"
+                          : "text-[var(--text-primary)]",
+                      )}
+                    >
+                      {composite == null ? "—" : composite.toFixed(3)}
+                    </td>
+                    <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                      {nTrades.toLocaleString()}
+                    </td>
+                    <td
+                      className={cn(
+                        "num px-3 py-1.5 text-right",
+                        alertCount > 0
+                          ? "text-[var(--text-secondary)]"
+                          : "text-[var(--text-tertiary)]",
+                      )}
+                    >
+                      {alertCount.toLocaleString()}
+                    </td>
+                    <td className="max-w-[260px] truncate px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
+                      {m.committees.length === 0
+                        ? "—"
+                        : m.committees.map((c) => c.name).join(" · ")}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {pageCount > 1 && (

@@ -328,67 +328,69 @@ function ComparisonPanel({
         Comparison
       </div>
       <div className="rounded border border-[var(--border)] bg-[var(--bg-1)]">
-        <table className="w-full text-xs">
-          <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
-            <tr className="border-b border-[var(--border)]">
-              <th className="px-3 py-1.5 text-left">Strategy</th>
-              <th className="px-3 py-1.5 text-right">n_trades</th>
-              <th className="px-3 py-1.5 text-right">Total return</th>
-              <th className="px-3 py-1.5 text-right">Sharpe</th>
-              <th className="px-3 py-1.5 text-right">Sortino</th>
-              <th className="px-3 py-1.5 text-right">Max DD</th>
-              <th className="px-3 py-1.5 text-right">Win rate</th>
-              <th className="px-3 py-1.5 text-right">Avg hold</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(({ preset, run }) => (
-              <tr
-                key={preset.key}
-                className={clsx(
-                  "border-b border-[var(--border)]/40",
-                  preset.headline && "bg-[var(--cyan)]/5",
-                  preset.is_null_baseline && "bg-[var(--bg-2)]/40",
-                )}
-              >
-                <td className="px-3 py-1.5 text-[var(--text-primary)]">{preset.name}</td>
-                <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                  {run.metrics?.n_trades ?? 0}
-                </td>
-                <td
-                  className={clsx(
-                    "num px-3 py-1.5 text-right",
-                    run.metrics?.total_return != null && signClass(run.metrics.total_return),
-                  )}
-                >
-                  {run.metrics?.total_return != null
-                    ? fmtPctRaw(run.metrics.total_return * 100)
-                    : "—"}
-                </td>
-                <td
-                  className={clsx(
-                    "num px-3 py-1.5 text-right",
-                    preset.headline && "text-[var(--cyan)]",
-                  )}
-                >
-                  {run.metrics?.sharpe?.toFixed(3) ?? "—"}
-                </td>
-                <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                  {run.metrics?.sortino?.toFixed(3) ?? "—"}
-                </td>
-                <td className="num px-3 py-1.5 text-right text-[var(--negative)]">
-                  {run.metrics ? `-${(run.metrics.max_drawdown * 100).toFixed(2)}%` : "—"}
-                </td>
-                <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                  {run.metrics ? `${(run.metrics.win_rate * 100).toFixed(1)}%` : "—"}
-                </td>
-                <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                  {run.metrics ? `${run.metrics.avg_holding_days.toFixed(0)}d` : "—"}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
+              <tr className="border-b border-[var(--border)]">
+                <th className="px-3 py-1.5 text-left">Strategy</th>
+                <th className="px-3 py-1.5 text-right">n_trades</th>
+                <th className="px-3 py-1.5 text-right">Total return</th>
+                <th className="px-3 py-1.5 text-right">Sharpe</th>
+                <th className="px-3 py-1.5 text-right">Sortino</th>
+                <th className="px-3 py-1.5 text-right">Max DD</th>
+                <th className="px-3 py-1.5 text-right">Win rate</th>
+                <th className="px-3 py-1.5 text-right">Avg hold</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map(({ preset, run }) => (
+                <tr
+                  key={preset.key}
+                  className={clsx(
+                    "border-b border-[var(--border)]/40",
+                    preset.headline && "bg-[var(--cyan)]/5",
+                    preset.is_null_baseline && "bg-[var(--bg-2)]/40",
+                  )}
+                >
+                  <td className="px-3 py-1.5 text-[var(--text-primary)]">{preset.name}</td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                    {run.metrics?.n_trades ?? 0}
+                  </td>
+                  <td
+                    className={clsx(
+                      "num px-3 py-1.5 text-right",
+                      run.metrics?.total_return != null && signClass(run.metrics.total_return),
+                    )}
+                  >
+                    {run.metrics?.total_return != null
+                      ? fmtPctRaw(run.metrics.total_return * 100)
+                      : "—"}
+                  </td>
+                  <td
+                    className={clsx(
+                      "num px-3 py-1.5 text-right",
+                      preset.headline && "text-[var(--cyan)]",
+                    )}
+                  >
+                    {run.metrics?.sharpe?.toFixed(3) ?? "—"}
+                  </td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                    {run.metrics?.sortino?.toFixed(3) ?? "—"}
+                  </td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--negative)]">
+                    {run.metrics ? `-${(run.metrics.max_drawdown * 100).toFixed(2)}%` : "—"}
+                  </td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                    {run.metrics ? `${(run.metrics.win_rate * 100).toFixed(1)}%` : "—"}
+                  </td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                    {run.metrics ? `${run.metrics.avg_holding_days.toFixed(0)}d` : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {sharpeGap != null && (
           <div className="border-t border-[var(--cyan)]/30 bg-[var(--cyan)]/5 px-3 py-3">
@@ -625,54 +627,59 @@ function TradesTable({
           No trades persisted for this run.
         </div>
       ) : (
-        <table className="w-full text-xs">
-          <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
-            <tr className="border-b border-[var(--border)]">
-              <th className="px-3 py-1.5 text-left">Ticker</th>
-              <th className="px-3 py-1.5 text-left">Member</th>
-              <th className="px-3 py-1.5 text-left">Entry</th>
-              <th className="px-3 py-1.5 text-left">Exit</th>
-              <th className="px-3 py-1.5 text-right">Entry px</th>
-              <th className="px-3 py-1.5 text-right">Exit px</th>
-              <th className="px-3 py-1.5 text-right">P&amp;L</th>
-              <th className="px-3 py-1.5 text-right">Return</th>
-              <th className="px-3 py-1.5 text-left">Source</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((t) => (
-              <tr key={t.id} className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]">
-                <td className="num px-3 py-1.5 text-[var(--cyan)]">
-                  {t.ticker_symbol ?? t.ticker_id.slice(0, 8)}
-                </td>
-                <td className="px-3 py-1.5 text-[var(--text-secondary)]">
-                  {t.official_name ?? "—"}
-                </td>
-                <td className="num px-3 py-1.5 text-[var(--text-secondary)]">{t.entry_date}</td>
-                <td className="num px-3 py-1.5 text-[var(--text-secondary)]">{t.exit_date}</td>
-                <td className="num px-3 py-1.5 text-right text-[var(--text-tertiary)]">
-                  {parseFloat(t.entry_price).toFixed(2)}
-                </td>
-                <td className="num px-3 py-1.5 text-right text-[var(--text-tertiary)]">
-                  {parseFloat(t.exit_price).toFixed(2)}
-                </td>
-                <td className={clsx("num px-3 py-1.5 text-right", signClass(parseFloat(t.pnl)))}>
-                  {fmtUSD(parseFloat(t.pnl))}
-                </td>
-                <td className={clsx("num px-3 py-1.5 text-right", signClass(t.return_pct))}>
-                  {fmtPctRaw(t.return_pct * 100)}
-                </td>
-                <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                  {t.source_alert_id
-                    ? `alert #${t.source_alert_id}`
-                    : t.source_transaction_id
-                      ? `tx #${t.source_transaction_id}`
-                      : "—"}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
+              <tr className="border-b border-[var(--border)]">
+                <th className="px-3 py-1.5 text-left">Ticker</th>
+                <th className="px-3 py-1.5 text-left">Member</th>
+                <th className="px-3 py-1.5 text-left">Entry</th>
+                <th className="px-3 py-1.5 text-left">Exit</th>
+                <th className="px-3 py-1.5 text-right">Entry px</th>
+                <th className="px-3 py-1.5 text-right">Exit px</th>
+                <th className="px-3 py-1.5 text-right">P&amp;L</th>
+                <th className="px-3 py-1.5 text-right">Return</th>
+                <th className="px-3 py-1.5 text-left">Source</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {items.map((t) => (
+                <tr
+                  key={t.id}
+                  className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
+                >
+                  <td className="num px-3 py-1.5 text-[var(--cyan)]">
+                    {t.ticker_symbol ?? t.ticker_id.slice(0, 8)}
+                  </td>
+                  <td className="px-3 py-1.5 text-[var(--text-secondary)]">
+                    {t.official_name ?? "—"}
+                  </td>
+                  <td className="num px-3 py-1.5 text-[var(--text-secondary)]">{t.entry_date}</td>
+                  <td className="num px-3 py-1.5 text-[var(--text-secondary)]">{t.exit_date}</td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--text-tertiary)]">
+                    {parseFloat(t.entry_price).toFixed(2)}
+                  </td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--text-tertiary)]">
+                    {parseFloat(t.exit_price).toFixed(2)}
+                  </td>
+                  <td className={clsx("num px-3 py-1.5 text-right", signClass(parseFloat(t.pnl)))}>
+                    {fmtUSD(parseFloat(t.pnl))}
+                  </td>
+                  <td className={clsx("num px-3 py-1.5 text-right", signClass(t.return_pct))}>
+                    {fmtPctRaw(t.return_pct * 100)}
+                  </td>
+                  <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
+                    {t.source_alert_id
+                      ? `alert #${t.source_alert_id}`
+                      : t.source_transaction_id
+                        ? `tx #${t.source_transaction_id}`
+                        : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
       {(offset > 0 || hasMore) && (
         <div className="flex items-center justify-end gap-1 border-t border-[var(--border)] px-3 py-2 text-[11px]">

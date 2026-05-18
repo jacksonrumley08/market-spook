@@ -174,7 +174,7 @@ function MemberDetail() {
               {member.tenure_years}y tenure · {member.bioguide_id}
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             <HeaderScore
               label="α 180d"
               loading={alphaQuery.isLoading}
@@ -232,9 +232,9 @@ function MemberDetail() {
         </div>
       )}
 
-      <div className="grid grid-cols-12 gap-3">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
         {/* Left col */}
-        <div className="col-span-5 space-y-3">
+        <div className="space-y-3 lg:col-span-5">
           <AlphaPanel
             loading={alphaQuery.isLoading}
             error={alphaQuery.error as Error | null}
@@ -343,52 +343,54 @@ function MemberDetail() {
         </div>
 
         {/* Right col */}
-        <div className="col-span-7 space-y-3">
+        <div className="space-y-3 lg:col-span-7">
           <div className="rounded border border-[var(--border)] bg-[var(--bg-1)]">
             <div className="border-b border-[var(--border)] px-3 py-2 text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
               Holdings (cumulative buy − sell)
             </div>
-            <table className="w-full text-xs">
-              <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
-                <tr className="border-b border-[var(--border)]">
-                  <th className="px-3 py-1.5 text-left">Ticker</th>
-                  <th className="px-3 py-1.5 text-left">Company</th>
-                  <th className="px-3 py-1.5 text-right">Net est.</th>
-                  <th className="px-3 py-1.5 text-right">Trades</th>
-                  <th className="px-3 py-1.5 text-right">Last</th>
-                </tr>
-              </thead>
-              <tbody>
-                {holdingsArr.slice(0, 12).map((h) => (
-                  <tr
-                    key={h.ticker}
-                    className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
-                  >
-                    <td className="px-3 py-1.5">
-                      <Link
-                        to="/tickers/$symbol"
-                        params={{ symbol: h.ticker }}
-                        className="num text-[var(--cyan)] hover:underline"
-                      >
-                        {h.ticker}
-                      </Link>
-                    </td>
-                    <td className="px-3 py-1.5 text-[var(--text-secondary)] truncate">
-                      {h.company}
-                    </td>
-                    <td className={"num px-3 py-1.5 text-right " + signClass(h.net)}>
-                      {h.net >= 0 ? "+" : ""}${(Math.abs(h.net) / 1000).toFixed(0)}K
-                    </td>
-                    <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                      {h.count}
-                    </td>
-                    <td className="px-3 py-1.5 text-right">
-                      <RelTime iso={h.lastDate} />
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
+                  <tr className="border-b border-[var(--border)]">
+                    <th className="px-3 py-1.5 text-left">Ticker</th>
+                    <th className="px-3 py-1.5 text-left">Company</th>
+                    <th className="px-3 py-1.5 text-right">Net est.</th>
+                    <th className="px-3 py-1.5 text-right">Trades</th>
+                    <th className="px-3 py-1.5 text-right">Last</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {holdingsArr.slice(0, 12).map((h) => (
+                    <tr
+                      key={h.ticker}
+                      className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
+                    >
+                      <td className="px-3 py-1.5">
+                        <Link
+                          to="/tickers/$symbol"
+                          params={{ symbol: h.ticker }}
+                          className="num text-[var(--cyan)] hover:underline"
+                        >
+                          {h.ticker}
+                        </Link>
+                      </td>
+                      <td className="px-3 py-1.5 text-[var(--text-secondary)] truncate">
+                        {h.company}
+                      </td>
+                      <td className={"num px-3 py-1.5 text-right " + signClass(h.net)}>
+                        {h.net >= 0 ? "+" : ""}${(Math.abs(h.net) / 1000).toFixed(0)}K
+                      </td>
+                      <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                        {h.count}
+                      </td>
+                      <td className="px-3 py-1.5 text-right">
+                        <RelTime iso={h.lastDate} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div className="rounded border border-[var(--border)] bg-[var(--bg-1)]">
@@ -396,60 +398,62 @@ function MemberDetail() {
               Recent trades
             </div>
             <div className="max-h-[420px] overflow-auto">
-              <table className="w-full text-xs">
-                <thead className="sticky top-0 bg-[var(--bg-1)] text-[10px] uppercase text-[var(--text-tertiary)]">
-                  <tr className="border-b border-[var(--border)]">
-                    <th className="px-3 py-1.5 text-left">Ticker</th>
-                    <th className="px-3 py-1.5 text-left">Type</th>
-                    <th className="px-3 py-1.5 text-right">Amount</th>
-                    <th className="px-3 py-1.5 text-left">Owner</th>
-                    <th className="px-3 py-1.5 text-left">Flags</th>
-                    <th className="px-3 py-1.5 text-right">When</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {txns?.items.map((t) => (
-                    <tr
-                      key={t.id}
-                      className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
-                    >
-                      <td className="px-3 py-1.5">
-                        <Link
-                          to="/tickers/$symbol"
-                          params={{ symbol: t.ticker }}
-                          className="num text-[var(--cyan)] hover:underline"
-                        >
-                          {t.ticker}
-                        </Link>
-                      </td>
-                      <td
-                        className={
-                          "px-3 py-1.5 num text-[10px] uppercase " +
-                          (t.type === "buy"
-                            ? "text-[var(--positive)]"
-                            : t.type === "sell"
-                              ? "text-[var(--negative)]"
-                              : "text-[var(--text-secondary)]")
-                        }
-                      >
-                        {t.type}
-                      </td>
-                      <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                        {fmtUSDRange(t.amount_min, t.amount_max)}
-                      </td>
-                      <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                        {t.owner_type}
-                      </td>
-                      <td className="px-3 py-1.5">
-                        <FlagRow flags={t.flags} />
-                      </td>
-                      <td className="px-3 py-1.5 text-right">
-                        <RelTime iso={t.transaction_date} />
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead className="sticky top-0 bg-[var(--bg-1)] text-[10px] uppercase text-[var(--text-tertiary)]">
+                    <tr className="border-b border-[var(--border)]">
+                      <th className="px-3 py-1.5 text-left">Ticker</th>
+                      <th className="px-3 py-1.5 text-left">Type</th>
+                      <th className="px-3 py-1.5 text-right">Amount</th>
+                      <th className="px-3 py-1.5 text-left">Owner</th>
+                      <th className="px-3 py-1.5 text-left">Flags</th>
+                      <th className="px-3 py-1.5 text-right">When</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {txns?.items.map((t) => (
+                      <tr
+                        key={t.id}
+                        className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
+                      >
+                        <td className="px-3 py-1.5">
+                          <Link
+                            to="/tickers/$symbol"
+                            params={{ symbol: t.ticker }}
+                            className="num text-[var(--cyan)] hover:underline"
+                          >
+                            {t.ticker}
+                          </Link>
+                        </td>
+                        <td
+                          className={
+                            "px-3 py-1.5 num text-[10px] uppercase " +
+                            (t.type === "buy"
+                              ? "text-[var(--positive)]"
+                              : t.type === "sell"
+                                ? "text-[var(--negative)]"
+                                : "text-[var(--text-secondary)]")
+                          }
+                        >
+                          {t.type}
+                        </td>
+                        <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                          {fmtUSDRange(t.amount_min, t.amount_max)}
+                        </td>
+                        <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
+                          {t.owner_type}
+                        </td>
+                        <td className="px-3 py-1.5">
+                          <FlagRow flags={t.flags} />
+                        </td>
+                        <td className="px-3 py-1.5 text-right">
+                          <RelTime iso={t.transaction_date} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -696,7 +700,7 @@ function ConcentrationPanel({
           N/A — no district trades on record for this member.
         </div>
       ) : (
-        <div className="mt-3 grid grid-cols-3 gap-3">
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
             <div className="num text-[10px] text-[var(--text-tertiary)]">In-district</div>
             <div className="num mt-0.5 text-lg text-[var(--text-primary)]">
@@ -795,7 +799,7 @@ function QualityPanel({
               composite
             </div>
           </div>
-          <div className="mt-3 grid grid-cols-5 gap-2 text-[11px]">
+          <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] sm:grid-cols-3 md:grid-cols-5">
             <QualityStat
               label="Lag (avg)"
               value={data.reporting_lag_avg_days}
