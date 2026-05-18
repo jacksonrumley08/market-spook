@@ -516,9 +516,10 @@ function buildDetector(w: WirePredictiveFeedItem): FeedDetector {
 }
 
 // Pulls the official UUID from whichever detector-prefixed slot the row uses.
-// For predictive items we never get a resolved member name from /feed/predictive
-// (Deferral #1 — backend B1 in the audit), so the row component renders
-// "Member" placeholder until that endpoint adds official_name.
+// As of backend PR #26 (Deferral #1 resolved), /feed/predictive resolves the
+// trader's name into the top-level `official_name` field server-side via a
+// single bulk JOIN against officials. The adapter reads that directly; this
+// helper still exists for member_id wiring (linking to /members/{id}).
 function predictiveOfficialId(w: WirePredictiveFeedItem): string | undefined {
   const r = w as unknown as Record<string, unknown>;
   return (
@@ -562,12 +563,24 @@ export function adaptPredictiveFeedItem(w: WirePredictiveFeedItem): UiPredictive
     str(r.vote_inconsistency_company_name) ??
     str(r.lobbying_overlay_client_name) ??
     w.cluster?.ticker?.symbol;
+  // Member display name: the backend now resolves the primary trader's name
+  // into w.official_name (Deferral #1 / backend PR #26). NULL for cluster
+  // items, which carry N members via w.cluster.members instead — fall back
+  // to "N members" so the row still renders a meaningful label.
+  let memberName = str(w.official_name);
+  if (!memberName) {
+    if (w.kind === "cluster" && w.cluster?.member_count) {
+      memberName = `${w.cluster.member_count} members`;
+    } else {
+      memberName = "Member"; // legacy fallback (kind we haven't extended yet)
+    }
+  }
   return {
     id: `predictive:${w.kind}:${w.occurred_at}:${txnId ?? Math.random().toString(36).slice(2, 8)}`,
     kind: "predictive",
     signal_kind: w.kind,
     member_id: memberId,
-    member_name: "Member", // Deferral #1 — see audit B1.
+    member_name: memberName,
     ticker,
     score: w.score,
     created_at: w.occurred_at,

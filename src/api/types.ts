@@ -171,6 +171,8 @@ export interface PredictiveFeedItem {
   score: number;
   /** Timestamp the signal effectively occurred — cluster.window_end, hearing.scheduled_at, or the Fed trade's transaction_date — used for feed ordering. */
   occurred_at: string;
+  /** Display name of the primary trader on the item — the member / fed-official / justice / staffer / state official whose trade (or trade-adjacent signal) triggered the row. NULL for kind='cluster' (which carries N members via nested ClusterOut.members instead of one). Resolved server-side via a single bulk JOIN against officials so the frontend doesn't N+1 /members/{id}. */
+  official_name?: string | null;
   cluster?: ClusterOut | null;
   /** Transaction id for kind='hearing_proximity' items. */
   hearing_proximity_transaction_id?: number | null;
@@ -314,6 +316,8 @@ export interface PredictiveFeedItem {
   scotus_overlap_justice_official_id?: string | null;
   /** UUID of the congressional member who traded the same ticker. */
   scotus_overlap_member_official_id?: string | null;
+  /** Display name of the congressional member; mirrors scotus_overlap_member_official_id. The justice's name lives in the top-level official_name field (justice is the primary trader). */
+  scotus_overlap_member_official_name?: string | null;
   /** judicial_transactions.id for the justice's trade. */
   scotus_overlap_judicial_transaction_id?: number | null;
   /** transactions.id for the congressional trade. */
@@ -342,6 +346,8 @@ export interface PredictiveFeedItem {
   staffer_proximity_employing_committee_id?: string | null;
   /** UUID of the staffer's employing member, when overlay_kind is MEMBER_CLUSTER or the staffer has a personal-office employment. */
   staffer_proximity_employing_member_id?: string | null;
+  /** Display name of the staffer's employing member; mirrors staffer_proximity_employing_member_id. The staffer's own name lives in the top-level official_name field. */
+  staffer_proximity_employing_member_name?: string | null;
   /** GICS sector overlap between the traded ticker's company and the employing committee's jurisdiction. Set for COMMITTEE_JURISDICTION. */
   staffer_proximity_matched_sector?: string | null;
   /** transactions.id of the employing member's matched trade (MEMBER_CLUSTER). */
@@ -364,6 +370,8 @@ export interface PredictiveFeedItem {
   state_official_proximity_company_hq_state?: string | null;
   /** UUID of the federal Congress member whose ticker overlap triggered CROSS_GOVERNMENT_CLUSTER. */
   state_official_proximity_related_federal_official_id?: string | null;
+  /** Display name of the related federal Congress member; mirrors state_official_proximity_related_federal_official_id. The state official's own name lives in the top-level official_name field. */
+  state_official_proximity_related_federal_official_name?: string | null;
   /** transactions.id of the federal member's matched trade. */
   state_official_proximity_related_federal_transaction_id?: number | null;
   /** |state_official_trade_date - federal_trade_date|, 0..30 (CROSS_GOVERNMENT_CLUSTER only). */
