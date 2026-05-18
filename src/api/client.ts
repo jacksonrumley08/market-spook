@@ -18,8 +18,12 @@ import type {
   ClusterOut as WireCluster,
   CommitteeOut as WireCommittee,
   DashboardSummary as WireDashboardSummary,
+  DisclosureDecayResponse,
+  FilingQualityBreakdown,
   IngestionHealthResponse,
   LeaderboardItem as WireLeaderboardItem,
+  MemberAlphaResponse,
+  MemberDistrictConcentration,
   MemberOut as WireMember,
   Page as WirePage,
   PredictiveFeedItem as WirePredictiveFeedItem,
@@ -58,6 +62,10 @@ import {
 const ENDPOINTS = {
   members: '/members',
   member: (id: string) => `/members/${id}`,
+  memberAlpha: (id: string) => `/members/${id}/alpha`,
+  memberDecay: (id: string) => `/members/${id}/decay`,
+  memberDistrictConcentration: (id: string) => `/members/${id}/district_concentration`,
+  memberQuality: (id: string) => `/members/${id}/quality`,
   transactionsRecent: '/transactions/recent',
   committee: (id: string) => `/committees/${id}`,
   // No backend list for /committees yet — listCommittees degrades to mocks.
@@ -154,6 +162,39 @@ export async function getMember(id: string): Promise<MemberOut> {
   }
   const wire = await realFetch<WireMember>(ENDPOINTS.member(id));
   return adaptMember(wire);
+}
+
+// Slice 7 — rolling alpha across 30/90/180/365d horizons. Returns the
+// canonical wire shape; consumers read mean_alpha/hit_rate as decimal-strings
+// and gate on n_trades for sample-size sufficiency.
+export async function getMemberAlpha(id: string): Promise<MemberAlphaResponse | null> {
+  if (API_CONFIG.useMocks) return null;
+  return safeFetch<MemberAlphaResponse | null>(ENDPOINTS.memberAlpha(id), null);
+}
+
+// SPEC §4 — post-disclosure decay curve at 0/7/14/30/60/90d.
+export async function getMemberDecay(id: string): Promise<DisclosureDecayResponse | null> {
+  if (API_CONFIG.useMocks) return null;
+  return safeFetch<DisclosureDecayResponse | null>(ENDPOINTS.memberDecay(id), null);
+}
+
+// Slice 16 — fraction of trades in companies HQ'd in the member's own district.
+// Returns null shape (district_id null, ratio null) for SENATE members or
+// House members with no district mapping.
+export async function getMemberDistrictConcentration(
+  id: string,
+): Promise<MemberDistrictConcentration | null> {
+  if (API_CONFIG.useMocks) return null;
+  return safeFetch<MemberDistrictConcentration | null>(
+    ENDPOINTS.memberDistrictConcentration(id),
+    null,
+  );
+}
+
+// Slice 9 — filing quality composite + components.
+export async function getMemberQuality(id: string): Promise<FilingQualityBreakdown | null> {
+  if (API_CONFIG.useMocks) return null;
+  return safeFetch<FilingQualityBreakdown | null>(ENDPOINTS.memberQuality(id), null);
 }
 
 // ---------- Transactions ----------
