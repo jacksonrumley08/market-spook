@@ -16,6 +16,9 @@ dist-ssr
 .nitro
 *.local
 
+# Host-mounted into the container so they don't clash
+bun-host-cache/
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

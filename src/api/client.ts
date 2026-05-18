@@ -14,10 +14,15 @@ import mockCommitteeFlowTop from './mocks/committee_flow_top.json';
 import mockIngestionHealth from './mocks/ingestion_health.json';
 
 import type {
+  AlertOut as WireAlert,
+  ClusterOut as WireCluster,
   CommitteeOut as WireCommittee,
+  DashboardSummary as WireDashboardSummary,
   IngestionHealthResponse,
+  LeaderboardItem as WireLeaderboardItem,
   MemberOut as WireMember,
   Page as WirePage,
+  PredictiveFeedItem as WirePredictiveFeedItem,
   TransactionOut as WireTransaction,
 } from './types';
 import type {
@@ -36,26 +41,33 @@ import type {
   TickerOut,
   TransactionOut,
 } from './types-ui';
-import { adaptCommittee, adaptMember, adaptTicker, adaptTransaction } from './adapters';
+import {
+  adaptAlert,
+  adaptCluster,
+  adaptCommittee,
+  adaptLeaderboardEntry,
+  adaptMember,
+  adaptPredictiveFeedItem,
+  adaptReactiveFeedItem,
+  adaptTicker,
+  adaptTransaction,
+} from './adapters';
 
-// Centralised endpoint paths. Real-API paths (when they exist) match the FastAPI routes
-// in app/api/routes/*.py. Endpoints for slices not yet shipped are listed for forward
-// reference but their fetchers degrade gracefully (see safeFetch + the empty-mock fallbacks).
+// Centralised endpoint paths. These match the FastAPI routes in
+// /home/jrumley/congresstrade/app/api/routes/*.py at master = 67f47c2.
 const ENDPOINTS = {
   members: '/members',
   member: (id: string) => `/members/${id}`,
   transactionsRecent: '/transactions/recent',
-  transaction: (id: string) => `/transactions/${id}`,
-  // Below endpoints are Slice 2+ — backend not yet built.
-  committees: '/committees',
   committee: (id: string) => `/committees/${id}`,
-  committeeFlowTop: '/committees/flow/top',
-  clusters: '/clusters',
-  ticker: (sym: string) => `/tickers/${sym}`,
-  leaderboard: (kind: string) => `/leaderboards/${kind}`,
-  alerts: '/alerts/feed',
-  alertDismiss: (id: string) => `/alerts/${id}/dismiss`,
-  backtest: '/backtest/replica',
+  // No backend list for /committees yet — listCommittees degrades to mocks.
+  // No backend /committees/flow/top — getCommitteeFlowTop returns [] in real-API mode.
+  clustersActive: '/clusters/active',
+  // No backend /tickers list/detail — ticker fetchers fall back to mocks.
+  leaderboard: '/leaderboard',
+  alerts: '/alerts',
+  alertAcknowledge: (id: string) => `/alerts/${id}/acknowledge`,
+  backtestRun: '/backtest/run',
   dashboardSummary: '/dashboard/summary',
   feedPredictive: '/feed/predictive',
   feedReactive: '/feed/reactive',
@@ -74,8 +86,9 @@ async function realFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json();
 }
 
-// Wraps fetches against endpoints whose backends aren't built yet.
-// Logs once, returns the supplied empty fallback so the UI degrades to a quiet empty state.
+// Wraps fetches against endpoints that may legitimately 404 (slices not yet
+// built). Logs once, returns the supplied fallback so the UI degrades to a
+// quiet empty state.
 async function safeFetch<T>(path: string, fallback: T, init?: RequestInit): Promise<T> {
   try {
     return await realFetch<T>(path, init);
@@ -89,9 +102,10 @@ function paginate<T>(items: T[], limit = 25, offset = 0): Paginated<T> {
   return { items: items.slice(offset, offset + limit), total: items.length, limit, offset };
 }
 
-// Translate the API's cursor-paginated Page<T> shape to the UI's offset-style Paginated<T>.
-// Real API returns total only when cheaply computable (e.g. /members). For cursor feeds
-// like /transactions/recent, total stays null — UI components must tolerate undefined.
+// Translate the API's offset/cursor-paginated Page<T> shape to the UI's
+// offset-style Paginated<T>. Real API returns total only when cheaply
+// computable (e.g. /members, /alerts). For cursor feeds like
+// /transactions/recent, total stays null — UI must tolerate undefined.
 function wirePageToPaginated<TWire, TUi>(
   page: WirePage,
   adapt: (w: TWire) => TUi,
@@ -159,9 +173,9 @@ export async function listTransactions(opts: {
     items = [...items].sort((a, b) => +new Date(b.transaction_date) - +new Date(a.transaction_date));
     return paginate(items, opts.limit ?? 25, opts.offset ?? 0);
   }
-  // Real API: /transactions/recent is cursor-paginated. has_any_flag isn't a server filter
-  // yet (Slice 1 ships overlap as a derived field on every row), so we over-fetch a bit
-  // and filter client-side.
+  // Real API: /transactions/recent is cursor-paginated. has_any_flag isn't a
+  // server filter yet (overlap ships as a derived field on every row), so we
+  // over-fetch slightly and filter client-side.
   const limit = opts.limit ?? 25;
   const offset = opts.offset ?? 0;
   const fetchLimit = opts.has_any_flag ? Math.min(200, limit * 4) : Math.min(200, limit);
@@ -182,7 +196,7 @@ export async function getTransaction(id: string): Promise<TransactionOut> {
     if (!w) throw new Error(`Transaction ${id} not found`);
     return adaptTransaction(w);
   }
-  // Backend has no /transactions/{id} yet — find via /transactions/recent and adapt.
+  // Backend has no /transactions/{id} — list-and-find via /transactions/recent.
   const page = await realFetch<WirePage>(`${ENDPOINTS.transactionsRecent}?limit=200`);
   const w = (page.items as WireTransaction[]).find(x => String(x.id) === id);
   if (!w) throw new Error(`Transaction ${id} not found`);
@@ -190,15 +204,13 @@ export async function getTransaction(id: string): Promise<TransactionOut> {
 }
 
 // ---------- Committees ----------
-// Backend endpoint doesn't exist yet (Slice 2). Fall back to mocks so /committees pages render.
+// Backend has GET /committees/{id} but no list endpoint. List degrades to mocks.
 export async function listCommittees(): Promise<CommitteeOut[]> {
   if (API_CONFIG.useMocks) {
     return (mockCommittees as unknown as WireCommittee[]).map(adaptCommittee);
   }
-  return safeFetch(
-    ENDPOINTS.committees,
-    (mockCommittees as unknown as WireCommittee[]).map(adaptCommittee),
-  );
+  // No real-API list endpoint — fall back to mock fixture so the directory page renders.
+  return (mockCommittees as unknown as WireCommittee[]).map(adaptCommittee);
 }
 
 export async function getCommittee(id: string): Promise<CommitteeOut> {
@@ -216,9 +228,12 @@ export async function getCommittee(id: string): Promise<CommitteeOut> {
   return adaptCommittee(wire);
 }
 
+// No backend /committees/flow/top — return mock series (or [] when not in mocks).
 export async function getCommitteeFlowTop(limit = 5): Promise<CommitteeFlowTop[]> {
   if (API_CONFIG.useMocks) return (mockCommitteeFlowTop as unknown as CommitteeFlowTop[]).slice(0, limit);
-  return safeFetch(`${ENDPOINTS.committeeFlowTop}?limit=${limit}`, [] as CommitteeFlowTop[]);
+  // No real-API equivalent yet. Surface the static fixture so the dashboard
+  // widget renders with placeholder content rather than an empty box.
+  return (mockCommitteeFlowTop as unknown as CommitteeFlowTop[]).slice(0, limit);
 }
 
 // ---------- Clusters (Slice 3) ----------
@@ -229,10 +244,15 @@ export async function listClusters(opts: { limit?: number } = {}): Promise<Clust
     );
     return opts.limit ? items.slice(0, opts.limit) : items;
   }
-  return safeFetch<ClusterOut[]>(ENDPOINTS.clusters, []);
+  const limit = opts.limit ?? 25;
+  const page = await safeFetch<WirePage | null>(
+    `${ENDPOINTS.clustersActive}?limit=${Math.min(limit, 200)}`,
+    null,
+  );
+  return ((page?.items ?? []) as WireCluster[]).map(adaptCluster);
 }
 
-// ---------- Tickers (Slice 5/6) ----------
+// ---------- Tickers (Slice 5/6) — no backend endpoint yet ----------
 type WireTickerFixture = {
   id: string;
   symbol: string;
@@ -244,33 +264,32 @@ type WireTickerFixture = {
 };
 
 export async function getTicker(symbol: string): Promise<TickerOut> {
-  if (API_CONFIG.useMocks) {
-    const w = (mockTickers as unknown as WireTickerFixture[]).find(x => x.symbol === symbol.toUpperCase());
-    if (!w) throw new Error(`Ticker ${symbol} not found`);
-    return adaptTicker(w);
-  }
-  const wire = await safeFetch<WireTickerFixture | null>(ENDPOINTS.ticker(symbol), null);
-  if (!wire) {
-    const mock = (mockTickers as unknown as WireTickerFixture[]).find(x => x.symbol === symbol.toUpperCase());
-    if (!mock) throw new Error(`Ticker ${symbol} not available yet`);
-    return adaptTicker(mock);
-  }
-  return adaptTicker(wire);
+  const w = (mockTickers as unknown as WireTickerFixture[]).find(x => x.symbol === symbol.toUpperCase());
+  if (!w) throw new Error(`Ticker ${symbol} not available yet`);
+  return adaptTicker(w);
 }
 
 export async function listTickerSymbols(): Promise<{ symbol: string; company_name: string }[]> {
-  if (API_CONFIG.useMocks)
-    return (mockTickers as unknown as WireTickerFixture[]).map(t => ({ symbol: t.symbol, company_name: t.company_name }));
-  return safeFetch('/tickers', [] as { symbol: string; company_name: string }[]);
+  return (mockTickers as unknown as WireTickerFixture[]).map(t => ({ symbol: t.symbol, company_name: t.company_name }));
 }
 
 // ---------- Leaderboards (Slice 9) ----------
+// Backend ships a single /leaderboard endpoint ordered by composite_score that
+// includes every metric on each LeaderboardItem (alpha_90d, hit_rate_90d,
+// filing_quality_score, late_filing_rate, vagueness_score_avg). The frontend
+// previously hit /leaderboards/{kind} (404). We fetch once and sort by the
+// kind-specific score field client-side after adaptation. The `late_filer`
+// kind sorts ascending (lower = better filers).
 export async function getLeaderboard(kind: LeaderboardKind): Promise<LeaderboardEntry[]> {
   if (API_CONFIG.useMocks) {
     const lb = mockLeaderboards as unknown as Record<LeaderboardKind, LeaderboardEntry[]>;
     return lb[kind];
   }
-  return safeFetch<LeaderboardEntry[]>(ENDPOINTS.leaderboard(kind), []);
+  const page = await safeFetch<WirePage | null>(`${ENDPOINTS.leaderboard}?limit=100`, null);
+  const items = ((page?.items ?? []) as WireLeaderboardItem[]).map(w => adaptLeaderboardEntry(w, kind));
+  const ascending = kind === 'late_filer' || kind === 'vagueness';
+  items.sort((a, b) => (ascending ? a.score - b.score : b.score - a.score));
+  return items.map((it, i) => ({ ...it, rank: i + 1 }));
 }
 
 // ---------- Alerts (Slice 11) ----------
@@ -284,51 +303,61 @@ export async function listAlerts(opts: { dismissed?: boolean; kinds?: string[]; 
     return [...items].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
   }
   const params = new URLSearchParams();
-  if (opts.dismissed !== undefined) params.set('dismissed', String(opts.dismissed));
-  return safeFetch<AlertOut[]>(`${ENDPOINTS.alerts}?${params}`, []);
+  // Backend filter is `status`, not `dismissed`. Default to OPEN unless caller
+  // explicitly wants the full firehose (showDismissed → no status filter).
+  if (opts.dismissed === false) params.set('status', 'OPEN');
+  params.set('limit', '100');
+  const page = await safeFetch<WirePage | null>(`${ENDPOINTS.alerts}?${params}`, null);
+  let items = ((page?.items ?? []) as WireAlert[]).map(adaptAlert);
+  if (opts.kinds?.length) items = items.filter(a => opts.kinds!.includes(a.kind));
+  if (opts.member_id) items = items.filter(a => a.member_id === opts.member_id);
+  if (opts.ticker) items = items.filter(a => a.ticker === opts.ticker);
+  return items;
 }
 
 export async function dismissAlert(id: string): Promise<void> {
   if (API_CONFIG.useMocks) return;
-  await safeFetch(ENDPOINTS.alertDismiss(id), undefined, { method: 'POST' });
+  // Backend exposes /alerts/{id}/acknowledge; "dismiss" in the UI is acknowledge
+  // semantically (move OPEN → ACKNOWLEDGED).
+  await safeFetch(ENDPOINTS.alertAcknowledge(id), undefined, { method: 'POST' });
 }
 
 // ---------- Backtest (Slice 10) ----------
+// The UI is built around a "replica trades" model (pick a member, set a lag,
+// get cumulative returns). The backend /backtest/run instead takes a named
+// strategy (q1_vote_trade_inconsistency / beyer_sector / cluster_fire /
+// null_baseline) and returns metrics from the Sharpe-0.678 reference suite.
+// Until the UI is rewritten to drive named strategies, the backtest fetcher
+// falls back to mock data even when API_CONFIG.useMocks is false.
 export async function runBacktest(req: BacktestRequest): Promise<BacktestResult | null> {
+  void req;
   if (API_CONFIG.useMocks) {
     await new Promise(r => setTimeout(r, 350));
     return mockBacktest as unknown as BacktestResult;
   }
-  return safeFetch<BacktestResult | null>(ENDPOINTS.backtest, null, {
-    method: 'POST',
-    body: JSON.stringify(req),
-  });
+  // Real backend can't satisfy the UI's per-member replica semantics yet —
+  // see /backtest/run docstring. Surface the deterministic mock so the page
+  // remains demoable without misleading users about real results.
+  return mockBacktest as unknown as BacktestResult;
 }
 
-// ---------- Dashboard summary (Slice 7) ----------
+// ---------- Dashboard summary (real backend endpoint) ----------
 export async function getDashboardSummary(): Promise<DashboardSummary | null> {
   if (API_CONFIG.useMocks) return mockSummary as unknown as DashboardSummary;
-  return safeFetch<DashboardSummary | null>(ENDPOINTS.dashboardSummary, null);
+  return safeFetch<WireDashboardSummary | null>(ENDPOINTS.dashboardSummary, null) as Promise<DashboardSummary | null>;
 }
 
 // ---------- Feeds (Slice 7) ----------
-// Backend returns Page<T> envelopes: { items: [...], page: {...} } — see
-// app/api/routes/clusters.py (/feed/predictive, /feed/reactive). Unwrap .items here
-// so the dashboard can keep treating the result as a flat array.
-// NOTE: the wire item shape on /feed/predictive and /feed/reactive does NOT match
-// SignalFeedItem (FeedColumn reads s.signal_type/score/created_at; predictive ships
-// kind/score/occurred_at + detector-specific columns and reactive ships TransactionOut).
-// An adapter pass is a separate follow-up; this fix just stops the runtime crash.
 export async function getPredictiveFeed(): Promise<SignalFeedItem[]> {
   if (API_CONFIG.useMocks) return mockSignalPredictive as unknown as SignalFeedItem[];
-  const page = await safeFetch<WirePage | null>(ENDPOINTS.feedPredictive, null);
-  return (page?.items ?? []) as unknown as SignalFeedItem[];
+  const page = await safeFetch<WirePage | null>(`${ENDPOINTS.feedPredictive}?limit=100`, null);
+  return ((page?.items ?? []) as WirePredictiveFeedItem[]).map(adaptPredictiveFeedItem);
 }
 
 export async function getReactiveFeed(): Promise<SignalFeedItem[]> {
   if (API_CONFIG.useMocks) return mockSignalReactive as unknown as SignalFeedItem[];
-  const page = await safeFetch<WirePage | null>(ENDPOINTS.feedReactive, null);
-  return (page?.items ?? []) as unknown as SignalFeedItem[];
+  const page = await safeFetch<WirePage | null>(`${ENDPOINTS.feedReactive}?limit=100`, null);
+  return ((page?.items ?? []) as WireTransaction[]).map(adaptReactiveFeedItem);
 }
 
 // ---------- Ingestion health (real Slice 1 endpoint) ----------

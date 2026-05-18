@@ -208,15 +208,15 @@ export interface LeaderboardEntry {
 }
 
 // ---------- Alerts ----------
-export type AlertKind =
-  | 'CLUSTER_THRESHOLD'
-  | 'CONTRACT_PROXIMITY'
-  | 'FOMC_BLACKOUT'
-  | 'WATCHLIST_MATCH'
-  | 'NEWS_CATALYST'
-  | 'INGESTION_HEALTH';
+// kind and severity are typed as `string` because v1 backend ships an open set
+// (VOTE_TRADE_INCONSISTENCY, LOBBYING_TRADE_OVERLAP, STATEMENT_TRADE_CONTRADICTION,
+// SCOTUS_CONGRESSIONAL_OVERLAP, STAFFER_TRADE_PROXIMITY, STATE_OFFICIAL_TRADE_PROXIMITY,
+// NEWS_TRADE_PROXIMITY, CLUSTER_THRESHOLD, CONTRACT_AWARD_PROXIMITY,
+// HIGH_VALUE_CONTRACT, FOMC_BLACKOUT, INGESTION_HEALTH). The alerts page renders
+// unknown kinds with a neutral chip.
+export type AlertKind = string;
 
-export type AlertSeverity = 'critical' | 'warning' | 'info';
+export type AlertSeverity = string;
 
 export interface AlertOut {
   id: string;

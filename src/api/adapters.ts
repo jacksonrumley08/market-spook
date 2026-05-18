@@ -4,21 +4,32 @@
 // populate the missing data.
 
 import type {
+  AlertOut as WireAlert,
+  ClusterOut as WireCluster,
   CommitteeOut as WireCommittee,
+  LeaderboardItem as WireLeaderboardItem,
   MemberOut as WireMember,
+  PredictiveFeedItem as WirePredictiveFeedItem,
   TransactionOut as WireTransaction,
 } from './types';
 import type {
+  AlertOut as UiAlert,
+  ClusterOut as UiCluster,
   CommitteeOut as UiCommittee,
   DerivedFlags,
+  LeaderboardEntry as UiLeaderboardEntry,
+  LeaderboardKind,
   MemberOut as UiMember,
   Party,
+  SignalFeedItem,
   TickerOut as UiTicker,
   TransactionOut as UiTransaction,
   Chamber,
 } from './types-ui';
 
-// Wire-fixture extensions present on Slice-1 transactions JSON.
+// Mocks predate the nested wire schema and ship the overlap as flat fields.
+// Real API returns it under TransactionOut.jurisdiction_overlap (see types.ts).
+// We accept either so the adapter works against both.
 type WireTransactionFixture = WireTransaction & {
   jurisdiction_overlap_flag?: boolean;
   jurisdiction_overlap_committees?: string[];
@@ -79,11 +90,25 @@ function daysBetween(a: string, b: string): number {
   return Math.round(ms / 86_400_000);
 }
 
+function overlapFromWire(w: WireTransactionFixture): { flag: boolean; committees: string[] } {
+  // Prefer real-API nested shape; fall back to flat mock fields.
+  if (w.jurisdiction_overlap) {
+    return {
+      flag: !!w.jurisdiction_overlap.flag,
+      committees: w.jurisdiction_overlap.committees ?? [],
+    };
+  }
+  return {
+    flag: !!w.jurisdiction_overlap_flag,
+    committees: w.jurisdiction_overlap_committees ?? [],
+  };
+}
+
 function buildFlags(w: WireTransactionFixture): DerivedFlags {
   const flags: DerivedFlags = {};
-  const overlaps = w.jurisdiction_overlap_committees ?? [];
-  if (overlaps.length > 0) {
-    flags.jurisdiction_overlap = overlaps.map(name => ({
+  const { committees } = overlapFromWire(w);
+  if (committees.length > 0) {
+    flags.jurisdiction_overlap = committees.map(name => ({
       committee_id: name,
       committee_name: name,
     }));
@@ -94,6 +119,7 @@ function buildFlags(w: WireTransactionFixture): DerivedFlags {
 export function adaptTransaction(w: WireTransactionFixture): UiTransaction {
   const lateness = w.filed_at ? Math.max(0, daysBetween(w.transaction_date, w.filed_at)) : 0;
   const tType = (w.transaction_type || '').toLowerCase();
+  const { flag: overlapFlag } = overlapFromWire(w);
   return {
     id: String(w.id),
     member_id: w.official.id,
@@ -109,7 +135,7 @@ export function adaptTransaction(w: WireTransactionFixture): UiTransaction {
     transaction_date: w.transaction_date,
     filing_date: w.filed_at ?? w.transaction_date,
     filing_lateness_days: lateness,
-    has_any_flag: !!w.jurisdiction_overlap_flag,
+    has_any_flag: overlapFlag,
     flags: buildFlags(w),
   };
 }
@@ -137,5 +163,190 @@ export function adaptTicker(w: WireTickerFixture): UiTicker {
     ohlc: [],
     congressional_activity: [],
     active_clusters: [],
+  };
+}
+
+// ---------- Clusters ----------
+export function adaptCluster(w: WireCluster): UiCluster {
+  const dir = (w.direction || '').toLowerCase();
+  return {
+    id: w.id,
+    ticker: w.ticker?.symbol ?? '—',
+    company_name: w.ticker?.symbol ?? '',
+    committee_id: w.committee_id,
+    committee_name: w.committee_name,
+    direction: dir === 'sell' ? 'sell' : 'buy',
+    window_start: w.window_start,
+    window_end: w.window_end,
+    member_count: w.member_count,
+    members: (w.members ?? []).map(m => ({
+      member_id: m.official.id,
+      name: m.official.full_name,
+      party: partyToUi(m.official.party),
+    })),
+    predictive_context: { contracts: [], hearings: [], lobbying: [] },
+    size_series: [],
+    formed_at: w.created_at,
+  };
+}
+
+// ---------- Leaderboards ----------
+export function adaptLeaderboardEntry(
+  w: WireLeaderboardItem,
+  kind: LeaderboardKind,
+): UiLeaderboardEntry {
+  const kindScore = (() => {
+    switch (kind) {
+      case 'alpha':
+        return w.alpha_90d != null ? Number(w.alpha_90d) : 0;
+      case 'hit_rate':
+        return w.hit_rate_90d != null ? Number(w.hit_rate_90d) : 0;
+      case 'filing_quality':
+        return w.filing_quality_score ?? 0;
+      case 'late_filer':
+        return w.late_filing_rate ?? 0;
+      case 'vagueness':
+        return w.vagueness_score_avg ?? 0;
+      case 'options_conviction':
+        // Not directly exposed in LeaderboardItem; fall back to composite.
+        return w.composite_score ?? 0;
+      default:
+        return w.composite_score ?? 0;
+    }
+  })();
+  return {
+    rank: w.rank_overall ?? 0,
+    rank_delta: 0,
+    member_id: w.official_id,
+    member_name: w.full_name,
+    party: partyToUi(w.party),
+    state: w.state ?? '',
+    chamber: chamberToUi(w.chamber),
+    score: Number(kindScore),
+    series_30d: [],
+  };
+}
+
+// ---------- Alerts ----------
+// Canonical kinds — extracted from the alert's payload when present, otherwise
+// derived from the alert kind. The UI's "summary" is a short, kind-aware line
+// pulled from the same payload.
+function alertSummary(kind: string, payload: Record<string, unknown>): string {
+  const p = payload as Record<string, unknown>;
+  const officialName = (p.official_name ?? p.member_name) as string | undefined;
+  const companyName = (p.company_name ?? p.client_name) as string | undefined;
+  const symbol = (p.ticker_symbol ?? p.symbol) as string | undefined;
+  switch (kind) {
+    case 'VOTE_TRADE_INCONSISTENCY':
+      return `${officialName ?? 'Member'} traded ${companyName ?? symbol ?? 'a position'} near ${p.legis_num ?? 'a related vote'}`;
+    case 'CONTRACT_AWARD_PROXIMITY':
+    case 'HIGH_VALUE_CONTRACT':
+      return `${officialName ?? 'Member'} traded ${companyName ?? 'a contractor'} near a federal award`;
+    case 'LOBBYING_TRADE_OVERLAP':
+      return `${officialName ?? 'Member'} traded ${companyName ?? 'a lobbying client'}`;
+    case 'CLUSTER_THRESHOLD':
+      return `Cluster: ${p.member_count ?? '?'} members on ${symbol ?? p.ticker_symbol ?? 'a ticker'}`;
+    case 'FOMC_BLACKOUT':
+      return `${officialName ?? 'Fed official'} traded in the FOMC blackout window`;
+    case 'NEWS_TRADE_PROXIMITY':
+      return `${officialName ?? 'Member'} traded ${companyName ?? 'a company'} near a news event`;
+    case 'STATEMENT_TRADE_CONTRADICTION':
+      return `${officialName ?? 'Member'} traded against a recent statement`;
+    case 'SCOTUS_CONGRESSIONAL_OVERLAP':
+      return `Justice + member co-trading ${companyName ?? symbol ?? 'a ticker'}`;
+    case 'STAFFER_TRADE_PROXIMITY':
+      return `Staffer trade near member's committee jurisdiction`;
+    case 'STATE_OFFICIAL_TRADE_PROXIMITY':
+      return `State official trade overlap`;
+    case 'INGESTION_HEALTH':
+      return `Ingestion health: ${p.source_name ?? 'a source'} ${p.event_type ?? 'event'}`;
+    default:
+      return kind;
+  }
+}
+
+export function adaptAlert(w: WireAlert): UiAlert {
+  const payload = (w.payload ?? {}) as Record<string, unknown>;
+  const memberIdRaw = (payload.official_id ?? payload.member_id) as string | undefined;
+  const tickerRaw = (payload.ticker_symbol ?? payload.symbol ?? payload.company_name) as string | undefined;
+  return {
+    id: String(w.id),
+    kind: w.kind,
+    severity: w.severity,
+    summary: alertSummary(w.kind, payload),
+    member_id: w.official_id ?? memberIdRaw,
+    ticker: tickerRaw,
+    created_at: w.created_at,
+    dismissed: !!w.dismissed_at || w.status === 'RESOLVED' || w.status === 'EXPIRED',
+    payload,
+  };
+}
+
+// ---------- Feed items ----------
+// /feed/predictive — heterogeneous detector items. Each kind populates a
+// different subset of detector-prefixed fields; we pick the matching ones to
+// produce a uniform SignalFeedItem the dashboard can render.
+export function adaptPredictiveFeedItem(w: WirePredictiveFeedItem): SignalFeedItem {
+  const k = w.kind;
+  // Type-safe lookup against the dynamic detector-prefixed field set.
+  const r = w as unknown as Record<string, unknown>;
+  const officialId =
+    (r.vote_inconsistency_official_id as string | null | undefined) ??
+    (r.contract_proximity_official_id as string | null | undefined) ??
+    (r.fomc_blackout_official_id as string | null | undefined) ??
+    (r.lobbying_overlay_official_id as string | null | undefined) ??
+    (r.news_proximity_official_id as string | null | undefined) ??
+    (r.statement_contradiction_official_id as string | null | undefined) ??
+    (r.scotus_overlap_member_official_id as string | null | undefined) ??
+    (r.staffer_proximity_staffer_official_id as string | null | undefined) ??
+    (r.state_official_proximity_state_official_id as string | null | undefined) ??
+    '';
+  const memberName =
+    (r.vote_inconsistency_official_name as string | undefined) ??
+    (r.contract_proximity_official_name as string | undefined) ??
+    (r.lobbying_overlay_official_name as string | undefined) ??
+    'Member';
+  const ticker =
+    (r.vote_inconsistency_company_name as string | undefined) ??
+    (r.lobbying_overlay_client_name as string | undefined) ??
+    (r.contract_proximity_aggregated_count != null ? `${r.contract_proximity_aggregated_count} contracts` : undefined) ??
+    (w.cluster?.ticker?.symbol ?? undefined) ??
+    '—';
+  const txnId =
+    (r.vote_inconsistency_transaction_id as number | null | undefined) ??
+    (r.hearing_proximity_transaction_id as number | null | undefined) ??
+    (r.fomc_blackout_transaction_id as number | null | undefined) ??
+    (r.contract_proximity_transaction_id as number | null | undefined) ??
+    (r.lobbying_overlay_transaction_id as number | null | undefined) ??
+    (r.news_proximity_transaction_id as number | null | undefined) ??
+    (r.statement_contradiction_transaction_id as number | null | undefined) ??
+    null;
+  return {
+    id: `predictive:${k}:${w.occurred_at}:${txnId ?? Math.random().toString(36).slice(2, 8)}`,
+    kind: 'predictive',
+    signal_type: k,
+    member_id: officialId ?? '',
+    member_name: memberName,
+    ticker,
+    score: w.score,
+    created_at: w.occurred_at,
+    transaction_id: txnId != null ? String(txnId) : undefined,
+  };
+}
+
+// /feed/reactive — Page<TransactionOut>. Each item is a disclosed trade with
+// nested official + ticker; we project it down to SignalFeedItem.
+export function adaptReactiveFeedItem(w: WireTransaction): SignalFeedItem {
+  const overlap = w.jurisdiction_overlap?.flag ?? false;
+  return {
+    id: `reactive:${w.id}`,
+    kind: 'reactive',
+    signal_type: (overlap ? 'jurisdiction_overlap' : (w.transaction_type ?? 'TRADE')),
+    member_id: w.official.id,
+    member_name: w.official.full_name,
+    ticker: w.ticker?.symbol ?? '—',
+    score: overlap ? 1 : 0,
+    created_at: w.filed_at ?? w.transaction_date,
+    transaction_id: String(w.id),
   };
 }
