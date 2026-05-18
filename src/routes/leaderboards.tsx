@@ -1,33 +1,105 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-type LBKind = 'alpha' | 'hit_rate' | 'vagueness' | 'late_filer' | 'options_conviction' | 'filing_quality';
-const KINDS: LBKind[] = ['alpha','hit_rate','vagueness','late_filer','options_conviction','filing_quality'];
-import { getLeaderboard } from '@/api/client';
-import type { LeaderboardKind } from '@/api/types-ui';
-import { Sparkline } from '@/components/Sparkline';
-import { PartyChip } from '@/components/PartyChip';
-import { fmtPctRaw, signClass } from '@/lib/format';
-import { SkeletonRows } from '@/components/SkeletonRows';
-import { cn } from '@/lib/utils';
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { getLeaderboard } from "@/api/client";
+import type { LeaderboardEntry, LeaderboardKind } from "@/api/types-ui";
+import { PartyChip } from "@/components/PartyChip";
+import { fmtPctRaw, signClass } from "@/lib/format";
+import { SkeletonRows } from "@/components/SkeletonRows";
+import { cn } from "@/lib/utils";
 
-const TABS: { kind: LeaderboardKind; label: string; fmt: (v: number) => string; cls?: (v: number) => string }[] = [
-  { kind: 'alpha', label: 'Alpha', fmt: v => fmtPctRaw(v), cls: signClass },
-  { kind: 'hit_rate', label: 'Hit rate', fmt: v => `${(v * 100).toFixed(1)}%` },
-  { kind: 'vagueness', label: 'Vagueness', fmt: v => `${(v * 100).toFixed(1)}%`, cls: v => v > 0.4 ? 'text-[var(--warning)]' : '' },
-  { kind: 'late_filer', label: 'Late filer', fmt: v => `${(v * 100).toFixed(0)}`, cls: v => v > 0.3 ? 'text-[var(--warning)]' : '' },
-  { kind: 'options_conviction', label: 'Options conviction', fmt: v => `${(v * 100).toFixed(0)}` },
-  { kind: 'filing_quality', label: 'Filing quality', fmt: v => `${(v * 100).toFixed(0)}` },
+// `options_conviction` is the legacy tab that silently fell back to
+// composite at the adapter layer (no /leaderboard column backs it).
+// Dropped from the visible tab list per audit P3 #54; the LeaderboardKind
+// union keeps it for URL-search-param back-compat.
+type VisibleKind = Exclude<LeaderboardKind, "options_conviction">;
+const VISIBLE_KINDS: VisibleKind[] = [
+  "composite",
+  "alpha",
+  "hit_rate",
+  "filing_quality",
+  "late_filer",
+  "vagueness",
 ];
 
-export const Route = createFileRoute('/leaderboards')({
-  validateSearch: (s: Record<string, unknown>): { tab: LBKind } => {
-    const t = s.tab as LBKind;
-    return { tab: KINDS.includes(t) ? t : 'alpha' };
+const fmtPct1 = (v: number) => `${(v * 100).toFixed(1)}%`;
+const fmtPct0 = (v: number) => `${(v * 100).toFixed(0)}`;
+
+type TabMeta = {
+  kind: VisibleKind;
+  label: string;
+  select: (r: LeaderboardEntry) => number | null;
+  fmt: (v: number) => string;
+  cls?: (v: number) => string;
+  description: string;
+};
+
+const TABS: TabMeta[] = [
+  {
+    kind: "composite",
+    label: "Composite",
+    select: (r) => r.composite_score,
+    fmt: (v) => v.toFixed(3),
+    description:
+      "Slice-9 composite: 0.4·α + 0.3·hit_rate + 0.2·filing_quality + 0.1·alert_density. Bayesian-shrunk toward priors; ~0.5 = neutral.",
+  },
+  {
+    kind: "alpha",
+    label: "Alpha 90d",
+    select: (r) => r.alpha_90d,
+    fmt: (v) => fmtPctRaw(v),
+    cls: signClass,
+    description: "Mean 90-day excess return vs sector ETF.",
+  },
+  {
+    kind: "hit_rate",
+    label: "Hit rate 90d",
+    select: (r) => r.hit_rate_90d,
+    fmt: fmtPct1,
+    description: "% of BUYs with positive 90d excess return.",
+  },
+  {
+    kind: "filing_quality",
+    label: "Filing quality",
+    select: (r) => r.filing_quality_score,
+    fmt: fmtPct0,
+    description: "0–100 composite of late-filing rate, vagueness, completeness, amendment rate.",
+  },
+  {
+    kind: "late_filer",
+    label: "Late filer",
+    select: (r) => r.late_filing_rate,
+    fmt: fmtPct0,
+    cls: (v) => (v > 0.3 ? "text-[var(--warning)]" : ""),
+    description: "Fraction of trades filed >45d after the trade. Lower = better.",
+  },
+  {
+    kind: "vagueness",
+    label: "Vagueness",
+    select: (r) => r.vagueness_score_avg,
+    fmt: fmtPct0,
+    cls: (v) => (v > 0.4 ? "text-[var(--warning)]" : ""),
+    description: "Average asset-description vagueness, 0 = always specific. Lower = better.",
+  },
+];
+
+function isVisibleKind(k: string): k is VisibleKind {
+  return (VISIBLE_KINDS as string[]).includes(k);
+}
+
+export const Route = createFileRoute("/leaderboards")({
+  validateSearch: (s: Record<string, unknown>): { tab: VisibleKind } => {
+    const t = typeof s.tab === "string" && isVisibleKind(s.tab) ? s.tab : "composite";
+    return { tab: t };
   },
   head: () => ({
     meta: [
-      { title: 'Leaderboards — CongressTrade Intelligence' },
-      { name: 'description', content: 'Member rankings by alpha, hit rate, vagueness, lateness, and conviction.' },
+      { title: "Leaderboards — CongressTrade Intelligence" },
+      {
+        name: "description",
+        content:
+          "Member rankings by composite score, alpha, hit rate, filing quality, and lateness.",
+      },
     ],
   }),
   component: LeaderboardsPage,
@@ -35,26 +107,68 @@ export const Route = createFileRoute('/leaderboards')({
 
 function LeaderboardsPage() {
   const { tab } = Route.useSearch();
-  const navigate = useNavigate({ from: '/leaderboards' });
-  const { data, isLoading } = useQuery({ queryKey: ['leaderboard', tab], queryFn: () => getLeaderboard(tab) });
-  const meta = TABS.find(t => t.kind === tab)!;
+  const navigate = useNavigate({ from: "/leaderboards" });
+  const { data, isLoading } = useQuery({
+    queryKey: ["leaderboard", tab],
+    queryFn: () => getLeaderboard(tab),
+  });
+  const meta = TABS.find((t) => t.kind === tab) ?? TABS[0];
+
+  const rows = useMemo(() => data ?? [], [data]);
+  // Q1 of *sufficient-sample* members for the active metric — the audit
+  // notes 66% of critical signals land on Q1, so we render the top
+  // quartile with a subtle accent.
+  const q1Cutoff = useMemo(() => {
+    const scored = rows
+      .filter((r) => r.has_sufficient_sample)
+      .map((r) => meta.select(r))
+      .filter((v): v is number => v != null);
+    if (scored.length === 0) return null;
+    // For descending metrics Q1 = top quartile (highest scores). For
+    // ascending metrics (late_filer, vagueness) Q1 = lowest quartile.
+    const ascending = tab === "late_filer" || tab === "vagueness";
+    const sorted = [...scored].sort((a, b) => (ascending ? a - b : b - a));
+    const idx = Math.max(0, Math.floor(sorted.length * 0.25) - 1);
+    return sorted[idx];
+  }, [rows, meta, tab]);
+
+  const inQ1 = (r: LeaderboardEntry): boolean => {
+    if (!r.has_sufficient_sample || q1Cutoff == null) return false;
+    const v = meta.select(r);
+    if (v == null) return false;
+    const ascending = tab === "late_filer" || tab === "vagueness";
+    return ascending ? v <= q1Cutoff : v >= q1Cutoff;
+  };
+
+  const sufficientCount = rows.filter((r) => r.has_sufficient_sample).length;
+  const insufficientCount = rows.length - sufficientCount;
 
   return (
     <div className="space-y-3">
-      <div>
-        <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">Leaderboards</h1>
+      <div className="flex items-baseline justify-between">
+        <div>
+          <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">
+            Leaderboards
+          </h1>
+          <p className="num text-[10px] text-[var(--text-tertiary)]">
+            {sufficientCount} ranked · {insufficientCount} small-n · top quartile accented
+          </p>
+        </div>
+        <p className="num max-w-[420px] text-right text-[10px] text-[var(--text-tertiary)]">
+          {meta.description}
+        </p>
       </div>
 
       <div className="flex gap-1 border-b border-[var(--border)]">
-        {TABS.map(t => (
+        {TABS.map((t) => (
           <button
             key={t.kind}
             onClick={() => navigate({ search: { tab: t.kind } })}
             className={cn(
-              'border-b-2 px-3 py-1.5 text-xs uppercase tracking-wider transition-colors -mb-px',
+              "border-b-2 px-3 py-1.5 text-xs uppercase tracking-wider transition-colors -mb-px",
               tab === t.kind
-                ? 'border-[var(--cyan)] text-[var(--text-primary)]'
-                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
+                ? "border-[var(--cyan)] text-[var(--text-primary)]"
+                : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]",
             )}
           >
             {t.label}
@@ -67,25 +181,126 @@ function LeaderboardsPage() {
           <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
             <tr className="border-b border-[var(--border)]">
               <th className="px-3 py-1.5 text-left">#</th>
-              <th className="px-3 py-1.5 text-left">Δ</th>
               <th className="px-3 py-1.5 text-left">Member</th>
               <th className="px-3 py-1.5 text-left">Aff.</th>
-              <th className="px-3 py-1.5 text-right">Score</th>
-              <th className="px-3 py-1.5 text-right">30d</th>
+              <th className="px-3 py-1.5 text-right" title="Active tab metric">
+                {meta.label}
+              </th>
+              <th className="px-3 py-1.5 text-right" title="Composite score (Slice-9)">
+                Composite
+              </th>
+              <th className="px-3 py-1.5 text-right" title="Lifetime trades">
+                n
+              </th>
+              <th className="px-3 py-1.5 text-right" title="Alerts (lifetime / critical)">
+                Alerts
+              </th>
             </tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan={6} className="p-3"><SkeletonRows rows={10} cols={6} /></td></tr>}
-            {data?.map(r => (
-              <tr key={r.member_id} className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]">
-                <td className="num px-3 py-1.5 text-[var(--text-tertiary)]">{r.rank}</td>
-                <td className={'num px-3 py-1.5 text-[10px] ' + signClass(r.rank_delta)}>{r.rank_delta > 0 ? `↑${r.rank_delta}` : r.rank_delta < 0 ? `↓${Math.abs(r.rank_delta)}` : '—'}</td>
-                <td className="px-3 py-1.5"><Link to="/members/$id" params={{ id: r.member_id }} className="text-[var(--text-primary)] hover:underline">{r.member_name}</Link></td>
-                <td className="px-3 py-1.5"><PartyChip party={r.party} state={r.state} chamber={r.chamber} /></td>
-                <td className={'num px-3 py-1.5 text-right ' + (meta.cls?.(r.score) ?? 'text-[var(--text-primary)]')}>{meta.fmt(r.score)}</td>
-                <td className="px-3 py-1.5 text-right"><Sparkline data={r.series_30d} width={70} height={18} /></td>
+            {isLoading && (
+              <tr>
+                <td colSpan={7} className="p-3">
+                  <SkeletonRows rows={12} cols={7} />
+                </td>
               </tr>
-            ))}
+            )}
+            {!isLoading && rows.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-3 py-6 text-center text-[var(--text-tertiary)]">
+                  No leaderboard data.
+                </td>
+              </tr>
+            )}
+            {rows.map((r) => {
+              const insufficient = !r.has_sufficient_sample;
+              const score = meta.select(r);
+              const q1 = inQ1(r);
+              return (
+                <tr
+                  key={r.member_id}
+                  className={cn(
+                    "border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]",
+                    insufficient && "opacity-60",
+                    q1 && "bg-[var(--cyan)]/[0.04]",
+                  )}
+                >
+                  <td className="num px-3 py-1.5 text-[var(--text-tertiary)]">
+                    {insufficient ? "—" : (r.rank_overall ?? r.rank)}
+                  </td>
+                  <td className="px-3 py-1.5">
+                    <Link
+                      to="/members/$id"
+                      params={{ id: r.member_id }}
+                      className="text-[var(--text-primary)] hover:underline"
+                    >
+                      {r.member_name}
+                    </Link>
+                    {insufficient && (
+                      <span
+                        className="num ml-2 text-[9px] uppercase text-[var(--text-tertiary)]"
+                        title="Insufficient sample (n < 10 lifetime trades). Rank suppressed."
+                      >
+                        small n={r.n_trades_lifetime}
+                      </span>
+                    )}
+                    {q1 && (
+                      <span
+                        className="num ml-2 rounded bg-[var(--cyan)]/15 px-1 py-0.5 text-[8px] font-mono uppercase text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30"
+                        title="Top quartile on this metric — Slice-7 analysis: ~66% of critical signals concentrate here."
+                      >
+                        Q1
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-3 py-1.5">
+                    <PartyChip party={r.party} state={r.state} chamber={r.chamber} />
+                  </td>
+                  <td
+                    className={cn(
+                      "num px-3 py-1.5 text-right",
+                      score == null
+                        ? "text-[var(--text-tertiary)]"
+                        : (meta.cls?.(score) ?? "text-[var(--text-primary)]"),
+                    )}
+                  >
+                    {score == null ? "—" : meta.fmt(score)}
+                  </td>
+                  <td
+                    className={cn(
+                      "num px-3 py-1.5 text-right",
+                      r.composite_score == null
+                        ? "text-[var(--text-tertiary)]"
+                        : "text-[var(--text-secondary)]",
+                    )}
+                  >
+                    {r.composite_score == null ? "—" : r.composite_score.toFixed(3)}
+                  </td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                    {r.n_trades_lifetime}
+                    {r.n_trades_90d > 0 && (
+                      <span
+                        className="num ml-1 text-[9px] text-[var(--text-tertiary)]"
+                        title="trailing 90d"
+                      >
+                        +{r.n_trades_90d}
+                      </span>
+                    )}
+                  </td>
+                  <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                    {r.alert_count_lifetime}
+                    {r.critical_alert_count_lifetime > 0 && (
+                      <span
+                        className="num ml-1 rounded bg-[var(--red)]/15 px-1 text-[9px] text-[var(--red)] ring-1 ring-[var(--red)]/30"
+                        title="critical-severity alerts (lifetime)"
+                      >
+                        {r.critical_alert_count_lifetime}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

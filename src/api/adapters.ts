@@ -228,39 +228,70 @@ export function adaptCluster(w: WireCluster): UiCluster {
 }
 
 // ---------- Leaderboards ----------
+// Coerce Decimal-strings ("0.20025…") or numbers to JS number, returning
+// null for missing or non-finite values so the UI can render an em-dash.
+function numOrNull(v: number | string | null | undefined): number | null {
+  if (v == null) return null;
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
 export function adaptLeaderboardEntry(
   w: WireLeaderboardItem,
   kind: LeaderboardKind,
 ): UiLeaderboardEntry {
+  const composite_score = numOrNull(w.composite_score);
+  const alpha_90d = numOrNull(w.alpha_90d);
+  const hit_rate_90d = numOrNull(w.hit_rate_90d);
+  const filing_quality_score = numOrNull(w.filing_quality_score);
+  const late_filing_rate = numOrNull(w.late_filing_rate);
+  const vagueness_score_avg = numOrNull(w.vagueness_score_avg);
+
   const kindScore = (() => {
     switch (kind) {
+      case "composite":
+        return composite_score;
       case "alpha":
-        return w.alpha_90d != null ? Number(w.alpha_90d) : 0;
+        return alpha_90d;
       case "hit_rate":
-        return w.hit_rate_90d != null ? Number(w.hit_rate_90d) : 0;
+        return hit_rate_90d;
       case "filing_quality":
-        return w.filing_quality_score ?? 0;
+        return filing_quality_score;
       case "late_filer":
-        return w.late_filing_rate ?? 0;
+        return late_filing_rate;
       case "vagueness":
-        return w.vagueness_score_avg ?? 0;
+        return vagueness_score_avg;
       case "options_conviction":
-        // Not directly exposed in LeaderboardItem; fall back to composite.
-        return w.composite_score ?? 0;
+        // No per-row options_conviction field — kept here for the legacy
+        // tab; the page no longer offers it to users.
+        return composite_score;
       default:
-        return w.composite_score ?? 0;
+        return composite_score;
     }
   })();
+
   return {
     rank: w.rank_overall ?? 0,
     rank_delta: 0,
+    rank_overall: w.rank_overall ?? null,
     member_id: w.official_id,
     member_name: w.full_name,
     party: partyToUi(w.party),
     state: w.state ?? "",
     chamber: chamberToUi(w.chamber),
-    score: Number(kindScore),
+    score: kindScore ?? 0,
     series_30d: [],
+    composite_score,
+    alpha_90d,
+    hit_rate_90d,
+    filing_quality_score,
+    late_filing_rate,
+    vagueness_score_avg,
+    n_trades_lifetime: w.n_trades_lifetime,
+    n_trades_90d: w.n_trades_90d,
+    alert_count_lifetime: w.alert_count_lifetime,
+    critical_alert_count_lifetime: w.critical_alert_count_lifetime,
+    has_sufficient_sample: w.has_sufficient_sample,
   };
 }
 

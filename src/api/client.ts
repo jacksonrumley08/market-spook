@@ -338,21 +338,32 @@ export async function listTickerSymbols(): Promise<{ symbol: string; company_nam
 // ---------- Leaderboards (Slice 9) ----------
 // Backend ships a single /leaderboard endpoint ordered by composite_score that
 // includes every metric on each LeaderboardItem (alpha_90d, hit_rate_90d,
-// filing_quality_score, late_filing_rate, vagueness_score_avg). The frontend
-// previously hit /leaderboards/{kind} (404). We fetch once and sort by the
-// kind-specific score field client-side after adaptation. The `late_filer`
-// kind sorts ascending (lower = better filers).
+// filing_quality_score, late_filing_rate, vagueness_score_avg, n_trades_*,
+// alert_count_*, has_sufficient_sample). We fetch once with
+// `include_insufficient=true` so the page can show every member (77
+// sufficient + 123 insufficient at last count) and visually mark the
+// small-n cohort. The `late_filer` and `vagueness` kinds sort ascending
+// (lower = better filers / less vague).
 export async function getLeaderboard(kind: LeaderboardKind): Promise<LeaderboardEntry[]> {
   if (API_CONFIG.useMocks) {
     const lb = mockLeaderboards as unknown as Record<LeaderboardKind, LeaderboardEntry[]>;
-    return lb[kind];
+    return lb[kind] ?? lb["alpha"] ?? [];
   }
-  const page = await safeFetch<WirePage | null>(`${ENDPOINTS.leaderboard}?limit=100`, null);
+  const page = await safeFetch<WirePage | null>(
+    `${ENDPOINTS.leaderboard}?limit=200&include_insufficient=true`,
+    null,
+  );
   const items = ((page?.items ?? []) as WireLeaderboardItem[]).map((w) =>
     adaptLeaderboardEntry(w, kind),
   );
   const ascending = kind === "late_filer" || kind === "vagueness";
-  items.sort((a, b) => (ascending ? a.score - b.score : b.score - a.score));
+  // Sort: sufficient-sample first (ranked), insufficient at the bottom.
+  items.sort((a, b) => {
+    if (a.has_sufficient_sample !== b.has_sufficient_sample) {
+      return a.has_sufficient_sample ? -1 : 1;
+    }
+    return ascending ? a.score - b.score : b.score - a.score;
+  });
   return items.map((it, i) => ({ ...it, rank: i + 1 }));
 }
 

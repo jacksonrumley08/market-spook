@@ -223,7 +223,13 @@ export interface TickerOut {
 }
 
 // ---------- Leaderboards ----------
+// Composite is the load-bearing Slice-9 ranking (0.4·α + 0.3·hit_rate +
+// 0.2·filing_q + 0.1·alert_density). The legacy "options_conviction" tab
+// silently fell back to composite at the adapter level; we keep the literal
+// here so URL search params validate, but the page no longer offers that
+// tab to users (see leaderboards.tsx).
 export type LeaderboardKind =
+  | "composite"
   | "alpha"
   | "hit_rate"
   | "vagueness"
@@ -232,15 +238,37 @@ export type LeaderboardKind =
   | "filing_quality";
 
 export interface LeaderboardEntry {
+  // Position in the active-tab sort (1-indexed). Distinct from
+  // `rank_overall` which is the backend's composite-score rank and is
+  // null for insufficient-sample members.
   rank: number;
   rank_delta: number;
+  rank_overall: number | null;
   member_id: string;
   member_name: string;
   party: Party;
   state: string;
   chamber: Chamber;
+  // The active tab's score, surfaced by the row's metric column. Kept
+  // for backwards compat with sort+format helpers.
   score: number;
   series_30d: DatedValue[];
+
+  // All Slice-9 metrics preserved on every row so per-tab and side-by-side
+  // comparison work without re-fetching. See app/api/schemas/leaderboard.py.
+  composite_score: number | null;
+  alpha_90d: number | null;
+  hit_rate_90d: number | null;
+  filing_quality_score: number | null;
+  late_filing_rate: number | null;
+  vagueness_score_avg: number | null;
+  n_trades_lifetime: number;
+  n_trades_90d: number;
+  alert_count_lifetime: number;
+  critical_alert_count_lifetime: number;
+  // False when n_trades_lifetime < 10. Rows where this is false are still
+  // displayed but visually faded with a small-n suffix.
+  has_sufficient_sample: boolean;
 }
 
 // ---------- Alerts ----------
