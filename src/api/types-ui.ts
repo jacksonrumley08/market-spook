@@ -306,17 +306,185 @@ export interface DashboardSummary {
 }
 
 // ---------- Signal feed ----------
-export interface SignalFeedItem {
+// The dashboard's predictive + reactive feeds share a base shape (member,
+// ticker, score, timestamp) but the predictive feed carries kind-specific
+// detector payloads (vote question, news headline, contract recipient,
+// SCOTUS justice, lobbying client, etc.). We model this as a discriminated
+// union on `signal_kind` so per-kind row components can narrow safely.
+//
+// member_name is "Member" placeholder for predictive items where the
+// backend ships only an official UUID (Deferral #1 — see audit B1).
+// Reactive items always carry the resolved name via TransactionOut.official.
+
+export interface FeedItemBase {
   id: string;
   kind: "predictive" | "reactive";
-  signal_type: string;
-  member_id: string;
+  // Raw backend kind discriminator (lowercase for predictive feed, uppercase
+  // for reactive's overlap flag). Use feedKindLabel / feedKindColor from
+  // alertKinds.ts to map to a friendly chip.
+  signal_kind: string;
+  member_id?: string;
   member_name: string;
-  ticker: string;
+  ticker?: string;
   score: number;
   created_at: string;
   transaction_id?: string;
 }
+
+// Per-kind detector payloads. Each variant is the union of fields the
+// matching detector populates on PredictiveFeedItem in
+// app/api/schemas/clusters.py. UI components narrow on `detector.kind`.
+export type VoteInconsistencyDetector = {
+  kind: "vote_trade_inconsistency";
+  vote_question?: string;
+  vote_description?: string;
+  legis_num?: string;
+  member_position?: string;
+  trade_direction?: string;
+  proximity_days?: number;
+  key_vote?: boolean;
+  sector_impact?: string;
+  company_name?: string;
+};
+
+export type NewsProximityDetector = {
+  kind: "news_trade_proximity";
+  headline?: string;
+  source_url?: string;
+  tone?: number;
+  proximity_days?: number;
+  news_event_date?: string;
+};
+
+export type StatementContradictionDetector = {
+  kind: "statement_trade_contradiction";
+  source_url?: string;
+  source_type?: string;
+  sentiment_score?: number;
+  trade_direction?: string;
+  proximity_days?: number;
+  contradiction_kind?: string;
+  gics_sector?: string;
+};
+
+export type ScotusOverlapDetector = {
+  kind: "scotus_congressional_overlap";
+  justice_id?: string;
+  member_id?: string;
+  justice_trade_direction?: string;
+  member_trade_direction?: string;
+  proximity_days?: number;
+  same_direction?: boolean;
+  justice_trade_date?: string;
+  member_trade_date?: string;
+};
+
+export type FomcBlackoutDetector = {
+  kind: "fomc_blackout";
+  fed_official_id?: string;
+  meeting_id?: string;
+};
+
+export type LobbyingOverlayDetector = {
+  kind: "lobbying_overlay";
+  client_name?: string;
+  registrant_name?: string;
+  client_company_id?: string;
+  issue_codes: string[];
+  issue_sector_match?: boolean;
+  proximity_days?: number;
+  amount_usd?: number;
+  aggregated_count?: number;
+};
+
+export type ContractProximityDetector = {
+  // 'high_value_contract' shares the same detector field family as
+  // 'contract_proximity'; we keep them as one variant.
+  kind: "contract_proximity" | "high_value_contract";
+  recipient_names: string[];
+  award_amount?: number;
+  award_id?: string;
+  proximity_days?: number;
+  aggregated_count?: number;
+  aggregated_max_amount?: number;
+  iso_week?: string;
+};
+
+export type ClusterDetector = {
+  kind: "cluster";
+  ticker?: string;
+  committee_name?: string;
+  direction?: string;
+  member_count?: number;
+  window_start?: string;
+  window_end?: string;
+  member_names: string[];
+};
+
+export type HearingProximityDetector = {
+  kind: "hearing_proximity";
+};
+
+export type StafferProximityDetector = {
+  kind: "staffer_trade_proximity";
+  overlay_kind?: string;
+  matched_sector?: string;
+  proximity_days?: number;
+  employing_committee_id?: string;
+  employing_member_id?: string;
+};
+
+export type StateOfficialProximityDetector = {
+  kind: "state_official_trade_proximity";
+  state?: string;
+  office_type?: string;
+  overlay_kind?: string;
+  proximity_days?: number;
+};
+
+// Fallback variant for kinds we haven't built a renderer for yet. Uses a
+// sentinel discriminator so the named variants narrow cleanly under switch /
+// `d.kind === 'X'`. The original backend kind is preserved as `raw_kind`.
+export type UnknownDetector = { kind: "__unknown__"; raw_kind: string };
+
+export type FeedDetector =
+  | VoteInconsistencyDetector
+  | NewsProximityDetector
+  | StatementContradictionDetector
+  | ScotusOverlapDetector
+  | FomcBlackoutDetector
+  | LobbyingOverlayDetector
+  | ContractProximityDetector
+  | ClusterDetector
+  | HearingProximityDetector
+  | StafferProximityDetector
+  | StateOfficialProximityDetector
+  | UnknownDetector;
+
+export interface PredictiveFeedItem extends FeedItemBase {
+  kind: "predictive";
+  detector: FeedDetector;
+}
+
+// Reactive feed = disclosed trades stream. Carries the structured amount,
+// direction, hearing proximity, and jurisdiction overlap so the row can
+// show "Member bought $1k–$15k near Energy hearing".
+export interface ReactiveFeedItem extends FeedItemBase {
+  kind: "reactive";
+  transaction_type?: string; // BUY | SELL | EXCHANGE | …
+  amount_min?: number;
+  amount_max?: number;
+  amount_bucket?: string;
+  jurisdiction_overlap_committees: string[];
+  hearing_proximity?: {
+    hearing_topic?: string;
+    committee_name?: string;
+    proximity_days: number;
+    scheduled_at?: string;
+  };
+}
+
+export type SignalFeedItem = PredictiveFeedItem | ReactiveFeedItem;
 
 // ---------- Committee flow (top sectors) ----------
 export interface CommitteeFlowTop {

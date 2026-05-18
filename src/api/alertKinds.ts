@@ -75,3 +75,77 @@ export function kindColor(kind: string): string {
     "bg-[var(--text-tertiary)]/15 text-[var(--text-secondary)] ring-[var(--border)]"
   );
 }
+
+// ---------- Predictive feed kinds ----------
+// /feed/predictive uses lowercase discriminator strings that do not always
+// align 1:1 with AlertKindEnum: 'lobbying_overlay' (feed) corresponds to
+// 'LOBBYING_TRADE_OVERLAP' (alerts); 'hearing_proximity' and 'cluster' have
+// no alert counterpart. The 12 active feed kinds are the discriminator
+// values listed in app/api/schemas/clusters.py:PredictiveFeedItem.kind.
+export const PREDICTIVE_FEED_KINDS = [
+  "vote_trade_inconsistency",
+  "news_trade_proximity",
+  "statement_trade_contradiction",
+  "scotus_congressional_overlap",
+  "fomc_blackout",
+  "lobbying_overlay",
+  "contract_proximity",
+  "high_value_contract",
+  "cluster",
+  "hearing_proximity",
+  "staffer_trade_proximity",
+  "state_official_trade_proximity",
+] as const;
+
+export type PredictiveFeedKind = (typeof PREDICTIVE_FEED_KINDS)[number];
+
+// Maps any kind string (lowercase feed form, UPPERCASE alert form, or shorthand)
+// to the alert-enum canonical key used by KIND_COLOR. Returns the original
+// string upper-cased when no mapping exists so unknown kinds get the
+// fallback chip color.
+const FEED_TO_ALERT_KIND: Record<string, string> = {
+  vote_trade_inconsistency: "VOTE_TRADE_INCONSISTENCY",
+  news_trade_proximity: "NEWS_TRADE_PROXIMITY",
+  statement_trade_contradiction: "STATEMENT_TRADE_CONTRADICTION",
+  scotus_congressional_overlap: "SCOTUS_CONGRESSIONAL_OVERLAP",
+  fomc_blackout: "FOMC_BLACKOUT",
+  lobbying_overlay: "LOBBYING_TRADE_OVERLAP",
+  contract_proximity: "CONTRACT_AWARD_PROXIMITY",
+  high_value_contract: "HIGH_VALUE_CONTRACT",
+  cluster: "CLUSTER_THRESHOLD",
+  staffer_trade_proximity: "STAFFER_TRADE_PROXIMITY",
+  state_official_trade_proximity: "STATE_OFFICIAL_TRADE_PROXIMITY",
+  // hearing_proximity has no alert enum — falls through to a neutral chip.
+};
+
+export function normalizeKind(kind: string): string {
+  if (kind in FEED_TO_ALERT_KIND) return FEED_TO_ALERT_KIND[kind];
+  return kind.toUpperCase();
+}
+
+// Short label used on dashboard feed pills where horizontal space is tight.
+// Differs from `alertKindLabel` (which is verbose Title Case) — these are
+// chosen so each kind fits in ~14 chars next to a member name + ticker.
+const FEED_KIND_SHORT_LABEL: Record<string, string> = {
+  vote_trade_inconsistency: "Vote↔Trade",
+  news_trade_proximity: "News",
+  statement_trade_contradiction: "Statement",
+  scotus_congressional_overlap: "SCOTUS",
+  fomc_blackout: "FOMC",
+  lobbying_overlay: "Lobbying",
+  contract_proximity: "Contract",
+  high_value_contract: "Hi-$ Contract",
+  cluster: "Cluster",
+  hearing_proximity: "Hearing",
+  staffer_trade_proximity: "Staffer",
+  state_official_trade_proximity: "State Official",
+};
+
+export function feedKindLabel(kind: string): string {
+  if (kind in FEED_KIND_SHORT_LABEL) return FEED_KIND_SHORT_LABEL[kind];
+  return alertKindLabel(kind);
+}
+
+export function feedKindColor(kind: string): string {
+  return kindColor(normalizeKind(kind));
+}

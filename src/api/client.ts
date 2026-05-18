@@ -44,7 +44,8 @@ import type {
   LeaderboardKind,
   MemberOut,
   Paginated,
-  SignalFeedItem,
+  PredictiveFeedItem,
+  ReactiveFeedItem,
   TickerOut,
   TransactionOut,
 } from "./types-ui";
@@ -459,14 +460,24 @@ export async function getDashboardSummary(): Promise<DashboardSummary | null> {
 }
 
 // ---------- Feeds (Slice 7) ----------
-export async function getPredictiveFeed(): Promise<SignalFeedItem[]> {
-  if (API_CONFIG.useMocks) return mockSignalPredictive as unknown as SignalFeedItem[];
+export async function getPredictiveFeed(): Promise<PredictiveFeedItem[]> {
+  if (API_CONFIG.useMocks) {
+    // Legacy mock fixtures predate the discriminated detector union, so we
+    // run them through the adapter as if they were wire items. Most fields
+    // will narrow to UnknownDetector and the row falls back to its
+    // signal-kind chip — acceptable for offline dev.
+    return (mockSignalPredictive as unknown as WirePredictiveFeedItem[]).map(
+      adaptPredictiveFeedItem,
+    );
+  }
   const page = await safeFetch<WirePage | null>(`${ENDPOINTS.feedPredictive}?limit=100`, null);
   return ((page?.items ?? []) as WirePredictiveFeedItem[]).map(adaptPredictiveFeedItem);
 }
 
-export async function getReactiveFeed(): Promise<SignalFeedItem[]> {
-  if (API_CONFIG.useMocks) return mockSignalReactive as unknown as SignalFeedItem[];
+export async function getReactiveFeed(): Promise<ReactiveFeedItem[]> {
+  if (API_CONFIG.useMocks) {
+    return (mockSignalReactive as unknown as WireTransaction[]).map(adaptReactiveFeedItem);
+  }
   const page = await safeFetch<WirePage | null>(`${ENDPOINTS.feedReactive}?limit=100`, null);
   return ((page?.items ?? []) as WireTransaction[]).map(adaptReactiveFeedItem);
 }
