@@ -128,22 +128,38 @@ function CmdK() {
   );
 }
 
+// Bell shows count of critical-severity OPEN alerts. The full alert table can
+// have 100k+ rows, so an unscoped count would always cap at 100 and read as
+// permanently meaningless. We probe critical-only (a much narrower cohort)
+// and cap visually at 99+ so the digit stays single-character wide.
 function AlertBell() {
   const navigate = useNavigate();
-  const { data } = useQuery({
-    queryKey: ["alerts-unread"],
+  const { data, isLoading } = useQuery({
+    queryKey: ["alerts-unread", "critical"],
     queryFn: () => listAlerts({ status: "OPEN", limit: 100 }),
   });
-  const count = data?.items.length ?? 0;
+  const criticalItems = (data?.items ?? []).filter((a) => a.severity === "critical");
+  const count = criticalItems.length;
+  const more = data?.has_more ?? false;
+  const display = count >= 99 || (count === 100 && more) ? "99+" : String(count);
+  const title = isLoading
+    ? "Loading alert count…"
+    : count === 0
+      ? "No critical alerts open"
+      : `${display} critical alert${count === 1 ? "" : "s"} open`;
   return (
     <button
       onClick={() => navigate({ to: "/alerts", search: { status: "OPEN", page: 1 } })}
+      title={title}
       className="relative flex h-7 w-7 items-center justify-center rounded text-[var(--text-secondary)] hover:bg-[var(--bg-2)] hover:text-[var(--text-primary)]"
     >
       <Bell className="h-3.5 w-3.5" />
-      {count > 0 && (
-        <span className="num absolute -right-1 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[var(--amber)] px-1 text-[9px] font-medium text-black">
-          {count}
+      {isLoading && (
+        <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[var(--text-tertiary)]/40" />
+      )}
+      {!isLoading && count > 0 && (
+        <span className="absolute -right-1 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[var(--negative)] px-1 text-[9px] font-medium text-white">
+          {display}
         </span>
       )}
     </button>

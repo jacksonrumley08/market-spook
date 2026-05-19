@@ -183,7 +183,8 @@ function MemberDetail() {
           </div>
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             <HeaderScore
-              label="α 180d"
+              label="180-day return"
+              hint="Average 180-day excess return above the sector ETF, after trades were disclosed."
               loading={alphaQuery.isLoading}
               insufficient={!alphaSufficient}
               n={alpha180?.n_trades ?? 0}
@@ -192,7 +193,8 @@ function MemberDetail() {
               colorize
             />
             <HeaderScore
-              label="Hit rate 90d"
+              label="Win rate (90d)"
+              hint="Share of buy trades that beat the sector benchmark over 90 days."
               loading={alphaQuery.isLoading}
               insufficient={!alphaSufficient}
               n={alpha90?.n_trades ?? 0}
@@ -200,7 +202,8 @@ function MemberDetail() {
               format={(v) => `${(v * 100).toFixed(0)}%`}
             />
             <HeaderScore
-              label="Filing q."
+              label="Disclosure quality"
+              hint="How well this member discloses trades — timeliness, specificity, completeness, corrections."
               loading={qualityQuery.isLoading}
               insufficient={(quality?.n_transactions ?? 0) === 0}
               n={quality?.n_transactions ?? 0}
@@ -208,7 +211,8 @@ function MemberDetail() {
               format={(v) => `${(v * 100).toFixed(0)}%`}
             />
             <HeaderScore
-              label="Vagueness"
+              label="Disclosure vagueness"
+              hint="Higher = vaguer trade descriptions (e.g. 'shares of X' without share counts)."
               loading={qualityQuery.isLoading}
               insufficient={(quality?.n_transactions ?? 0) === 0}
               n={quality?.n_transactions ?? 0}
@@ -480,6 +484,7 @@ function MemberDetail() {
 
 function HeaderScore({
   label,
+  hint,
   loading,
   insufficient,
   n,
@@ -489,6 +494,7 @@ function HeaderScore({
   warningWhen,
 }: {
   label: string;
+  hint?: string;
   loading: boolean;
   insufficient: boolean;
   n: number;
@@ -499,14 +505,20 @@ function HeaderScore({
 }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
+      <div
+        className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]"
+        title={hint}
+      >
         {label}
       </div>
       <div className="num mt-0.5 text-2xl">
         {loading ? (
           <span className="text-[var(--text-tertiary)]">—</span>
         ) : insufficient || value == null ? (
-          <span className="text-[var(--text-tertiary)]" title={`insufficient sample (n=${n})`}>
+          <span
+            className="text-[var(--text-tertiary)]"
+            title={`Only ${n} trade${n === 1 ? "" : "s"} on record — need 10 minimum for a reliable estimate.`}
+          >
             <span className="text-[var(--text-secondary)]">—</span>
           </span>
         ) : (
@@ -524,7 +536,9 @@ function HeaderScore({
         )}
       </div>
       {!loading && (insufficient || value == null) && (
-        <div className="num text-[9px] text-[var(--text-tertiary)]">n={n} · insufficient</div>
+        <div className="text-[9px] text-[var(--text-tertiary)]">
+          low data ({n} trade{n === 1 ? "" : "s"})
+        </div>
       )}
     </div>
   );
@@ -546,8 +560,11 @@ function AlphaPanel({
           Excess return vs benchmark
         </div>
         {data && (
-          <div className="num text-[9px] text-[var(--text-tertiary)]">
-            benchmark: {data.benchmark}
+          <div
+            className="text-[9px] text-[var(--text-tertiary)]"
+            title="The portfolio of trades is compared against a sector ETF; if no sector ETF is available, against the S&P 500."
+          >
+            vs. sector ETF
           </div>
         )}
       </div>
@@ -555,7 +572,7 @@ function AlphaPanel({
         <div className="mt-3 grid grid-cols-2 gap-3">
           {ALPHA_HORIZONS.map((h) => (
             <div key={h} className="rounded bg-[var(--bg-2)] p-2.5">
-              <div className="num text-[10px] text-[var(--text-tertiary)]">α {h}d</div>
+              <div className="text-[10px] text-[var(--text-tertiary)]">{h}-day return</div>
               <div className="mt-1 num text-sm text-[var(--text-tertiary)]">—</div>
             </div>
           ))}
@@ -573,7 +590,7 @@ function AlphaPanel({
             return (
               <div key={h} className="rounded bg-[var(--bg-2)] p-2.5">
                 <div className="flex items-baseline justify-between">
-                  <div className="num text-[10px] text-[var(--text-tertiary)]">α {h}d</div>
+                  <div className="text-[10px] text-[var(--text-tertiary)]">{h}-day return</div>
                   <div className="num text-[9px] text-[var(--text-tertiary)]">n={n}</div>
                 </div>
                 {insufficient ? (
@@ -628,7 +645,7 @@ function DecayPanel({
         </div>
         {data && hasAnyData && (
           <div className="num text-[9px] text-[var(--text-tertiary)]">
-            n={data.points[0]?.n_trades ?? 0} BUYs
+            {data.points[0]?.n_trades ?? 0} buys analyzed
           </div>
         )}
       </div>
@@ -638,7 +655,7 @@ function DecayPanel({
         <div className="mt-3 text-xs text-[var(--text-tertiary)]">Decay curve unavailable.</div>
       ) : !hasAnyData ? (
         <div className="mt-3 text-xs text-[var(--text-tertiary)]">
-          insufficient sample to compute decay
+          Need at least 10 buy trades to compute this curve.
         </div>
       ) : (
         <div className="mt-3" style={{ height: 140 }}>
