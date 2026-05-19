@@ -138,20 +138,18 @@ function CmdK() {
   );
 }
 
-// Bell shows count of critical-severity OPEN alerts. The full alert table can
-// have 100k+ rows, so an unscoped count would always cap at 100 and read as
-// permanently meaningless. We probe critical-only (a much narrower cohort)
-// and cap visually at 99+ so the digit stays single-character wide.
+// Bell shows count of critical-severity OPEN alerts. We pass `severity=critical`
+// straight through to the backend which now returns an exact `total` count when
+// any filter is applied, so the bell can read it without paginating. limit=1
+// keeps the payload tiny — we only consume `total`.
 function AlertBell() {
   const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ["alerts-unread", "critical"],
-    queryFn: () => listAlerts({ status: "OPEN", limit: 100 }),
+    queryFn: () => listAlerts({ status: "OPEN", severity: "critical", limit: 1 }),
   });
-  const criticalItems = (data?.items ?? []).filter((a) => a.severity === "critical");
-  const count = criticalItems.length;
-  const more = data?.has_more ?? false;
-  const display = count >= 99 || (count === 100 && more) ? "99+" : String(count);
+  const count = data?.total ?? 0;
+  const display = count >= 99 ? "99+" : String(count);
   const title = isLoading
     ? "Loading alert count…"
     : count === 0

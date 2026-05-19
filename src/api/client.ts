@@ -396,6 +396,7 @@ export async function listAlerts(
   opts: {
     status?: string;
     kind?: string;
+    severity?: string;
     limit?: number;
     offset?: number;
     member_id?: string;
@@ -412,6 +413,7 @@ export async function listAlerts(
     const effectiveStatus = opts.status ?? (opts.dismissed === false ? "OPEN" : undefined);
     if (effectiveStatus) items = items.filter((a) => a.status === effectiveStatus);
     if (opts.kind) items = items.filter((a) => a.kind === opts.kind);
+    if (opts.severity) items = items.filter((a) => a.severity === opts.severity);
     if (opts.member_id) items = items.filter((a) => a.member_id === opts.member_id);
     if (opts.ticker) items = items.filter((a) => a.ticker === opts.ticker);
     items = [...items].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
@@ -428,6 +430,7 @@ export async function listAlerts(
   const effectiveStatus = opts.status ?? (opts.dismissed === false ? "OPEN" : undefined);
   if (effectiveStatus) params.set("status", effectiveStatus);
   if (opts.kind) params.set("kind", opts.kind);
+  if (opts.severity) params.set("severity", opts.severity);
   params.set("limit", String(Math.min(limit, 200)));
   params.set("offset", String(offset));
   const page = await safeFetch<WirePage | null>(`${ENDPOINTS.alerts}?${params}`, null);
