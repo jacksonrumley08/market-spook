@@ -27,7 +27,7 @@ function CommitteesIndex() {
         <p className="num text-[10px] text-[var(--text-tertiary)]">{data?.length ?? 0} tracked</p>
       </div>
       {isLoading && <SkeletonRows rows={6} cols={4} />}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {data?.map((c) => (
           <Link
             key={c.id}
