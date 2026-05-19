@@ -14,16 +14,20 @@ import {
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { to: "/", label: "Home" },
-  { to: "/members", label: "Members" },
-  { to: "/committees", label: "Committees" },
-  { to: "/districts", label: "Districts" },
-  { to: "/scotus", label: "SCOTUS" },
-  { to: "/clusters", label: "Clusters" },
-  { to: "/leaderboards", label: "Leaderboards" },
-  { to: "/backtest", label: "Backtest" },
-  { to: "/alerts", label: "Alerts" },
-  { to: "/news", label: "News" },
+  { to: "/", label: "Home", hint: "Dashboard" },
+  { to: "/members", label: "Members", hint: "Members of Congress directory" },
+  { to: "/committees", label: "Committees", hint: "Congressional committees" },
+  {
+    to: "/districts",
+    label: "Districts",
+    hint: "Congressional districts ranked by alert activity",
+  },
+  { to: "/scotus", label: "SCOTUS", hint: "Supreme Court justices" },
+  { to: "/clusters", label: "Clusters", hint: "Coordinated trading detected across members" },
+  { to: "/leaderboards", label: "Rankings", hint: "Members ranked by overall score" },
+  { to: "/backtest", label: "Backtest", hint: "Strategy backtests against real alerts" },
+  { to: "/alerts", label: "Alerts", hint: "All detector alerts" },
+  { to: "/news", label: "News", hint: "News articles linked to member trades" },
 ] as const;
 
 function NavLinks() {
@@ -38,6 +42,7 @@ function NavLinks() {
           <Link
             key={item.to}
             to={item.to}
+            title={item.hint}
             className={cn(
               "rounded px-2.5 py-1 text-xs uppercase tracking-wider transition-colors",
               active
@@ -56,13 +61,18 @@ function NavLinks() {
 function CmdK() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  // Gate to `enabled: open` so the 500+-row member fetch + ticker fetch don't
+  // hit the API on every page load — they were running on the homepage even
+  // for users who never press Cmd+K.
   const { data: members } = useQuery({
     queryKey: ["members-cmdk"],
     queryFn: () => listMembers({ limit: 999 }),
+    enabled: open,
   });
   const { data: tickers } = useQuery({
     queryKey: ["tickers-cmdk"],
     queryFn: () => listTickerSymbols(),
+    enabled: open,
   });
 
   useEffect(() => {
@@ -89,7 +99,7 @@ function CmdK() {
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Search members, tickers…" />
         <CommandList>
-          <CommandEmpty>No results.</CommandEmpty>
+          <CommandEmpty>No matches. Try a full name or ticker symbol.</CommandEmpty>
           <CommandGroup heading="Members">
             {members?.items.slice(0, 30).map((m) => (
               <CommandItem
@@ -128,22 +138,36 @@ function CmdK() {
   );
 }
 
+// Bell shows count of critical-severity OPEN alerts. We pass `severity=critical`
+// straight through to the backend which now returns an exact `total` count when
+// any filter is applied, so the bell can read it without paginating. limit=1
+// keeps the payload tiny — we only consume `total`.
 function AlertBell() {
   const navigate = useNavigate();
-  const { data } = useQuery({
-    queryKey: ["alerts-unread"],
-    queryFn: () => listAlerts({ status: "OPEN", limit: 100 }),
+  const { data, isLoading } = useQuery({
+    queryKey: ["alerts-unread", "critical"],
+    queryFn: () => listAlerts({ status: "OPEN", severity: "critical", limit: 1 }),
   });
-  const count = data?.items.length ?? 0;
+  const count = data?.total ?? 0;
+  const display = count >= 99 ? "99+" : String(count);
+  const title = isLoading
+    ? "Loading alert count…"
+    : count === 0
+      ? "No critical alerts open"
+      : `${display} critical alert${count === 1 ? "" : "s"} open`;
   return (
     <button
       onClick={() => navigate({ to: "/alerts", search: { status: "OPEN", page: 1 } })}
+      title={title}
       className="relative flex h-7 w-7 items-center justify-center rounded text-[var(--text-secondary)] hover:bg-[var(--bg-2)] hover:text-[var(--text-primary)]"
     >
       <Bell className="h-3.5 w-3.5" />
-      {count > 0 && (
-        <span className="num absolute -right-1 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[var(--amber)] px-1 text-[9px] font-medium text-black">
-          {count}
+      {isLoading && (
+        <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[var(--text-tertiary)]/40" />
+      )}
+      {!isLoading && count > 0 && (
+        <span className="absolute -right-1 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[var(--negative)] px-1 text-[9px] font-medium text-white">
+          {display}
         </span>
       )}
     </button>
@@ -154,6 +178,10 @@ function AlertBell() {
 // background (cached by react-query so /admin/health reuses the same query).
 // Renders an amber dot when any source is DEGRADED so operators can see
 // trouble without opening the page.
+// Operator-facing health indicator. Degraded sources show an amber dot;
+// disabled sources (paused after consecutive failures) show a red dot;
+// otherwise hidden. Both states are surfaced so an unattended source going
+// down doesn't fall off the radar.
 function HealthDot() {
   const { data } = useQuery({
     queryKey: ["admin-health"],
@@ -162,19 +190,30 @@ function HealthDot() {
   });
   const sources = data?.sources ?? [];
   const degraded = sources.filter((s) => s.health_status === "DEGRADED").length;
-  const tone = degraded > 0 ? "text-[var(--warning)]" : "text-[var(--text-secondary)]";
+  const disabled = sources.filter((s) => s.health_status === "DISABLED").length;
+  const tone =
+    degraded > 0
+      ? "text-[var(--warning)]"
+      : disabled > 0
+        ? "text-[var(--negative)]"
+        : "text-[var(--text-secondary)]";
+  const dotColor =
+    degraded > 0 ? "bg-[var(--warning)]" : disabled > 0 ? "bg-[var(--negative)]" : null;
+  const titleParts = [`Ingestion health · ${sources.length} sources`];
+  if (degraded > 0) titleParts.push(`${degraded} degraded`);
+  if (disabled > 0) titleParts.push(`${disabled} disabled`);
   return (
     <Link
       to="/admin/health"
-      title={`Ingestion health · ${sources.length} sources${degraded ? ` · ${degraded} degraded` : ""}`}
+      title={titleParts.join(" · ")}
       className={cn(
         "relative flex h-7 w-7 items-center justify-center rounded hover:bg-[var(--bg-2)] hover:text-[var(--text-primary)]",
         tone,
       )}
     >
       <Activity className="h-3.5 w-3.5" />
-      {degraded > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[var(--warning)]" />
+      {dotColor && (
+        <span className={cn("absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full", dotColor)} />
       )}
     </Link>
   );
@@ -187,7 +226,6 @@ export function TopNav() {
         <Link to="/" className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-sm bg-[var(--cyan)]" />
           <span className="text-xs font-semibold uppercase tracking-[0.18em]">CongressTrade</span>
-          <span className="num text-[10px] text-[var(--text-tertiary)]">v0.1</span>
         </Link>
         <div className="ml-2">
           <NavLinks />

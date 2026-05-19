@@ -6,6 +6,7 @@ import { getIngestionHealth } from "@/api/client";
 import type { SourceHealthOut } from "@/api/types";
 import { RelTime } from "@/components/RelTime";
 import { SkeletonRows } from "@/components/SkeletonRows";
+import { sourceLabel } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/health")({
@@ -22,28 +23,48 @@ export const Route = createFileRoute("/admin/health")({
 });
 
 // Sort order: DEGRADED first (operational attention), then DISABLED, then
-// HEALTHY alphabetically. Within each status group, alphabetical by name.
+// IDLE (HEALTHY-but-never-run), then HEALTHY. Within each status group,
+// alphabetical by name.
 const STATUS_ORDER: Record<string, number> = {
   DEGRADED: 0,
   DISABLED: 1,
-  HEALTHY: 2,
+  IDLE: 2,
+  HEALTHY: 3,
 };
 
 function statusOrder(s: string): number {
   return STATUS_ORDER[s] ?? 99;
 }
 
+// HEALTHY + never-ran is a separate UX state: the green pill misleads
+// operators into thinking a source is fine when it's actually never
+// produced data. Surface it as IDLE.
+function effectiveStatus(s: SourceHealthOut): string {
+  if (s.health_status === "HEALTHY" && s.last_run_at == null && s.last_success_at == null) {
+    return "IDLE";
+  }
+  return s.health_status;
+}
+
 function statusClass(s: string): string {
   switch (s) {
     case "HEALTHY":
       return "bg-[var(--positive)]/20 text-[var(--positive)] ring-[var(--positive)]/30";
+    case "IDLE":
+      return "bg-[var(--bg-2)] text-[var(--text-secondary)] ring-[var(--border)]";
     case "DEGRADED":
       return "bg-[var(--warning)]/20 text-[var(--warning)] ring-[var(--warning)]/30";
     case "DISABLED":
-      return "bg-[var(--bg-2)] text-[var(--text-tertiary)] ring-[var(--border)]";
+      return "bg-[var(--negative)]/15 text-[var(--negative)] ring-[var(--negative)]/30";
     default:
       return "bg-[var(--bg-1)] text-[var(--text-secondary)] ring-[var(--border)]";
   }
+}
+
+function kindLabel(kind: string): string {
+  if (kind === "API") return "REST API";
+  if (kind === "SCRAPER") return "Web scraper";
+  return kind;
 }
 
 function HealthPage() {
@@ -56,13 +77,14 @@ function HealthPage() {
 
   const sources: SourceHealthOut[] = data?.sources ?? [];
   const sorted = [...sources].sort((a, b) => {
-    const so = statusOrder(a.health_status) - statusOrder(b.health_status);
+    const so = statusOrder(effectiveStatus(a)) - statusOrder(effectiveStatus(b));
     if (so !== 0) return so;
     return a.name.localeCompare(b.name);
   });
 
   const counts = sources.reduce<Record<string, number>>((acc, s) => {
-    acc[s.health_status] = (acc[s.health_status] ?? 0) + 1;
+    const k = effectiveStatus(s);
+    acc[k] = (acc[k] ?? 0) + 1;
     return acc;
   }, {});
 
@@ -73,9 +95,20 @@ function HealthPage() {
           <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">
             Ingestion health
           </h1>
-          <p className="num text-[10px] text-[var(--text-tertiary)]">
+          <p className="text-[10px] text-[var(--text-tertiary)]">
             {sources.length} sources ·{" "}
             <span className="text-[var(--positive)]">{counts.HEALTHY ?? 0} healthy</span>
+            {(counts.IDLE ?? 0) > 0 && (
+              <>
+                {" · "}
+                <span
+                  className="text-[var(--text-secondary)]"
+                  title="HEALTHY status but never produced a run — backend may not have wired the cron yet"
+                >
+                  {counts.IDLE} idle
+                </span>
+              </>
+            )}
             {(counts.DEGRADED ?? 0) > 0 && (
               <>
                 {" · "}
@@ -85,10 +118,15 @@ function HealthPage() {
             {(counts.DISABLED ?? 0) > 0 && (
               <>
                 {" · "}
-                <span className="text-[var(--text-tertiary)]">{counts.DISABLED} disabled</span>
+                <span
+                  className="text-[var(--negative)]"
+                  title="Auto-paused after consecutive failures. Recover via `just unblock-source <name>` on the host."
+                >
+                  {counts.DISABLED} disabled
+                </span>
               </>
             )}
-            {" · auto-refresh 60s"}
+            {" · auto-refresh every minute"}
           </p>
         </div>
         <button
@@ -113,9 +151,14 @@ function HealthPage() {
             <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
               <tr className="border-b border-[var(--border)]">
                 <th className="px-3 py-1.5 text-left">Source</th>
-                <th className="px-3 py-1.5 text-left">Kind</th>
+                <th className="px-3 py-1.5 text-left">Type</th>
                 <th className="px-3 py-1.5 text-left">Status</th>
-                <th className="px-3 py-1.5 text-right">Failures</th>
+                <th
+                  className="px-3 py-1.5 text-right"
+                  title="Consecutive failures since last success"
+                >
+                  Failures
+                </th>
                 <th className="px-3 py-1.5 text-left">Last run</th>
                 <th className="px-3 py-1.5 text-left">Last success</th>
                 <th className="px-3 py-1.5 text-left">Last failure</th>
@@ -144,18 +187,23 @@ function HealthPage() {
                       onClick={() => setExpanded(isExpanded ? null : s.name)}
                       className="cursor-pointer border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
                     >
-                      <td className="num px-3 py-1.5 text-[var(--text-primary)]">{s.name}</td>
-                      <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                        {s.kind}
+                      <td
+                        className="px-3 py-1.5 text-[var(--text-primary)]"
+                        title={`Internal key: ${s.name}`}
+                      >
+                        {sourceLabel(s.name)}
+                      </td>
+                      <td className="px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
+                        {kindLabel(s.kind)}
                       </td>
                       <td className="px-3 py-1.5">
                         <span
                           className={cn(
-                            "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider ring-1",
-                            statusClass(s.health_status),
+                            "rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wider ring-1",
+                            statusClass(effectiveStatus(s)),
                           )}
                         >
-                          {s.health_status}
+                          {effectiveStatus(s)}
                         </span>
                       </td>
                       <td
@@ -200,23 +248,26 @@ function HealthPage() {
                           className="border-b border-[var(--border)]/40 bg-[var(--bg-0)]"
                         >
                           <td colSpan={7} className="p-3">
-                            <div className="grid grid-cols-1 gap-2 text-[11px] md:grid-cols-2">
-                              <div>
-                                <div className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)]">
-                                  Last failure reason
-                                </div>
-                                <div className="num mt-1 text-[var(--text-secondary)]">
-                                  {s.last_failure_reason ?? "—"}
-                                </div>
+                            <div className="text-[11px] text-[var(--text-secondary)]">
+                              <div className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)]">
+                                Last failure reason
                               </div>
-                              <div>
-                                <div className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)]">
-                                  Raw payload
-                                </div>
-                                <pre className="num mt-1 overflow-auto text-[10px] text-[var(--text-tertiary)]">
-                                  {JSON.stringify(s, null, 2)}
-                                </pre>
+                              <div className="mt-1 whitespace-pre-wrap break-words">
+                                {s.last_failure_reason ?? (
+                                  <span className="text-[var(--text-tertiary)]">
+                                    No failure reason recorded.
+                                  </span>
+                                )}
                               </div>
+                              {effectiveStatus(s) === "DISABLED" && (
+                                <div className="mt-2 text-[10px] text-[var(--text-tertiary)]">
+                                  Recover via{" "}
+                                  <code className="rounded bg-[var(--bg-2)] px-1">
+                                    just unblock-source {s.name}
+                                  </code>{" "}
+                                  on the host.
+                                </div>
+                              )}
                             </div>
                           </td>
                         </motion.tr>
