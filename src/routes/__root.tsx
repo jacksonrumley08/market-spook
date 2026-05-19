@@ -10,11 +10,12 @@ import {
 
 import appCss from "../styles.css?url";
 import { TopNav } from "@/components/TopNav";
+import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-0)]">
+    <div className="flex min-h-[60vh] items-center justify-center bg-[var(--bg-0)]">
       <div className="text-center">
         <div className="num text-6xl text-[var(--text-primary)]">404</div>
         <div className="mt-2 text-xs uppercase tracking-wider text-[var(--text-secondary)]">
@@ -33,7 +34,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
   const [showDetails, setShowDetails] = useState(false);
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-0)]">
+    <div className="flex min-h-[60vh] items-center justify-center bg-[var(--bg-0)]">
       <div className="max-w-md rounded border border-[var(--border)] bg-[var(--bg-1)] p-6">
         <div className="text-sm text-[var(--text-primary)]">Something broke loading this page.</div>
         <p className="mt-1 text-xs text-[var(--text-secondary)]">
@@ -83,7 +84,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "CongressTrade Intelligence" },
       {
         name: "description",
-        content: "Internal: signals from US government officials' stock trades.",
+        content:
+          "Open intelligence platform linking congressional, federal-official, and SCOTUS trading disclosures to votes, hearings, contracts, lobbying, and news. Research only — not financial advice.",
       },
       { name: "robots", content: "noindex, nofollow" },
     ],
@@ -122,11 +124,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-[var(--bg-0)]">
+      <div className="flex min-h-screen flex-col bg-[var(--bg-0)]">
         <TopNav />
-        <main className="mx-auto max-w-[1600px] px-4 py-4">
+        <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-4">
           <Outlet />
         </main>
+        <Footer />
         <Toaster theme="dark" position="bottom-right" />
       </div>
     </QueryClientProvider>

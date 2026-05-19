@@ -99,7 +99,13 @@ function Dashboard() {
         <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">
           Dashboard
         </h1>
-        <p className="num mt-0.5 text-[10px] text-[var(--text-tertiary)]" suppressHydrationWarning>
+        <p className="mt-1 max-w-3xl text-sm leading-snug text-[var(--text-primary)]">
+          Open intelligence on{" "}
+          <span className="text-[var(--cyan)]">congressional, federal-official, and SCOTUS</span>{" "}
+          stock trades — linked to votes, hearings, committee jurisdictions, federal contracts,
+          lobbying filings, and news catalysts. Research only; see footer for disclaimer.
+        </p>
+        <p className="num mt-1 text-[10px] text-[var(--text-tertiary)]" suppressHydrationWarning>
           Last update: {new Date().toISOString().slice(0, 16).replace("T", " ")}Z
         </p>
       </div>
