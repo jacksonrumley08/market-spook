@@ -27,7 +27,13 @@ import {
 import { PartyChip } from "@/components/PartyChip";
 import { FlagRow } from "@/components/FlagBadge";
 import { RelTime } from "@/components/RelTime";
-import { fmtPctRaw, fmtUSDRange, signClass } from "@/lib/format";
+import {
+  fmtPctRaw,
+  fmtUSDRange,
+  ownerTypeLabel,
+  signClass,
+  transactionTypeLabel,
+} from "@/lib/format";
 import { SkeletonRows } from "@/components/SkeletonRows";
 
 export const Route = createFileRoute("/members/$id")({
@@ -171,7 +177,8 @@ function MemberDetail() {
               ))}
             </div>
             <div className="num mt-2 text-[10px] text-[var(--text-tertiary)]">
-              {member.tenure_years}y tenure · {member.bioguide_id}
+              {member.tenure_years > 0 && <>{member.tenure_years}y tenure · </>}
+              <span title="Library of Congress bioguide identifier">{member.bioguide_id}</span>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
@@ -213,20 +220,25 @@ function MemberDetail() {
         </div>
       </div>
 
-      {/* Six-sigma in-district concentration callout — SPEC §18 highlight */}
+      {/* Outsized in-district concentration callout — surfaced when z >= 3 */}
       {highZ && conc && (
         <div className="rounded border border-[var(--warning)] bg-[var(--warning)]/10 px-4 py-2">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--warning)]">
-              Six-sigma finding
+              Outlier finding
             </span>
             <span className="text-sm text-[var(--text-primary)]">
-              In-district concentration{" "}
+              Trades own-district companies far more than average —{" "}
               <span className="num font-medium text-[var(--warning)]">
-                z = {conc.z_score_vs_baseline!.toFixed(2)}σ
+                {conc.in_district_trade_count} of {conc.total_trade_count}
               </span>{" "}
-              vs the universe baseline · {conc.in_district_trade_count} of {conc.total_trade_count}{" "}
-              trades in {conc.state}-{conc.district_num} companies
+              trades involve companies headquartered in {conc.state}-{conc.district_num}.
+              <span
+                className="num ml-1 text-[10px] text-[var(--text-tertiary)]"
+                title="Standard deviations above the cross-member baseline"
+              >
+                ({conc.z_score_vs_baseline!.toFixed(1)}× the typical rate)
+              </span>
             </span>
           </div>
         </div>
@@ -261,85 +273,89 @@ function MemberDetail() {
             data={quality ?? null}
           />
 
-          <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
-            <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-              Sector tilt
+          {member.sector_tilt.length > 0 && (
+            <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
+              <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+                Sector tilt
+              </div>
+              <div className="mt-3 flex items-center gap-4">
+                <div style={{ width: 140, height: 140 }}>
+                  <ResponsiveContainer>
+                    <PieChart>
+                      <Pie
+                        data={member.sector_tilt}
+                        dataKey="weight"
+                        innerRadius={36}
+                        outerRadius={64}
+                        stroke="var(--bg-1)"
+                        strokeWidth={1}
+                      >
+                        {member.sector_tilt.map((_, i) => (
+                          <Cell key={i} fill={SECTOR_COLORS[i % SECTOR_COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex-1 space-y-1">
+                  {member.sector_tilt.slice(0, 6).map((s, i) => (
+                    <div key={s.sector} className="flex items-center gap-2 text-[11px]">
+                      <span
+                        className="h-2 w-2 rounded-sm"
+                        style={{ background: SECTOR_COLORS[i % SECTOR_COLORS.length] }}
+                      />
+                      <span className="flex-1 truncate">{s.sector}</span>
+                      <span className="num text-[var(--text-secondary)]">
+                        {(s.weight * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="mt-3 flex items-center gap-4">
-              <div style={{ width: 140, height: 140 }}>
+          )}
+
+          {member.hearing_proximity.length > 0 && (
+            <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
+              <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+                Trades near committee hearings
+              </div>
+              <div className="mt-3" style={{ height: 140 }}>
                 <ResponsiveContainer>
-                  <PieChart>
-                    <Pie
-                      data={member.sector_tilt}
-                      dataKey="weight"
-                      innerRadius={36}
-                      outerRadius={64}
-                      stroke="var(--bg-1)"
-                      strokeWidth={1}
-                    >
-                      {member.sector_tilt.map((_, i) => (
-                        <Cell key={i} fill={SECTOR_COLORS[i % SECTOR_COLORS.length]} />
+                  <BarChart data={member.hearing_proximity}>
+                    <XAxis
+                      dataKey="proximity_days"
+                      tick={{ fontSize: 9, fill: "var(--text-tertiary)" }}
+                      stroke="var(--border)"
+                    />
+                    <YAxis hide />
+                    <RTooltip
+                      contentStyle={{
+                        background: "var(--bg-2)",
+                        border: "1px solid var(--border)",
+                        fontSize: 11,
+                      }}
+                      labelFormatter={(v) => `${v >= 0 ? "+" : ""}${v} days`}
+                    />
+                    <Bar dataKey="count">
+                      {member.hearing_proximity.map((p, i) => (
+                        <Cell
+                          key={i}
+                          fill={
+                            p.signed > 0.1
+                              ? "var(--positive)"
+                              : p.signed < -0.1
+                                ? "var(--negative)"
+                                : "var(--text-tertiary)"
+                          }
+                        />
                       ))}
-                    </Pie>
-                  </PieChart>
+                    </Bar>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex-1 space-y-1">
-                {member.sector_tilt.slice(0, 6).map((s, i) => (
-                  <div key={s.sector} className="flex items-center gap-2 text-[11px]">
-                    <span
-                      className="h-2 w-2 rounded-sm"
-                      style={{ background: SECTOR_COLORS[i % SECTOR_COLORS.length] }}
-                    />
-                    <span className="flex-1 truncate">{s.sector}</span>
-                    <span className="num text-[var(--text-secondary)]">
-                      {(s.weight * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
             </div>
-          </div>
-
-          <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
-            <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-              Hearing-trade proximity
-            </div>
-            <div className="mt-3" style={{ height: 140 }}>
-              <ResponsiveContainer>
-                <BarChart data={member.hearing_proximity}>
-                  <XAxis
-                    dataKey="proximity_days"
-                    tick={{ fontSize: 9, fill: "var(--text-tertiary)" }}
-                    stroke="var(--border)"
-                  />
-                  <YAxis hide />
-                  <RTooltip
-                    contentStyle={{
-                      background: "var(--bg-2)",
-                      border: "1px solid var(--border)",
-                      fontSize: 11,
-                    }}
-                    labelFormatter={(v) => `${v >= 0 ? "+" : ""}${v}d`}
-                  />
-                  <Bar dataKey="count">
-                    {member.hearing_proximity.map((p, i) => (
-                      <Cell
-                        key={i}
-                        fill={
-                          p.signed > 0.1
-                            ? "var(--positive)"
-                            : p.signed < -0.1
-                              ? "var(--negative)"
-                              : "var(--text-tertiary)"
-                        }
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Right col */}
@@ -427,7 +443,7 @@ function MemberDetail() {
                         </td>
                         <td
                           className={
-                            "px-3 py-1.5 num text-[10px] uppercase " +
+                            "px-3 py-1.5 text-[10px] " +
                             (t.type === "buy"
                               ? "text-[var(--positive)]"
                               : t.type === "sell"
@@ -435,13 +451,13 @@ function MemberDetail() {
                                 : "text-[var(--text-secondary)]")
                           }
                         >
-                          {t.type}
+                          {transactionTypeLabel(t.type)}
                         </td>
                         <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
                           {fmtUSDRange(t.amount_min, t.amount_max)}
                         </td>
-                        <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                          {t.owner_type}
+                        <td className="px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
+                          {ownerTypeLabel(t.owner_type)}
                         </td>
                         <td className="px-3 py-1.5">
                           <FlagRow flags={t.flags} />
@@ -527,7 +543,7 @@ function AlphaPanel({
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
       <div className="flex items-baseline justify-between">
         <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-          Alpha (Slice 7)
+          Excess return vs benchmark
         </div>
         {data && (
           <div className="num text-[9px] text-[var(--text-tertiary)]">
@@ -608,7 +624,7 @@ function DecayPanel({
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
       <div className="flex items-baseline justify-between">
         <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-          Post-disclosure decay (SPEC §4)
+          How quickly does the edge fade after disclosure?
         </div>
         {data && hasAnyData && (
           <div className="num text-[9px] text-[var(--text-tertiary)]">
@@ -685,7 +701,7 @@ function ConcentrationPanel({
   return (
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
       <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-        District concentration (Slice 16)
+        Trading own district
       </div>
       {loading ? (
         <div className="mt-3 text-xs text-[var(--text-tertiary)]">—</div>
@@ -782,7 +798,7 @@ function QualityPanel({
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
       <div className="flex items-baseline justify-between">
         <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-          Filing quality (Slice 9)
+          Disclosure quality
         </div>
         {data && (
           <div className="num text-[9px] text-[var(--text-tertiary)]">

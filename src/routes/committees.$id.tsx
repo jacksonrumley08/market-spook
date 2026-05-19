@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { getCommittee } from "@/api/client";
 import { PartyChip } from "@/components/PartyChip";
 import { RelTime } from "@/components/RelTime";
@@ -8,12 +8,12 @@ import { SkeletonRows } from "@/components/SkeletonRows";
 import type { CommitteeOfficial, CommitteeRole, HearingStatus } from "@/api/types-ui";
 
 export const Route = createFileRoute("/committees/$id")({
-  head: ({ params }) => ({
+  head: () => ({
     meta: [
-      { title: `Committee ${params.id} — CongressTrade Intelligence` },
+      { title: "Committee — CongressTrade Intelligence" },
       {
         name: "description",
-        content: `Active roster and recent hearings for committee ${params.id}.`,
+        content: "Active roster and recent hearings for a Congressional committee.",
       },
     ],
   }),
@@ -75,6 +75,12 @@ function CommitteeDetail() {
       return a.name.localeCompare(b.name);
     });
   }, [c]);
+
+  useEffect(() => {
+    if (c?.name) {
+      document.title = `${c.name} — Committees — CongressTrade Intelligence`;
+    }
+  }, [c?.name]);
 
   if (isLoading) {
     return (
@@ -231,11 +237,6 @@ function CommitteeDetail() {
                 ))}
               </ul>
             )}
-          </div>
-
-          <div className="rounded border border-dashed border-[var(--border)] bg-[var(--bg-1)] p-3 text-[10px] text-[var(--text-tertiary)]">
-            Backend gap: <code className="num">/committees/{"{id}"}</code> does not yet expose
-            weekly sector flow or recent cluster trades for this committee.
           </div>
         </div>
       </div>

@@ -508,9 +508,9 @@ function RunDetail({ runId, preset }: { runId: string; preset: BacktestPreset | 
 
           {isHeadline && sharpe != null && (
             <div className="rounded bg-[var(--cyan)]/10 px-3 py-2 text-[11px] text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30">
-              Platform's load-bearing finding — SPEC §17.
+              This is our flagship result.
               <br />
-              Re-running reproduces the validated empirical edge.
+              Each run uses fresh market data and should reproduce a similar Sharpe.
             </div>
           )}
         </div>

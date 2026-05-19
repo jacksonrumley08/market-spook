@@ -37,33 +37,35 @@ type TabMeta = {
 const TABS: TabMeta[] = [
   {
     kind: "composite",
-    label: "Composite",
+    label: "Overall",
     select: (r) => r.composite_score,
-    fmt: (v) => v.toFixed(3),
+    fmt: (v) => v.toFixed(2),
     description:
-      "Slice-9 composite: 0.4·α + 0.3·hit_rate + 0.2·filing_quality + 0.1·alert_density. Bayesian-shrunk toward priors; ~0.5 = neutral.",
+      "Overall score — combines after-trade returns, win rate, disclosure quality, and alert frequency. Higher = more notable trader.",
   },
   {
     kind: "alpha",
-    label: "Alpha 90d",
+    label: "90-day return",
     select: (r) => r.alpha_90d,
     fmt: (v) => fmtPctRaw(v),
     cls: signClass,
-    description: "Mean 90-day excess return vs sector ETF.",
+    description:
+      "Average 90-day return after a trade, above what a sector ETF returned the same period.",
   },
   {
     kind: "hit_rate",
-    label: "Hit rate 90d",
+    label: "Win rate",
     select: (r) => r.hit_rate_90d,
     fmt: fmtPct1,
-    description: "% of BUYs with positive 90d excess return.",
+    description: "Share of buy trades that beat the sector benchmark over 90 days.",
   },
   {
     kind: "filing_quality",
-    label: "Filing quality",
+    label: "Disclosure quality",
     select: (r) => r.filing_quality_score,
     fmt: fmtPct0,
-    description: "0–100 composite of late-filing rate, vagueness, completeness, amendment rate.",
+    description:
+      "How well the member discloses trades — timeliness, specificity, completeness, corrections.",
   },
   {
     kind: "late_filer",
@@ -71,7 +73,8 @@ const TABS: TabMeta[] = [
     select: (r) => r.late_filing_rate,
     fmt: fmtPct0,
     cls: (v) => (v > 0.3 ? "text-[var(--warning)]" : ""),
-    description: "Fraction of trades filed >45d after the trade. Lower = better.",
+    description:
+      "Share of trades disclosed more than 45 days after the trade (the STOCK Act deadline). Lower is better.",
   },
   {
     kind: "vagueness",
@@ -79,7 +82,7 @@ const TABS: TabMeta[] = [
     select: (r) => r.vagueness_score_avg,
     fmt: fmtPct0,
     cls: (v) => (v > 0.4 ? "text-[var(--warning)]" : ""),
-    description: "Average asset-description vagueness, 0 = always specific. Lower = better.",
+    description: "How precisely the member describes their trades. Lower = more specific.",
   },
 ];
 

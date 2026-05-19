@@ -1,9 +1,8 @@
 // Canonical alert-kind list sourced from app/db/types.py:AlertKindEnum
-// (backend master). The frontend mirrors all 15 kinds so users can filter
-// on every value the backend may emit; some kinds are legacy/Lovable
-// pre-slice values that no longer fire (CONTRACT_PROXIMITY, WATCHLIST_MATCH,
-// NEWS_CATALYST) but are kept for completeness so historical alerts remain
-// reachable.
+// (backend master). The frontend mirrors all 15 kinds so a serialized alert
+// from any era of the platform renders correctly; ACTIVE_ALERT_KINDS below is
+// the subset the filter UI exposes (legacy enums removed so they don't ship as
+// dead pill buttons).
 
 export const ALERT_KINDS = [
   "VOTE_TRADE_INCONSISTENCY",
@@ -18,10 +17,27 @@ export const ALERT_KINDS = [
   "CLUSTER_THRESHOLD",
   "FOMC_BLACKOUT",
   "INGESTION_HEALTH",
-  // Legacy kinds — kept in enum, may still appear on historical alerts.
+  // Legacy pre-Slice-3 kinds — no longer fired. Kept in the enum so
+  // historical alert rows render without crashing the kind chip.
   "CONTRACT_PROXIMITY",
   "WATCHLIST_MATCH",
   "NEWS_CATALYST",
+] as const;
+
+// Filter pills should only show kinds the engine still emits.
+export const ACTIVE_ALERT_KINDS = [
+  "VOTE_TRADE_INCONSISTENCY",
+  "NEWS_TRADE_PROXIMITY",
+  "STATEMENT_TRADE_CONTRADICTION",
+  "LOBBYING_TRADE_OVERLAP",
+  "CONTRACT_AWARD_PROXIMITY",
+  "HIGH_VALUE_CONTRACT",
+  "SCOTUS_CONGRESSIONAL_OVERLAP",
+  "STAFFER_TRADE_PROXIMITY",
+  "STATE_OFFICIAL_TRADE_PROXIMITY",
+  "CLUSTER_THRESHOLD",
+  "FOMC_BLACKOUT",
+  "INGESTION_HEALTH",
 ] as const;
 
 export type AlertKindLiteral = (typeof ALERT_KINDS)[number];
@@ -29,14 +45,72 @@ export type AlertKindLiteral = (typeof ALERT_KINDS)[number];
 export const ALERT_STATUSES = ["OPEN", "ACKNOWLEDGED", "RESOLVED", "EXPIRED"] as const;
 export type AlertStatusLiteral = (typeof ALERT_STATUSES)[number];
 
-// Friendly Title-Case label. Falls back to titlecasing the raw value so
-// unknown kinds render readably.
+// Plain-English label for every kind. The previous implementation merely
+// title-cased the enum (`VOTE_TRADE_INCONSISTENCY` → "Vote Trade
+// Inconsistency"), which is readable but does not tell the user *what the
+// detector found*. These labels do.
+const ALERT_KIND_LABEL: Record<string, string> = {
+  VOTE_TRADE_INCONSISTENCY: "Voted against own holdings",
+  NEWS_TRADE_PROXIMITY: "Traded near major news",
+  STATEMENT_TRADE_CONTRADICTION: "Statement contradicts trade",
+  LOBBYING_TRADE_OVERLAP: "Lobbying overlaps trade",
+  CONTRACT_AWARD_PROXIMITY: "Traded near contract award",
+  HIGH_VALUE_CONTRACT: "Large federal contract",
+  SCOTUS_CONGRESSIONAL_OVERLAP: "SCOTUS + Congress co-trade",
+  STAFFER_TRADE_PROXIMITY: "Staffer traded near event",
+  STATE_OFFICIAL_TRADE_PROXIMITY: "State official trade",
+  CLUSTER_THRESHOLD: "Coordinated trading detected",
+  FOMC_BLACKOUT: "Trade during Fed blackout",
+  INGESTION_HEALTH: "Data source failed",
+  // Legacy fallbacks — best-effort English.
+  CONTRACT_PROXIMITY: "Traded near a contract",
+  WATCHLIST_MATCH: "Watchlist match",
+  NEWS_CATALYST: "News catalyst",
+};
+
+// One-sentence detector description used in tooltips and "what is this?" UI.
+export const ALERT_KIND_DESCRIPTION: Record<string, string> = {
+  VOTE_TRADE_INCONSISTENCY:
+    "Member voted on a bill, then traded a company in the affected sector against the vote direction.",
+  NEWS_TRADE_PROXIMITY:
+    "Member traded a company shortly before or after a major news event about it.",
+  STATEMENT_TRADE_CONTRADICTION:
+    "Member made a public statement, then traded in a way that contradicts the position they took.",
+  LOBBYING_TRADE_OVERLAP:
+    "Member traded a company that was actively lobbying their committee in the same week.",
+  CONTRACT_AWARD_PROXIMITY:
+    "Member traded a company within days of a federal contract award to that company.",
+  HIGH_VALUE_CONTRACT:
+    "Member traded a company that recently received an unusually large federal contract.",
+  SCOTUS_CONGRESSIONAL_OVERLAP:
+    "A Supreme Court justice and a member of Congress traded the same company in overlapping windows.",
+  STAFFER_TRADE_PROXIMITY:
+    "A senior staffer traded a company whose business overlaps their member's committee or recent hearings.",
+  STATE_OFFICIAL_TRADE_PROXIMITY:
+    "A state-level official traded a company headquartered in their state or under their jurisdiction.",
+  CLUSTER_THRESHOLD:
+    "Three or more members of the same committee traded the same company in the same direction within 14 days.",
+  FOMC_BLACKOUT:
+    "A Federal Reserve official traded during the FOMC blackout period (no-trade window around meetings).",
+  INGESTION_HEALTH: "An upstream data source failed enough times to be flagged for ops review.",
+  CONTRACT_PROXIMITY: "Legacy alert — superseded by Contract Award Proximity.",
+  WATCHLIST_MATCH: "Legacy alert — superseded by per-kind detectors.",
+  NEWS_CATALYST: "Legacy alert — superseded by News-Trade Proximity.",
+};
+
+// Friendly label lookup. Falls back to a Title-Case rendering for unknown
+// kinds so the chip is never blank.
 export function alertKindLabel(kind: string): string {
+  if (kind in ALERT_KIND_LABEL) return ALERT_KIND_LABEL[kind];
   return kind
     .toLowerCase()
     .split("_")
     .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
     .join(" ");
+}
+
+export function alertKindDescription(kind: string): string | undefined {
+  return ALERT_KIND_DESCRIPTION[kind];
 }
 
 // Severity colors used by the pill + row chip. Routes the kind into one of a
@@ -140,21 +214,21 @@ export function normalizeKind(kind: string): string {
 }
 
 // Short label used on dashboard feed pills where horizontal space is tight.
-// Differs from `alertKindLabel` (which is verbose Title Case) — these are
-// chosen so each kind fits in ~14 chars next to a member name + ticker.
+// Differs from `alertKindLabel` (which now ships a full-sentence dictionary) —
+// these are <= 14 chars so the pill fits next to a member name + ticker.
 const FEED_KIND_SHORT_LABEL: Record<string, string> = {
-  vote_trade_inconsistency: "Vote↔Trade",
-  news_trade_proximity: "News",
-  statement_trade_contradiction: "Statement",
-  scotus_congressional_overlap: "SCOTUS",
-  fomc_blackout: "FOMC",
-  lobbying_overlay: "Lobbying",
-  contract_proximity: "Contract",
-  high_value_contract: "Hi-$ Contract",
+  vote_trade_inconsistency: "Vote conflict",
+  news_trade_proximity: "News-trade",
+  statement_trade_contradiction: "Statement clash",
+  scotus_congressional_overlap: "SCOTUS overlap",
+  fomc_blackout: "Fed blackout",
+  lobbying_overlay: "Lobby tie",
+  contract_proximity: "Contract trade",
+  high_value_contract: "Large contract",
   cluster: "Cluster",
-  hearing_proximity: "Hearing",
-  staffer_trade_proximity: "Staffer",
-  state_official_trade_proximity: "State Official",
+  hearing_proximity: "Hearing trade",
+  staffer_trade_proximity: "Staffer trade",
+  state_official_trade_proximity: "State official",
 };
 
 export function feedKindLabel(kind: string): string {

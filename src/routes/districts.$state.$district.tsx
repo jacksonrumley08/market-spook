@@ -64,7 +64,8 @@ function DistrictDetail() {
             / {state}-{district}
           </h1>
           <p className="num text-[10px] text-[var(--text-tertiary)]">
-            {d?.chamber ?? "—"} · congress {d?.congress_number ?? "—"} · source {d?.source ?? "—"}
+            {d?.chamber ?? "—"}
+            {d?.congress_number != null && ` · ${d.congress_number}th Congress`}
           </p>
         </div>
         {d?.population_2020 != null && (
@@ -250,21 +251,14 @@ function DistrictDetail() {
                 />
                 <span
                   className={cn(
-                    "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider ring-1",
+                    "rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wider ring-1",
                     kindColor(a.kind),
                   )}
-                  title={alertKindLabel(a.kind)}
+                  title={a.kind}
                 >
-                  {a.kind}
+                  {alertKindLabel(a.kind)}
                 </span>
-                <span className="flex-1 text-[var(--text-secondary)]">
-                  {a.headline ?? `alert #${a.alert_id}`}
-                </span>
-                {a.related_transaction_id != null && (
-                  <span className="num text-[10px] text-[var(--text-tertiary)]">
-                    tx #{a.related_transaction_id}
-                  </span>
-                )}
+                <span className="flex-1 text-[var(--text-secondary)]">{a.headline ?? "—"}</span>
                 <RelTime iso={a.created_at} />
               </div>
             ))}
