@@ -40,6 +40,12 @@ function TickerDetail() {
 
   return (
     <div className="space-y-3">
+      <div className="rounded border border-[var(--warning)] bg-[var(--warning)]/10 px-3 py-2 text-[11px] text-[var(--warning)]">
+        <strong className="font-medium uppercase tracking-wider">Demo data</strong> — the
+        ticker-detail backend endpoint is not implemented yet. The price chart, holdings, and
+        activity rows below are sample fixtures. Real trades for this symbol live on the member
+        detail pages.
+      </div>
       <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
         <div className="flex items-baseline gap-3">
           <h1 className="num text-3xl font-medium text-[var(--text-primary)]">{t.symbol}</h1>
@@ -47,7 +53,6 @@ function TickerDetail() {
           <span className="rounded bg-[var(--bg-2)] px-1.5 py-0.5 text-[10px] uppercase text-[var(--text-secondary)]">
             {t.sector}
           </span>
-          <span className="text-[10px] text-[var(--text-tertiary)]">{t.gics}</span>
           <div className="ml-auto flex items-baseline gap-3">
             <div className="num text-2xl text-[var(--text-primary)]">${last.c.toFixed(2)}</div>
             <div className={"num text-sm " + signClass(ret)}>

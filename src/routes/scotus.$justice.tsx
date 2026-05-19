@@ -1,14 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { getScotusJustice, listScotusHoldings, listScotusTransactions } from "@/api/client";
-import { fmtUSD } from "@/lib/format";
+import { assetCategoryLabel, fmtUSD, titleCaseAsset, transactionTypeLabel } from "@/lib/format";
 import { SkeletonRows } from "@/components/SkeletonRows";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/scotus/$justice")({
-  head: ({ params }) => ({
+  head: () => ({
     meta: [
-      { title: `Justice ${params.justice.slice(0, 8)} — CongressTrade Intelligence` },
+      { title: "SCOTUS justice — CongressTrade Intelligence" },
       {
         name: "description",
         content:
@@ -38,6 +39,12 @@ function JusticeDetail() {
   const j = justiceQuery.data;
   const holdings = holdingsQuery.data ?? [];
   const transactions = transactionsQuery.data ?? [];
+
+  useEffect(() => {
+    if (j?.full_name) {
+      document.title = `${j.full_name} — SCOTUS — CongressTrade Intelligence`;
+    }
+  }, [j?.full_name]);
 
   const filingYears = Array.from(
     new Set(
@@ -138,9 +145,11 @@ function JusticeDetail() {
                   key={`${h.asset_name}-${h.filing_year}-${i}`}
                   className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
                 >
-                  <td className="px-3 py-1.5 text-[var(--text-primary)]">{h.asset_name}</td>
-                  <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                    {h.asset_category}
+                  <td className="px-3 py-1.5 text-[var(--text-primary)]">
+                    {titleCaseAsset(h.asset_name)}
+                  </td>
+                  <td className="px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
+                    {assetCategoryLabel(h.asset_category)}
                   </td>
                   <td className="px-3 py-1.5">
                     {h.ticker ? (
@@ -209,7 +218,9 @@ function JusticeDetail() {
                   <td className="num px-3 py-1.5 text-[var(--text-tertiary)]">
                     {t.transaction_date_approximate ?? "—"}
                   </td>
-                  <td className="px-3 py-1.5 text-[var(--text-primary)]">{t.asset_name}</td>
+                  <td className="px-3 py-1.5 text-[var(--text-primary)]">
+                    {titleCaseAsset(t.asset_name)}
+                  </td>
                   <td className="px-3 py-1.5">
                     {t.ticker ? (
                       <Link
@@ -278,10 +289,10 @@ function DirectionChip({ d }: { d?: string | null }) {
   if (!d) return <span className="text-[var(--text-tertiary)]">—</span>;
   const u = d.toUpperCase();
   const cls =
-    u === "BUY"
+    u === "BUY" || u === "PURCHASE"
       ? "text-[var(--positive)]"
-      : u === "SELL"
+      : u === "SELL" || u === "SALE" || u === "PARTIAL_SALE"
         ? "text-[var(--negative)]"
         : "text-[var(--text-secondary)]";
-  return <span className={cn("num text-[10px] uppercase", cls)}>{u}</span>;
+  return <span className={cn("text-[10px]", cls)}>{transactionTypeLabel(d)}</span>;
 }
