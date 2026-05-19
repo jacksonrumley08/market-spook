@@ -572,6 +572,12 @@ export interface SourceHealthOut {
   name: string;
   kind: string;
   health_status: string;
+  /** Derived UI status: HEALTHY | STALE | IDLE | DEFERRED | DEGRADED | DISABLED */
+  display_status: string;
+  /** Hours since last_success_at after which display_status flips to STALE */
+  stale_threshold_hours: number;
+  /** Time since last_success_at; null when never run */
+  hours_since_last_success?: number | null;
   consecutive_failures: number;
   last_run_at?: string | null;
   last_success_at?: string | null;

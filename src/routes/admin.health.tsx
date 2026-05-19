@@ -22,24 +22,28 @@ export const Route = createFileRoute("/admin/health")({
   component: HealthPage,
 });
 
-// Sort order: DEGRADED first (operational attention), then DISABLED, then
-// IDLE (HEALTHY-but-never-run), then HEALTHY. Within each status group,
-// alphabetical by name.
+// Sort order. Backend now ships display_status directly (HEALTHY / STALE /
+// IDLE / DEFERRED / DEGRADED / DISABLED). DEGRADED + DISABLED + STALE bubble
+// to the top because they need operator attention; IDLE and DEFERRED are
+// known-not-running states; HEALTHY is last.
 const STATUS_ORDER: Record<string, number> = {
   DEGRADED: 0,
   DISABLED: 1,
-  IDLE: 2,
-  HEALTHY: 3,
+  STALE: 2,
+  IDLE: 3,
+  DEFERRED: 4,
+  HEALTHY: 5,
 };
 
 function statusOrder(s: string): number {
   return STATUS_ORDER[s] ?? 99;
 }
 
-// HEALTHY + never-ran is a separate UX state: the green pill misleads
-// operators into thinking a source is fine when it's actually never
-// produced data. Surface it as IDLE.
+// Trust the backend's display_status when present; fall back to a
+// client-side derivation for back-compat during the rolling deploy where
+// older API responses lack the field.
 function effectiveStatus(s: SourceHealthOut): string {
+  if (s.display_status) return s.display_status;
   if (s.health_status === "HEALTHY" && s.last_run_at == null && s.last_success_at == null) {
     return "IDLE";
   }
@@ -50,8 +54,12 @@ function statusClass(s: string): string {
   switch (s) {
     case "HEALTHY":
       return "bg-[var(--positive)]/20 text-[var(--positive)] ring-[var(--positive)]/30";
+    case "STALE":
+      return "bg-[var(--amber)]/15 text-[var(--amber)] ring-[var(--amber)]/30";
     case "IDLE":
       return "bg-[var(--bg-2)] text-[var(--text-secondary)] ring-[var(--border)]";
+    case "DEFERRED":
+      return "bg-[var(--purple)]/15 text-[var(--purple)] ring-[var(--purple)]/30";
     case "DEGRADED":
       return "bg-[var(--warning)]/20 text-[var(--warning)] ring-[var(--warning)]/30";
     case "DISABLED":
@@ -98,6 +106,17 @@ function HealthPage() {
           <p className="text-[10px] text-[var(--text-tertiary)]">
             {sources.length} sources ·{" "}
             <span className="text-[var(--positive)]">{counts.HEALTHY ?? 0} healthy</span>
+            {(counts.STALE ?? 0) > 0 && (
+              <>
+                {" · "}
+                <span
+                  className="text-[var(--amber)]"
+                  title="Last successful run is older than the per-kind staleness threshold (24h for API sources, 48h for scrapers, 72h for PDF). Cron may be stuck."
+                >
+                  {counts.STALE} stale
+                </span>
+              </>
+            )}
             {(counts.IDLE ?? 0) > 0 && (
               <>
                 {" · "}
@@ -106,6 +125,17 @@ function HealthPage() {
                   title="HEALTHY status but never produced a run — backend may not have wired the cron yet"
                 >
                   {counts.IDLE} idle
+                </span>
+              </>
+            )}
+            {(counts.DEFERRED ?? 0) > 0 && (
+              <>
+                {" · "}
+                <span
+                  className="text-[var(--purple)]"
+                  title="Source scraper deferred per v1 ship plan (Senate EFD, House staffer JS-portal, state ethics). Stub still registers as HEALTHY in the FSM."
+                >
+                  {counts.DEFERRED} deferred
                 </span>
               </>
             )}
