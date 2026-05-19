@@ -15,6 +15,7 @@ import type { PredictiveFeedItem, ReactiveFeedItem, SignalFeedItem } from "@/api
 import { Sparkline } from "@/components/Sparkline";
 import { RelTime } from "@/components/RelTime";
 import { FlagRow } from "@/components/FlagBadge";
+import { EmpiricalEdge } from "@/components/EmpiricalEdge";
 import {
   fmtUSD,
   fmtUSDRange,
@@ -103,6 +104,8 @@ function Dashboard() {
           Last update: {new Date().toISOString().slice(0, 16).replace("T", " ")}Z
         </p>
       </div>
+
+      <EmpiricalEdge />
 
       {/* Top row */}
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
