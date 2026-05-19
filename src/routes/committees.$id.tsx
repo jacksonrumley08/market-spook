@@ -66,14 +66,22 @@ function CommitteeDetail() {
     queryFn: () => getCommittee(id),
   });
 
-  const sortedMembers = useMemo(() => {
-    if (!c) return [];
-    return [...c.members].sort((a, b) => {
-      const ra = ROLE_ORDER[a.role] ?? 99;
-      const rb = ROLE_ORDER[b.role] ?? 99;
-      if (ra !== rb) return ra - rb;
-      return a.name.localeCompare(b.name);
-    });
+  // Filter out roster rows that lack bioguide_id, party, AND state — those
+  // are stale historic snapshots (former members carried over from previous
+  // Congresses in the cached roster join). Otherwise the roster table reads
+  // as if half the committee has missing data.
+  const { sortedMembers, archivedCount } = useMemo(() => {
+    if (!c) return { sortedMembers: [], archivedCount: 0 };
+    const archived = c.members.filter((m) => !m.bioguide_id && !m.party && !m.state).length;
+    const live = c.members
+      .filter((m) => m.bioguide_id || m.party || m.state)
+      .sort((a, b) => {
+        const ra = ROLE_ORDER[a.role] ?? 99;
+        const rb = ROLE_ORDER[b.role] ?? 99;
+        if (ra !== rb) return ra - rb;
+        return a.name.localeCompare(b.name);
+      });
+    return { sortedMembers: live, archivedCount: archived };
   }, [c]);
 
   useEffect(() => {
@@ -114,23 +122,31 @@ function CommitteeDetail() {
           )}
           <span className="num text-[10px] text-[var(--text-tertiary)]">
             {sortedMembers.length} members
+            {archivedCount > 0 && (
+              <span
+                className="ml-1"
+                title={`${archivedCount} historic roster entries from prior Congresses were hidden.`}
+              >
+                (+{archivedCount} archived)
+              </span>
+            )}
           </span>
         </div>
         <div className="num mt-2 flex flex-wrap gap-3 text-[10px] text-[var(--text-tertiary)]">
           <span>
-            <span className="text-[var(--blue)]">D</span> {counts.D}
+            <span className="text-[var(--blue)]">D</span> {counts.D} Dems
           </span>
           <span>
-            <span className="text-[var(--red)]">R</span> {counts.R}
+            <span className="text-[var(--red)]">R</span> {counts.R} GOP
           </span>
           {counts.I > 0 && (
             <span>
-              <span className="text-[var(--text-secondary)]">I</span> {counts.I}
+              <span className="text-[var(--text-secondary)]">I</span> {counts.I} indep
             </span>
           )}
           {counts.U > 0 && (
-            <span>
-              <span className="text-[var(--text-secondary)]">?</span> {counts.U}
+            <span title="Members whose party we couldn't resolve from the roster">
+              <span className="text-[var(--text-secondary)]">?</span> {counts.U} unknown
             </span>
           )}
         </div>
@@ -153,8 +169,7 @@ function CommitteeDetail() {
                   <tr className="border-b border-[var(--border)]">
                     <th className="px-3 py-1.5 text-left">Member</th>
                     <th className="px-3 py-1.5 text-left">Role</th>
-                    <th className="px-3 py-1.5 text-left">Aff.</th>
-                    <th className="px-3 py-1.5 text-left">Bioguide</th>
+                    <th className="px-3 py-1.5 text-left">Party</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -185,11 +200,8 @@ function CommitteeDetail() {
                         {m.party ? (
                           <PartyChip party={m.party} state={m.state ?? undefined} />
                         ) : (
-                          <span className="text-[10px] text-[var(--text-tertiary)]">—</span>
+                          <span className="text-[10px] text-[var(--text-tertiary)]">Unknown</span>
                         )}
-                      </td>
-                      <td className="num px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
-                        {m.bioguide_id ?? "—"}
                       </td>
                     </tr>
                   ))}
