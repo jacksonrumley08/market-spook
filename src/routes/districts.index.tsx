@@ -31,7 +31,7 @@ export const Route = createFileRoute("/districts/")({
       {
         name: "description",
         content:
-          "Congressional district alert-density heatmap. 441 House districts ranked by trailing 90d alert volume and lifetime alert counts.",
+          "Congressional districts ranked by alert volume in the last 90 days and over the full history.",
       },
     ],
   }),
@@ -95,15 +95,16 @@ function DistrictsPage() {
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">
-            Districts heatmap
+            District activity
           </h1>
-          <p className="num text-[10px] text-[var(--text-tertiary)]">
-            {items.length} districts · {totalActive} with 90d activity · top quartile accented
+          <p className="text-[10px] text-[var(--text-tertiary)]">
+            {items.length} districts · {totalActive} with alerts in the last 90 days · busiest 25%
+            highlighted
           </p>
         </div>
-        <p className="num max-w-[420px] text-right text-[10px] text-[var(--text-tertiary)]">
-          Alert density by congressional district (HOUSE + statewide SENATE). NJ-5 leads at ~3× the
-          next-busiest district.
+        <p className="max-w-[420px] text-right text-[10px] text-[var(--text-tertiary)]">
+          Alert volume by congressional district (House seats + statewide Senate rows). Click any
+          district for the seat-holder, recent trades, and district-level alerts.
         </p>
       </div>
 
@@ -147,18 +148,26 @@ function DistrictsPage() {
                 <th className="px-3 py-1.5 text-left">#</th>
                 <th className="px-3 py-1.5 text-left">District</th>
                 <th className="px-3 py-1.5 text-left">Chamber</th>
-                <th className="px-3 py-1.5 text-right" title="OPEN+resolved alerts in trailing 90d">
-                  90d alerts
-                </th>
-                <th className="px-3 py-1.5 text-left">Density</th>
                 <th
                   className="px-3 py-1.5 text-right"
-                  title="Critical-severity alerts (trailing 90d)"
+                  title="Open or resolved alerts in the last 90 days"
+                >
+                  90-day alerts
+                </th>
+                <th
+                  className="px-3 py-1.5 text-left"
+                  title="Bar shows this district's 90-day alert count relative to the busiest district"
+                >
+                  Volume
+                </th>
+                <th
+                  className="px-3 py-1.5 text-right"
+                  title="Critical-severity alerts in the last 90 days"
                 >
                   Critical
                 </th>
-                <th className="px-3 py-1.5 text-right" title="Lifetime alert count">
-                  Lifetime
+                <th className="px-3 py-1.5 text-right" title="Alerts ever recorded for this seat">
+                  All-time
                 </th>
               </tr>
             </thead>
@@ -209,10 +218,10 @@ function DistrictsPage() {
                       )}
                       {inQ1 && (
                         <span
-                          className="num ml-2 rounded bg-[var(--cyan)]/15 px-1 py-0.5 text-[8px] font-mono uppercase text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30"
-                          title="Top quartile by 90d alert density"
+                          className="ml-2 rounded bg-[var(--cyan)]/15 px-1 py-0.5 text-[8px] uppercase text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30"
+                          title="Top 25% busiest districts by alerts in the last 90 days"
                         >
-                          Q1
+                          Top 25%
                         </span>
                       )}
                     </td>

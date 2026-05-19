@@ -82,8 +82,8 @@ const ENDPOINTS = {
   memberDistrictConcentration: (id: string) => `/members/${id}/district_concentration`,
   memberQuality: (id: string) => `/members/${id}/quality`,
   transactionsRecent: "/transactions/recent",
+  committees: "/committees",
   committee: (id: string) => `/committees/${id}`,
-  // No backend list for /committees yet — listCommittees degrades to mocks.
   // No backend /committees/flow/top — getCommitteeFlowTop returns [] in real-API mode.
   clustersActive: "/clusters/active",
   // No backend /tickers list/detail — ticker fetchers fall back to mocks.
@@ -276,13 +276,36 @@ export async function getTransaction(id: string): Promise<TransactionOut> {
 }
 
 // ---------- Committees ----------
-// Backend has GET /committees/{id} but no list endpoint. List degrades to mocks.
+// Backend now ships GET /committees + GET /committees/{id}. The list shape
+// is the lighter `CommitteeListItem` (chamber, code, name, member_count,
+// chair_name); the mock fixture's full CommitteeOut shape is used in
+// useMocks=true mode for back-compat.
 export async function listCommittees(): Promise<CommitteeOut[]> {
   if (API_CONFIG.useMocks) {
     return (mockCommittees as unknown as WireCommittee[]).map(adaptCommittee);
   }
-  // No real-API list endpoint — fall back to mock fixture so the directory page renders.
-  return (mockCommittees as unknown as WireCommittee[]).map(adaptCommittee);
+  const page = await realFetch<WirePage>(`${ENDPOINTS.committees}?limit=200`);
+  // Project the list-shape rows into CommitteeOut so the existing
+  // `committees.index` component doesn't need a separate UI type. Fields
+  // the list endpoint doesn't carry (jurisdiction_summary / sectors) stay
+  // empty — the index renders without them.
+  return ((page?.items ?? []) as Array<{
+    id: string;
+    chamber: string;
+    code: string;
+    name: string;
+    member_count: number;
+    chair_name: string | null;
+  }>).map((r) => ({
+    id: r.id,
+    chamber: r.chamber.toLowerCase() as CommitteeOut["chamber"],
+    code: r.code,
+    name: r.name,
+    member_count: r.member_count,
+    chair_name: r.chair_name,
+    jurisdiction_summary: null,
+    jurisdiction_sectors: [],
+  }));
 }
 
 function mockCommitteeAsDetail(id: string): CommitteeDetailOut {

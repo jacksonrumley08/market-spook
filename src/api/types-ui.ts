@@ -141,12 +141,14 @@ export interface CommitteeOut {
   id: string;
   name: string;
   chamber: Chamber;
-  jurisdiction_summary: string;
-  jurisdiction_sectors: string[];
+  code?: string;
+  jurisdiction_summary?: string | null;
+  jurisdiction_sectors?: string[];
   member_count: number;
-  members: CommitteeMemberSummary[];
-  weekly_flow: CommitteeWeeklyFlowRow[];
-  recent_cluster_trades: TransactionOut[];
+  chair_name?: string | null;
+  members?: CommitteeMemberSummary[];
+  weekly_flow?: CommitteeWeeklyFlowRow[];
+  recent_cluster_trades?: TransactionOut[];
 }
 
 export type CommitteeRole = "CHAIR" | "RANKING" | "MEMBER" | "EX_OFFICIO" | string;

@@ -64,7 +64,8 @@ function DistrictDetail() {
             / {state}-{district}
           </h1>
           <p className="num text-[10px] text-[var(--text-tertiary)]">
-            {d?.chamber ?? "—"} · congress {d?.congress_number ?? "—"} · source {d?.source ?? "—"}
+            {d?.chamber ?? "—"}
+            {d?.congress_number != null && ` · ${d.congress_number}th Congress`}
           </p>
         </div>
         {d?.population_2020 != null && (
@@ -159,61 +160,95 @@ function DistrictDetail() {
               </tr>
             </thead>
             <tbody>
-              {(d?.recent_activity ?? []).length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-3 py-6 text-center text-[var(--text-tertiary)]">
-                    No recent trades on record.
-                  </td>
-                </tr>
-              ) : (
-                (d?.recent_activity ?? []).map((a) => (
-                  <tr
-                    key={`${a.transaction_id}-${a.ticker ?? a.transaction_date}`}
-                    className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
-                  >
-                    <td className="num px-3 py-1.5 text-[var(--text-tertiary)]">
-                      {a.transaction_date ?? "—"}
-                    </td>
-                    <td className="px-3 py-1.5">
-                      {a.official_id ? (
-                        <Link
-                          to="/members/$id"
-                          params={{ id: a.official_id }}
-                          className="text-[var(--text-primary)] hover:underline"
+              {(() => {
+                // Hide rows that lack both a ticker and a company name — those
+                // are usually disclosure-form filings that didn't resolve to
+                // an instrument (e.g. fund holdings, bond positions). Showing
+                // them as 20 rows of em-dashes makes the page look broken.
+                const visible = (d?.recent_activity ?? []).filter(
+                  (a) => a.ticker != null || a.company_name != null,
+                );
+                const hidden = (d?.recent_activity ?? []).length - visible.length;
+                if (visible.length === 0) {
+                  return (
+                    <tr>
+                      <td colSpan={6} className="px-3 py-6 text-center text-[var(--text-tertiary)]">
+                        No recent trades with resolved tickers.
+                        {hidden > 0 && (
+                          <div className="mt-1 text-[10px]">
+                            ({hidden} trade{hidden === 1 ? "" : "s"} on record without an identified
+                            instrument.)
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                }
+                return (
+                  <>
+                    {visible.map((a) => (
+                      <tr
+                        key={`${a.transaction_id}-${a.ticker ?? a.transaction_date}`}
+                        className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
+                      >
+                        <td className="num px-3 py-1.5 text-[var(--text-tertiary)]">
+                          {a.transaction_date ?? "—"}
+                        </td>
+                        <td className="px-3 py-1.5">
+                          {a.official_id ? (
+                            <Link
+                              to="/members/$id"
+                              params={{ id: a.official_id }}
+                              className="text-[var(--text-primary)] hover:underline"
+                            >
+                              {a.official_name ?? "—"}
+                            </Link>
+                          ) : (
+                            <span className="text-[var(--text-secondary)]">
+                              {a.official_name ?? "—"}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-3 py-1.5">
+                          {a.ticker ? (
+                            <Link
+                              to="/tickers/$symbol"
+                              params={{ symbol: a.ticker }}
+                              className="num text-[var(--cyan)] hover:underline"
+                            >
+                              {a.ticker}
+                            </Link>
+                          ) : (
+                            <span className="text-[var(--text-tertiary)]">—</span>
+                          )}
+                        </td>
+                        <td className="px-3 py-1.5 text-[var(--text-secondary)]">
+                          {a.company_name ?? "—"}
+                        </td>
+                        <td className="px-3 py-1.5">
+                          <DirectionChip d={a.transaction_type} />
+                        </td>
+                        <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
+                          {a.amount_max_usd
+                            ? fmtUSD(Number(a.amount_max_usd), { compact: true })
+                            : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                    {hidden > 0 && (
+                      <tr className="bg-[var(--bg-2)]/40">
+                        <td
+                          colSpan={6}
+                          className="px-3 py-2 text-center text-[10px] text-[var(--text-tertiary)]"
                         >
-                          {a.official_name ?? "—"}
-                        </Link>
-                      ) : (
-                        <span className="text-[var(--text-secondary)]">
-                          {a.official_name ?? "—"}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-3 py-1.5">
-                      {a.ticker ? (
-                        <Link
-                          to="/tickers/$symbol"
-                          params={{ symbol: a.ticker }}
-                          className="num text-[var(--cyan)] hover:underline"
-                        >
-                          {a.ticker}
-                        </Link>
-                      ) : (
-                        <span className="text-[var(--text-tertiary)]">—</span>
-                      )}
-                    </td>
-                    <td className="px-3 py-1.5 text-[var(--text-secondary)]">
-                      {a.company_name ?? "—"}
-                    </td>
-                    <td className="px-3 py-1.5">
-                      <DirectionChip d={a.transaction_type} />
-                    </td>
-                    <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                      {a.amount_max_usd ? fmtUSD(Number(a.amount_max_usd), { compact: true }) : "—"}
-                    </td>
-                  </tr>
-                ))
-              )}
+                          + {hidden} more trade{hidden === 1 ? "" : "s"} on record without an
+                          identified ticker.
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                );
+              })()}
             </tbody>
           </table>
         </div>
@@ -250,21 +285,14 @@ function DistrictDetail() {
                 />
                 <span
                   className={cn(
-                    "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider ring-1",
+                    "rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wider ring-1",
                     kindColor(a.kind),
                   )}
-                  title={alertKindLabel(a.kind)}
+                  title={a.kind}
                 >
-                  {a.kind}
+                  {alertKindLabel(a.kind)}
                 </span>
-                <span className="flex-1 text-[var(--text-secondary)]">
-                  {a.headline ?? `alert #${a.alert_id}`}
-                </span>
-                {a.related_transaction_id != null && (
-                  <span className="num text-[10px] text-[var(--text-tertiary)]">
-                    tx #{a.related_transaction_id}
-                  </span>
-                )}
+                <span className="flex-1 text-[var(--text-secondary)]">{a.headline ?? "—"}</span>
                 <RelTime iso={a.created_at} />
               </div>
             ))}
