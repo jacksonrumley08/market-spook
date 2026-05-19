@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { getDistrict, listDistrictAlerts } from "@/api/client";
+import {
+  getDistrict,
+  getMemberDistrictConcentration,
+  listDistrictAlerts,
+} from "@/api/client";
 import { alertKindLabel, kindColor } from "@/api/alertKinds";
 import { fmtUSD } from "@/lib/format";
 import { PartyChip } from "@/components/PartyChip";
@@ -36,6 +40,16 @@ function DistrictDetail() {
     queryKey: ["district-alerts", state, num],
     queryFn: () => listDistrictAlerts(state, num, { limit: 100 }),
     enabled: validNum,
+  });
+
+  // Pull the seat-holder's district concentration once we know the official.
+  // This surfaces the load-bearing empirical pattern (DelBene WA-1/Microsoft
+  // z=+6.43) that the audit P0 #10 flagged as invisible.
+  const officialId = districtQuery.data?.member?.official_id;
+  const concentrationQuery = useQuery({
+    queryKey: ["district-concentration", officialId],
+    queryFn: () => getMemberDistrictConcentration(officialId as string),
+    enabled: !!officialId,
   });
 
   if (!validNum) {
@@ -138,6 +152,26 @@ function DistrictDetail() {
           </div>
         </div>
       )}
+
+      {concentrationQuery.data &&
+        concentrationQuery.data.z_score_vs_baseline != null &&
+        concentrationQuery.data.district_concentration_ratio != null &&
+        concentrationQuery.data.baseline_mean_ratio != null &&
+        concentrationQuery.data.total_trade_count != null &&
+        concentrationQuery.data.in_district_trade_count != null && (
+          <ConcentrationCard
+            data={{
+              district_concentration_ratio:
+                concentrationQuery.data.district_concentration_ratio,
+              z_score_vs_baseline: concentrationQuery.data.z_score_vs_baseline,
+              baseline_mean_ratio: concentrationQuery.data.baseline_mean_ratio,
+              total_trade_count: concentrationQuery.data.total_trade_count,
+              in_district_trade_count:
+                concentrationQuery.data.in_district_trade_count,
+            }}
+            memberId={officialId}
+          />
+        )}
 
       {/* Recent trades */}
       <div className="rounded border border-[var(--border)] bg-[var(--bg-1)]">
@@ -299,6 +333,90 @@ function DistrictDetail() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// Visual cue for `z_score_vs_baseline`: > 2 is statistically notable
+// (~2.5%-of-population tail), > 4 is "look at this member specifically"
+// territory, > 6 is the DelBene/Microsoft anchor pattern.
+function zScoreClass(z: number): string {
+  if (z >= 6) return "text-[var(--red)]";
+  if (z >= 4) return "text-[var(--amber)]";
+  if (z >= 2) return "text-[var(--cyan)]";
+  return "text-[var(--text-secondary)]";
+}
+
+function ConcentrationCard({
+  data,
+  memberId,
+}: {
+  data: {
+    district_concentration_ratio: number;
+    z_score_vs_baseline: number;
+    baseline_mean_ratio: number;
+    total_trade_count: number;
+    in_district_trade_count: number;
+  };
+  memberId?: string;
+}) {
+  const z = data.z_score_vs_baseline;
+  const ratioPct = (data.district_concentration_ratio * 100).toFixed(1);
+  const baselinePct = (data.baseline_mean_ratio * 100).toFixed(2);
+  return (
+    <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
+      <div className="flex items-baseline justify-between text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+        <span>In-district concentration</span>
+        {memberId && (
+          <Link
+            to="/members/$id"
+            params={{ id: memberId }}
+            className="text-[var(--cyan)] hover:underline"
+          >
+            member detail →
+          </Link>
+        )}
+      </div>
+      <div className="mt-2 grid grid-cols-3 gap-3 text-xs">
+        <div>
+          <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
+            Z-score vs national baseline
+          </div>
+          <div className={"num mt-0.5 text-2xl font-medium " + zScoreClass(z)}>
+            {z >= 0 ? "+" : ""}
+            {z.toFixed(2)}σ
+          </div>
+        </div>
+        <div>
+          <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
+            In-district share
+          </div>
+          <div className="num mt-0.5 text-2xl font-medium text-[var(--text-primary)]">
+            {ratioPct}%
+          </div>
+          <div className="num mt-0.5 text-[10px] text-[var(--text-tertiary)]">
+            {data.in_district_trade_count}/{data.total_trade_count} trades
+          </div>
+        </div>
+        <div>
+          <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
+            National baseline
+          </div>
+          <div className="num mt-0.5 text-2xl font-medium text-[var(--text-secondary)]">
+            {baselinePct}%
+          </div>
+          <div className="num mt-0.5 text-[10px] text-[var(--text-tertiary)]">
+            mean House member
+          </div>
+        </div>
+      </div>
+      <p className="mt-2 text-[10px] leading-relaxed text-[var(--text-tertiary)]">
+        Fraction of this member's trades in companies headquartered in their own
+        district, vs the national House baseline. A z-score above 4σ identifies
+        members with materially disproportionate constituency exposure. Slice-16
+        also feeds this signal into +10% score_v2 boosts on in-district
+        VOTE_TRADE / STATEMENT_CONTRADICTION alerts.
+      </p>
     </div>
   );
 }
