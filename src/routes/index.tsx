@@ -457,7 +457,19 @@ function PredictiveRowBody({ item }: { item: PredictiveFeedItem }) {
         <>
           <KindChip kind={item.signal_kind} />
           <span className="truncate text-xs text-[var(--text-secondary)]">
-            Justice ↔ {d.member_id ? <MemberLink id={d.member_id} name="Member" /> : "Member"}
+            {d.justice_id ? (
+              <Link
+                to="/scotus/$justice"
+                params={{ justice: d.justice_id }}
+                className="text-[var(--text-primary)] hover:underline"
+              >
+                Justice
+              </Link>
+            ) : (
+              "Justice"
+            )}
+            {" ↔ "}
+            {d.member_id ? <MemberLink id={d.member_id} name="Member" /> : "Member"}
           </span>
           <span className="flex-1 text-[11px] text-[var(--text-secondary)]">
             <DirectionChip d={d.justice_trade_direction} />

@@ -25,8 +25,14 @@ import type {
   CommitteeOut as WireCommittee,
   DashboardSummary as WireDashboardSummary,
   DisclosureDecayResponse,
+  DistrictAlertSummary,
+  DistrictHeatmap,
+  DistrictHeatmapEntry,
+  DistrictOut,
   FilingQualityBreakdown,
   IngestionHealthResponse,
+  JudicialHoldingOut,
+  JudicialTransactionOut,
   LeaderboardItem as WireLeaderboardItem,
   MemberAlphaResponse,
   MemberDistrictConcentration,
@@ -34,6 +40,7 @@ import type {
   NewsEventOut,
   Page as WirePage,
   PredictiveFeedItem as WirePredictiveFeedItem,
+  ScotusJusticeOut,
   TransactionOut as WireTransaction,
 } from "./types";
 import type {
@@ -92,6 +99,12 @@ const ENDPOINTS = {
   feedReactive: "/feed/reactive",
   ingestionHealth: "/admin/ingestion/health",
   newsRecent: "/news/recent",
+  districtsHeatmap: "/districts/heatmap",
+  district: (state: string, num: number) => `/districts/${state}/${num}`,
+  districtAlerts: (state: string, num: number) => `/districts/${state}/${num}/alerts`,
+  scotusJustices: "/scotus/justices",
+  scotusHoldings: (id: string) => `/scotus/${id}/holdings`,
+  scotusTransactions: (id: string) => `/scotus/${id}/transactions`,
 };
 
 async function realFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -525,6 +538,65 @@ export async function getReactiveFeed(): Promise<ReactiveFeedItem[]> {
 export async function getIngestionHealth(): Promise<IngestionHealthResponse> {
   if (API_CONFIG.useMocks) return mockIngestionHealth as IngestionHealthResponse;
   return realFetch(ENDPOINTS.ingestionHealth);
+}
+
+// ---------- Districts (Slice 15/16) ----------
+// /districts/heatmap returns 441 entries (HOUSE districts + statewide SENATE
+// rows). NJ-5 leads by ~3× the next-busiest district. Items ship with both
+// 90d and lifetime alert counts so the UI can render trailing density vs
+// historical density side-by-side.
+export async function getDistrictsHeatmap(): Promise<DistrictHeatmapEntry[]> {
+  const res = await safeFetch<DistrictHeatmap | null>(ENDPOINTS.districtsHeatmap, null);
+  return res?.items ?? [];
+}
+
+// Per-district detail. State is 2-letter postal; num is the district number
+// (0 for at-large). Returns 404 for unknown (state, num) — surfaced as a
+// thrown error so the route renders an error boundary.
+export async function getDistrict(state: string, num: number): Promise<DistrictOut> {
+  return realFetch<DistrictOut>(ENDPOINTS.district(state, num));
+}
+
+// District-scoped alert stream. Returns a bare array (no Page envelope) per
+// the backend route. Includes alerts triggered on the district's seat-holder
+// plus any state officials whose territory overlaps the district.
+export async function listDistrictAlerts(
+  state: string,
+  num: number,
+  opts: { limit?: number } = {},
+): Promise<DistrictAlertSummary[]> {
+  const params = new URLSearchParams();
+  if (opts.limit) params.set("limit", String(opts.limit));
+  const qs = params.toString();
+  const path = qs
+    ? `${ENDPOINTS.districtAlerts(state, num)}?${qs}`
+    : ENDPOINTS.districtAlerts(state, num);
+  return safeFetch<DistrictAlertSummary[]>(path, []);
+}
+
+// ---------- SCOTUS (Slice 13) ----------
+// 9 active justices. seat_title distinguishes Chief Justice from Associates.
+// disclosure_count + most_recent_disclosure_year are summary fields off the
+// judicial_disclosures join — useful for a "stale disclosure" hint when the
+// most recent filing year is more than 12 months in the past.
+export async function listScotusJustices(): Promise<ScotusJusticeOut[]> {
+  const page = await safeFetch<WirePage | null>(ENDPOINTS.scotusJustices, null);
+  return (page?.items ?? []) as ScotusJusticeOut[];
+}
+
+export async function getScotusJustice(id: string): Promise<ScotusJusticeOut | null> {
+  const all = await listScotusJustices();
+  return all.find((j) => j.id === id) ?? null;
+}
+
+export async function listScotusHoldings(id: string): Promise<JudicialHoldingOut[]> {
+  const page = await safeFetch<WirePage | null>(ENDPOINTS.scotusHoldings(id), null);
+  return (page?.items ?? []) as JudicialHoldingOut[];
+}
+
+export async function listScotusTransactions(id: string): Promise<JudicialTransactionOut[]> {
+  const page = await safeFetch<WirePage | null>(ENDPOINTS.scotusTransactions(id), null);
+  return (page?.items ?? []) as JudicialTransactionOut[];
 }
 
 // ---------- News (Slice 11 — GDELT) ----------

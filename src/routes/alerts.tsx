@@ -284,6 +284,7 @@ function AlertsPage() {
                 <span className="flex-1 truncate text-[var(--text-primary)]">{a.summary}</span>
               </button>
               <NewsLink alert={a} />
+              <JusticeLink alert={a} />
               {a.member_id && (
                 <Link
                   onClick={(e) => e.stopPropagation()}
@@ -395,6 +396,26 @@ function NewsLink({ alert }: { alert: AlertOut }) {
     >
       <ExternalLink className="h-3 w-3" />
     </a>
+  );
+}
+
+// Drill-through link for SCOTUS_CONGRESSIONAL_OVERLAP alerts to the justice
+// detail page. The detector payload carries justice_official_id so the link
+// resolves directly. No-op for every other alert kind.
+function JusticeLink({ alert }: { alert: AlertOut }) {
+  if (alert.kind !== "SCOTUS_CONGRESSIONAL_OVERLAP") return null;
+  const justiceId = pickStr(alert.payload, "justice_official_id");
+  if (!justiceId) return null;
+  return (
+    <Link
+      onClick={(e) => e.stopPropagation()}
+      to="/scotus/$justice"
+      params={{ justice: justiceId }}
+      className="text-[10px] text-[var(--text-secondary)] hover:text-[var(--cyan)]"
+      title="View justice disclosures"
+    >
+      justice →
+    </Link>
   );
 }
 

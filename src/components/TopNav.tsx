@@ -17,6 +17,8 @@ const NAV = [
   { to: "/", label: "Home" },
   { to: "/members", label: "Members" },
   { to: "/committees", label: "Committees" },
+  { to: "/districts", label: "Districts" },
+  { to: "/scotus", label: "SCOTUS" },
   { to: "/clusters", label: "Clusters" },
   { to: "/leaderboards", label: "Leaderboards" },
   { to: "/backtest", label: "Backtest" },

@@ -15,12 +15,16 @@ import { Route as ClustersRouteImport } from './routes/clusters'
 import { Route as BacktestRouteImport } from './routes/backtest'
 import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ScotusIndexRouteImport } from './routes/scotus.index'
 import { Route as MembersIndexRouteImport } from './routes/members.index'
+import { Route as DistrictsIndexRouteImport } from './routes/districts.index'
 import { Route as CommitteesIndexRouteImport } from './routes/committees.index'
 import { Route as TickersSymbolRouteImport } from './routes/tickers.$symbol'
+import { Route as ScotusJusticeRouteImport } from './routes/scotus.$justice'
 import { Route as MembersIdRouteImport } from './routes/members.$id'
 import { Route as CommitteesIdRouteImport } from './routes/committees.$id'
 import { Route as AdminHealthRouteImport } from './routes/admin.health'
+import { Route as DistrictsStateDistrictRouteImport } from './routes/districts.$state.$district'
 
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
@@ -52,9 +56,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScotusIndexRoute = ScotusIndexRouteImport.update({
+  id: '/scotus/',
+  path: '/scotus/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MembersIndexRoute = MembersIndexRouteImport.update({
   id: '/members/',
   path: '/members/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DistrictsIndexRoute = DistrictsIndexRouteImport.update({
+  id: '/districts/',
+  path: '/districts/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommitteesIndexRoute = CommitteesIndexRouteImport.update({
@@ -65,6 +79,11 @@ const CommitteesIndexRoute = CommitteesIndexRouteImport.update({
 const TickersSymbolRoute = TickersSymbolRouteImport.update({
   id: '/tickers/$symbol',
   path: '/tickers/$symbol',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScotusJusticeRoute = ScotusJusticeRouteImport.update({
+  id: '/scotus/$justice',
+  path: '/scotus/$justice',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MembersIdRoute = MembersIdRouteImport.update({
@@ -82,6 +101,11 @@ const AdminHealthRoute = AdminHealthRouteImport.update({
   path: '/admin/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DistrictsStateDistrictRoute = DistrictsStateDistrictRouteImport.update({
+  id: '/districts/$state/$district',
+  path: '/districts/$state/$district',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -93,9 +117,13 @@ export interface FileRoutesByFullPath {
   '/admin/health': typeof AdminHealthRoute
   '/committees/$id': typeof CommitteesIdRoute
   '/members/$id': typeof MembersIdRoute
+  '/scotus/$justice': typeof ScotusJusticeRoute
   '/tickers/$symbol': typeof TickersSymbolRoute
   '/committees/': typeof CommitteesIndexRoute
+  '/districts/': typeof DistrictsIndexRoute
   '/members/': typeof MembersIndexRoute
+  '/scotus/': typeof ScotusIndexRoute
+  '/districts/$state/$district': typeof DistrictsStateDistrictRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -107,9 +135,13 @@ export interface FileRoutesByTo {
   '/admin/health': typeof AdminHealthRoute
   '/committees/$id': typeof CommitteesIdRoute
   '/members/$id': typeof MembersIdRoute
+  '/scotus/$justice': typeof ScotusJusticeRoute
   '/tickers/$symbol': typeof TickersSymbolRoute
   '/committees': typeof CommitteesIndexRoute
+  '/districts': typeof DistrictsIndexRoute
   '/members': typeof MembersIndexRoute
+  '/scotus': typeof ScotusIndexRoute
+  '/districts/$state/$district': typeof DistrictsStateDistrictRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -122,9 +154,13 @@ export interface FileRoutesById {
   '/admin/health': typeof AdminHealthRoute
   '/committees/$id': typeof CommitteesIdRoute
   '/members/$id': typeof MembersIdRoute
+  '/scotus/$justice': typeof ScotusJusticeRoute
   '/tickers/$symbol': typeof TickersSymbolRoute
   '/committees/': typeof CommitteesIndexRoute
+  '/districts/': typeof DistrictsIndexRoute
   '/members/': typeof MembersIndexRoute
+  '/scotus/': typeof ScotusIndexRoute
+  '/districts/$state/$district': typeof DistrictsStateDistrictRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -138,9 +174,13 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/committees/$id'
     | '/members/$id'
+    | '/scotus/$justice'
     | '/tickers/$symbol'
     | '/committees/'
+    | '/districts/'
     | '/members/'
+    | '/scotus/'
+    | '/districts/$state/$district'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -152,9 +192,13 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/committees/$id'
     | '/members/$id'
+    | '/scotus/$justice'
     | '/tickers/$symbol'
     | '/committees'
+    | '/districts'
     | '/members'
+    | '/scotus'
+    | '/districts/$state/$district'
   id:
     | '__root__'
     | '/'
@@ -166,9 +210,13 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/committees/$id'
     | '/members/$id'
+    | '/scotus/$justice'
     | '/tickers/$symbol'
     | '/committees/'
+    | '/districts/'
     | '/members/'
+    | '/scotus/'
+    | '/districts/$state/$district'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -181,9 +229,13 @@ export interface RootRouteChildren {
   AdminHealthRoute: typeof AdminHealthRoute
   CommitteesIdRoute: typeof CommitteesIdRoute
   MembersIdRoute: typeof MembersIdRoute
+  ScotusJusticeRoute: typeof ScotusJusticeRoute
   TickersSymbolRoute: typeof TickersSymbolRoute
   CommitteesIndexRoute: typeof CommitteesIndexRoute
+  DistrictsIndexRoute: typeof DistrictsIndexRoute
   MembersIndexRoute: typeof MembersIndexRoute
+  ScotusIndexRoute: typeof ScotusIndexRoute
+  DistrictsStateDistrictRoute: typeof DistrictsStateDistrictRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -230,11 +282,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scotus/': {
+      id: '/scotus/'
+      path: '/scotus'
+      fullPath: '/scotus/'
+      preLoaderRoute: typeof ScotusIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/members/': {
       id: '/members/'
       path: '/members'
       fullPath: '/members/'
       preLoaderRoute: typeof MembersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/districts/': {
+      id: '/districts/'
+      path: '/districts'
+      fullPath: '/districts/'
+      preLoaderRoute: typeof DistrictsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/committees/': {
@@ -249,6 +315,13 @@ declare module '@tanstack/react-router' {
       path: '/tickers/$symbol'
       fullPath: '/tickers/$symbol'
       preLoaderRoute: typeof TickersSymbolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scotus/$justice': {
+      id: '/scotus/$justice'
+      path: '/scotus/$justice'
+      fullPath: '/scotus/$justice'
+      preLoaderRoute: typeof ScotusJusticeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/members/$id': {
@@ -272,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/districts/$state/$district': {
+      id: '/districts/$state/$district'
+      path: '/districts/$state/$district'
+      fullPath: '/districts/$state/$district'
+      preLoaderRoute: typeof DistrictsStateDistrictRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -285,9 +365,13 @@ const rootRouteChildren: RootRouteChildren = {
   AdminHealthRoute: AdminHealthRoute,
   CommitteesIdRoute: CommitteesIdRoute,
   MembersIdRoute: MembersIdRoute,
+  ScotusJusticeRoute: ScotusJusticeRoute,
   TickersSymbolRoute: TickersSymbolRoute,
   CommitteesIndexRoute: CommitteesIndexRoute,
+  DistrictsIndexRoute: DistrictsIndexRoute,
   MembersIndexRoute: MembersIndexRoute,
+  ScotusIndexRoute: ScotusIndexRoute,
+  DistrictsStateDistrictRoute: DistrictsStateDistrictRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

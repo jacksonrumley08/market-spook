@@ -708,7 +708,18 @@ function ConcentrationPanel({
               <span className="text-[var(--text-tertiary)]"> / {data.total_trade_count}</span>
             </div>
             <div className="num text-[10px] text-[var(--text-tertiary)]">
-              {data.state}-{data.district_num}
+              {data.district_num != null ? (
+                <Link
+                  to="/districts/$state/$district"
+                  params={{ state: data.state, district: String(data.district_num) }}
+                  className="hover:text-[var(--cyan)] hover:underline"
+                  title="District page"
+                >
+                  {data.state}-{data.district_num} →
+                </Link>
+              ) : (
+                <>{data.state}</>
+              )}
             </div>
           </div>
           <div>
