@@ -591,12 +591,12 @@ function AlphaPanel({
               <div key={h} className="rounded bg-[var(--bg-2)] p-2.5">
                 <div className="flex items-baseline justify-between">
                   <div className="text-[10px] text-[var(--text-tertiary)]">{h}-day return</div>
-                  <div className="num text-[9px] text-[var(--text-tertiary)]">n={n}</div>
+                  <div className="text-[9px] text-[var(--text-tertiary)]">
+                    {n} trade{n === 1 ? "" : "s"}
+                  </div>
                 </div>
                 {insufficient ? (
-                  <div className="mt-1 text-[10px] text-[var(--text-tertiary)]">
-                    insufficient sample
-                  </div>
+                  <div className="mt-1 text-[10px] text-[var(--text-tertiary)]">Low data</div>
                 ) : (
                   <div className="mt-1 flex items-baseline justify-between gap-2">
                     <div

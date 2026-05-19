@@ -233,9 +233,9 @@ function MembersIndex() {
                       {insufficient && (
                         <span
                           className="ml-1.5 text-[9px] text-[var(--text-tertiary)]"
-                          title="Insufficient sample (n_trades_lifetime < 10) — scores may be unreliable."
+                          title="Below the 10-trade minimum — scores may be unreliable."
                         >
-                          small-n
+                          low data
                         </span>
                       )}
                     </td>

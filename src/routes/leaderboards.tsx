@@ -151,13 +151,14 @@ function LeaderboardsPage() {
       <div className="flex items-baseline justify-between">
         <div>
           <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">
-            Leaderboards
+            Member rankings
           </h1>
-          <p className="num text-[10px] text-[var(--text-tertiary)]">
-            {sufficientCount} ranked · {insufficientCount} small-n · top quartile accented
+          <p className="text-[10px] text-[var(--text-tertiary)]">
+            {sufficientCount} ranked · {insufficientCount} below the 10-trade minimum · top 25%
+            highlighted
           </p>
         </div>
-        <p className="num max-w-[420px] text-right text-[10px] text-[var(--text-tertiary)]">
+        <p className="max-w-[420px] text-right text-[10px] text-[var(--text-tertiary)]">
           {meta.description}
         </p>
       </div>
@@ -242,18 +243,18 @@ function LeaderboardsPage() {
                       </Link>
                       {insufficient && (
                         <span
-                          className="num ml-2 text-[9px] uppercase text-[var(--text-tertiary)]"
-                          title="Insufficient sample (n < 10 lifetime trades). Rank suppressed."
+                          className="ml-2 text-[9px] uppercase text-[var(--text-tertiary)]"
+                          title="Below the 10-trade minimum needed for a reliable estimate."
                         >
-                          small n={r.n_trades_lifetime}
+                          low data ({r.n_trades_lifetime})
                         </span>
                       )}
                       {q1 && (
                         <span
-                          className="num ml-2 rounded bg-[var(--cyan)]/15 px-1 py-0.5 text-[8px] font-mono uppercase text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30"
-                          title="Top quartile on this metric — Slice-7 analysis: ~66% of critical signals concentrate here."
+                          className="ml-2 rounded bg-[var(--cyan)]/15 px-1 py-0.5 text-[8px] uppercase text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30"
+                          title="Top 25% on this metric. Most platform alerts concentrate on these members."
                         >
-                          Q1
+                          Top 25%
                         </span>
                       )}
                     </td>

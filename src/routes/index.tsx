@@ -732,7 +732,7 @@ function FeedColumn({
         )}
         {!loading && items.length === 0 && (
           <div className="px-3 py-6 text-center text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
-            no signals
+            No signals in this window.
           </div>
         )}
         {items.map((s, i) => (
