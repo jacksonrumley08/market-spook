@@ -298,7 +298,7 @@ function AlertsPage() {
                   member →
                 </Link>
               )}
-              {a.ticker && (
+              {a.ticker ? (
                 <Link
                   onClick={(e) => e.stopPropagation()}
                   to="/tickers/$symbol"
@@ -307,7 +307,14 @@ function AlertsPage() {
                 >
                   {a.ticker}
                 </Link>
-              )}
+              ) : a.company_name ? (
+                <span
+                  className="text-[10px] text-[var(--text-secondary)]"
+                  title="No ticker resolved for this company — drill-through unavailable"
+                >
+                  {a.company_name}
+                </span>
+              ) : null}
               <RelTime iso={a.created_at} />
               {a.status === "OPEN" ? (
                 <button

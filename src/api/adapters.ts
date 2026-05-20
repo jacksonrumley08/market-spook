@@ -393,9 +393,11 @@ function alertSummary(kind: string, payload: Record<string, unknown>): string {
 export function adaptAlert(w: WireAlert): UiAlert {
   const payload = (w.payload ?? {}) as Record<string, unknown>;
   const memberIdRaw = (payload.official_id ?? payload.member_id) as string | undefined;
-  const tickerRaw = (payload.ticker_symbol ?? payload.symbol ?? payload.company_name) as
-    | string
-    | undefined;
+  // Real ticker symbol only — never fall back to company_name, because the
+  // drill-through Link uses this as the /tickers/$symbol route param and
+  // "Adobe Inc." 404s. company_name lives on its own field for plain-text display.
+  const tickerSymbol = (payload.ticker_symbol ?? payload.symbol) as string | undefined;
+  const companyName = (payload.company_name ?? null) as string | null;
   // score_v2 ships as a Decimal-string (e.g. "89.5414") or null when an alert
   // pre-dates the Slice-11 composite scorer. Coerce to a number for sort/display
   // and preserve null so the UI can flag legacy-unscored rows.
@@ -420,7 +422,8 @@ export function adaptAlert(w: WireAlert): UiAlert {
     summary: alertSummary(w.kind, payload),
     score_v2,
     member_id: w.official_id ?? memberIdRaw,
-    ticker: tickerRaw,
+    ticker: tickerSymbol,
+    company_name: companyName,
     created_at: w.created_at,
     acknowledged_at: w.acknowledged_at ?? null,
     resolved_at: w.resolved_at ?? null,
