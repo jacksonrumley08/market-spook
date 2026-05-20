@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { getLeaderboard } from "@/api/client";
 import type { LeaderboardEntry, LeaderboardKind } from "@/api/types-ui";
 import { PartyChip } from "@/components/PartyChip";
-import { fmtPctRaw, signClass } from "@/lib/format";
+import { fmtPctDecimal, signClass } from "@/lib/format";
 import { SkeletonRows } from "@/components/SkeletonRows";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ const VISIBLE_KINDS: VisibleKind[] = [
 ];
 
 const fmtPct1 = (v: number) => `${(v * 100).toFixed(1)}%`;
-const fmtPct0 = (v: number) => `${(v * 100).toFixed(0)}`;
+const fmtPct0 = (v: number) => `${(v * 100).toFixed(0)}%`;
 
 type TabMeta = {
   kind: VisibleKind;
@@ -47,7 +47,7 @@ const TABS: TabMeta[] = [
     kind: "alpha",
     label: "90-day return",
     select: (r) => r.alpha_90d,
-    fmt: (v) => fmtPctRaw(v),
+    fmt: (v) => fmtPctDecimal(v, 2),
     cls: signClass,
     description:
       "Average 90-day return after a trade, above what a sector ETF returned the same period.",
@@ -153,8 +153,11 @@ function LeaderboardsPage() {
           <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">
             Member rankings
           </h1>
-          <p className="text-[10px] text-[var(--text-tertiary)]">
-            {sufficientCount} ranked · {insufficientCount} below the 10-trade minimum · top 25%
+          <p
+            className="text-[10px] text-[var(--text-tertiary)]"
+            title="Ranking requires ≥10 lifetime trades AND at least one alpha-eligible buy. A member with 234 lifetime trades but no alpha-eligible buys is excluded from the ranking even though their lifetime count is large."
+          >
+            {sufficientCount} ranked · {insufficientCount} below the sample threshold · top 25%
             highlighted
           </p>
         </div>
@@ -244,7 +247,7 @@ function LeaderboardsPage() {
                       {insufficient && (
                         <span
                           className="ml-2 text-[9px] uppercase text-[var(--text-tertiary)]"
-                          title="Below the 10-trade minimum needed for a reliable estimate."
+                          title="Insufficient sample for a reliable estimate: ranking requires ≥10 lifetime trades AND ≥1 alpha-eligible buy. A 234-trade member can still be excluded if none of those trades were eligible for the alpha calculation."
                         >
                           low data ({r.n_trades_lifetime})
                         </span>

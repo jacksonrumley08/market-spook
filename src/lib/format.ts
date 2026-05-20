@@ -11,7 +11,14 @@ export const fmtUSDRange = (a: number, b: number) =>
 export const fmtPct = (n: number, mantissa = 1) =>
   `${n >= 0 ? "+" : ""}${(n * (Math.abs(n) > 1.5 ? 1 : 100)).toFixed(mantissa)}%`;
 
+// Input is already in percent units (e.g. 20.03 for 20.03%). Callers holding
+// a decimal must multiply by 100 first — see fmtPctDecimal for that variant.
 export const fmtPctRaw = (n: number, mantissa = 1) => `${n >= 0 ? "+" : ""}${n.toFixed(mantissa)}%`;
+
+// Input is a decimal (e.g. 0.2003 for 20.03%). Use this when reading raw
+// alpha/hit-rate values straight from the API.
+export const fmtPctDecimal = (n: number, mantissa = 1) =>
+  `${n >= 0 ? "+" : ""}${(n * 100).toFixed(mantissa)}%`;
 
 export const fmtNum = (n: number) => numbro(n).format({ thousandSeparated: true });
 

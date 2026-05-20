@@ -28,7 +28,7 @@ import { PartyChip } from "@/components/PartyChip";
 import { FlagRow } from "@/components/FlagBadge";
 import { RelTime } from "@/components/RelTime";
 import {
-  fmtPctRaw,
+  fmtPctDecimal,
   fmtUSDRange,
   ownerTypeLabel,
   signClass,
@@ -189,7 +189,7 @@ function MemberDetail() {
               insufficient={!alphaSufficient}
               n={alpha180?.n_trades ?? 0}
               value={parseDecimal(alpha180?.mean_alpha ?? null)}
-              format={(v) => fmtPctRaw(v)}
+              format={(v) => fmtPctDecimal(v, 2)}
               colorize
             />
             <HeaderScore
@@ -239,9 +239,13 @@ function MemberDetail() {
               trades involve companies headquartered in {conc.state}-{conc.district_num}.
               <span
                 className="num ml-1 text-[10px] text-[var(--text-tertiary)]"
-                title="Standard deviations above the cross-member baseline"
+                title={`Member's in-district trade share is ${(conc.district_concentration_ratio! * 100).toFixed(2)}% vs the ${(conc.baseline_mean_ratio! * 100).toFixed(2)}% cross-member baseline. The z-score expresses that gap in standard deviations.`}
               >
-                ({conc.z_score_vs_baseline!.toFixed(1)}× the typical rate)
+                ({conc.z_score_vs_baseline!.toFixed(1)}σ above district baseline
+                {conc.baseline_mean_ratio && conc.baseline_mean_ratio > 0
+                  ? ` — ${(conc.district_concentration_ratio! / conc.baseline_mean_ratio).toFixed(1)}× the typical rate`
+                  : ""}
+                )
               </span>
             </span>
           </div>
@@ -602,7 +606,7 @@ function AlphaPanel({
                     <div
                       className={"num text-sm " + (meanAlpha != null ? signClass(meanAlpha) : "")}
                     >
-                      {meanAlpha != null ? fmtPctRaw(meanAlpha) : "—"}
+                      {meanAlpha != null ? fmtPctDecimal(meanAlpha, 2) : "—"}
                     </div>
                     <div className="num text-[10px] text-[var(--text-secondary)]">
                       hit {hitRate != null ? `${(hitRate * 100).toFixed(0)}%` : "—"}
@@ -641,7 +645,7 @@ function DecayPanel({
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
       <div className="flex items-baseline justify-between">
         <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-          How quickly does the edge fade after disclosure?
+          Mean excess return at each horizon after disclosure
         </div>
         {data && hasAnyData && (
           <div className="num text-[9px] text-[var(--text-tertiary)]">
