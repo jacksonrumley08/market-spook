@@ -62,7 +62,10 @@
 
   --text-primary: #fafafa;
   --text-secondary: #a3a3a3;
-  --text-tertiary: #525252;
+  /* WCAG 2.2 AA pass: was #525252 (~2.5:1 vs --bg-0 #0a0a0a, fails the
+     4.5:1 normal-text threshold). #888888 measures ~5.6:1 — comfortable
+     AA pass while staying visually distinct from --text-secondary. */
+  --text-tertiary: #888888;
 
   --green: #22c55e;
   --red: #ef4444;
@@ -107,5 +110,31 @@
   }
   .mono {
     font-family: var(--font-mono);
+  }
+}
+
+/* Global keyboard-focus ring (WCAG 2.4.7 Focus Visible). Catches every
+   interactive element the rest of the codebase doesn't explicitly style
+   — links, buttons, table rows, cmd-k items. The Shadcn `Button` ships
+   its own focus-visible:ring; this rule is a fallback so a hand-rolled
+   <button> never ends up unfocusable for a keyboard user. */
+:where(a, button, [role="button"], [tabindex]:not([tabindex="-1"]), input, select, textarea):focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* WCAG 2.3.3 Animation from Interactions + 2.2.2 Pause, Stop, Hide.
+   When the OS prefers-reduced-motion, neutralize transitions and CSS
+   animations. The Shadcn components rely on data-state animations
+   (dialog fade-in, accordion expand), so this is a global override. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
