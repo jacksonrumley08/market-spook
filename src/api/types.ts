@@ -571,9 +571,14 @@ export interface MemberDistrictConcentration {
 export interface SourceHealthOut {
   name: string;
   kind: string;
+  /** Raw FSM state from the sources table */
   health_status: string;
-  /** Derived UI status: HEALTHY | STALE | IDLE | DEFERRED | DEGRADED | DISABLED */
+  /** Derived UI status: HEALTHY | STALE | IDLE | DEFERRED | DEGRADED | DISABLED. DEGRADED also fires when an OPEN INGESTION_HEALTH alert exists for the source (e.g. yfinance high_loss_rate). */
   display_status: string;
+  /** Provenance of the data: `real` = ingested live; `seeded` = hand-curated stub rows while the real scraper is deferred; `deferred` = source intentionally not running. */
+  population: "real" | "seeded" | "deferred";
+  /** Count of currently OPEN or ACKNOWLEDGED INGESTION_HEALTH alerts referencing this source. */
+  open_health_alerts: number;
   /** Hours since last_success_at after which display_status flips to STALE */
   stale_threshold_hours: number;
   /** Time since last_success_at; null when never run */

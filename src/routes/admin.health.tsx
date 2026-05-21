@@ -75,6 +75,27 @@ function kindLabel(kind: string): string {
   return kind;
 }
 
+function populationBadge(p: SourceHealthOut["population"]): {
+  label: string;
+  klass: string;
+  title: string;
+} | null {
+  if (p === "real") return null; // dominant case — no badge needed
+  if (p === "seeded") {
+    return {
+      label: "Synthetic",
+      klass: "bg-[var(--purple)]/15 text-[var(--purple)] ring-[var(--purple)]/30",
+      title:
+        "Hand-curated stub rows behind this source — the live scraper is deferred. Counts shown across the app for this source are not real ingestion output.",
+    };
+  }
+  return {
+    label: "Deferred",
+    klass: "bg-[var(--bg-2)] text-[var(--text-secondary)] ring-[var(--border)]",
+    title: "Source intentionally not running per v1 ship plan.",
+  };
+}
+
 function HealthPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const { data, isLoading, error, refetch, isFetching } = useQuery({
@@ -185,6 +206,12 @@ function HealthPage() {
                 <th className="px-3 py-1.5 text-left">Status</th>
                 <th
                   className="px-3 py-1.5 text-right"
+                  title="Currently OPEN or ACKNOWLEDGED INGESTION_HEALTH alerts for this source"
+                >
+                  Open alerts
+                </th>
+                <th
+                  className="px-3 py-1.5 text-right"
                   title="Consecutive failures since last success"
                 >
                   Failures
@@ -197,14 +224,14 @@ function HealthPage() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={7} className="p-3">
+                  <td colSpan={8} className="p-3">
                     <SkeletonRows rows={8} cols={7} />
                   </td>
                 </tr>
               )}
               {!isLoading && sorted.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-3 py-8 text-center text-[var(--text-tertiary)]">
+                  <td colSpan={8} className="px-3 py-8 text-center text-[var(--text-tertiary)]">
                     No sources reporting.
                   </td>
                 </tr>
@@ -221,7 +248,23 @@ function HealthPage() {
                         className="px-3 py-1.5 text-[var(--text-primary)]"
                         title={`Internal key: ${s.name}`}
                       >
-                        {sourceLabel(s.name)}
+                        <div className="flex items-center gap-1.5">
+                          <span>{sourceLabel(s.name)}</span>
+                          {(() => {
+                            const badge = populationBadge(s.population);
+                            return badge ? (
+                              <span
+                                title={badge.title}
+                                className={cn(
+                                  "rounded px-1 py-px text-[9px] uppercase tracking-wider ring-1",
+                                  badge.klass,
+                                )}
+                              >
+                                {badge.label}
+                              </span>
+                            ) : null;
+                          })()}
+                        </div>
                       </td>
                       <td className="px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
                         {kindLabel(s.kind)}
@@ -235,6 +278,21 @@ function HealthPage() {
                         >
                           {effectiveStatus(s)}
                         </span>
+                      </td>
+                      <td
+                        className={cn(
+                          "num px-3 py-1.5 text-right",
+                          s.open_health_alerts > 0
+                            ? "text-[var(--warning)]"
+                            : "text-[var(--text-tertiary)]",
+                        )}
+                        title={
+                          s.open_health_alerts > 0
+                            ? "INGESTION_HEALTH alerts (e.g. high_loss_rate) that the FSM didn't escalate"
+                            : undefined
+                        }
+                      >
+                        {s.open_health_alerts}
                       </td>
                       <td
                         className={cn(
@@ -277,7 +335,7 @@ function HealthPage() {
                           transition={{ duration: 0.15 }}
                           className="border-b border-[var(--border)]/40 bg-[var(--bg-0)]"
                         >
-                          <td colSpan={7} className="p-3">
+                          <td colSpan={8} className="p-3">
                             <div className="text-[11px] text-[var(--text-secondary)]">
                               <div className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)]">
                                 Last failure reason

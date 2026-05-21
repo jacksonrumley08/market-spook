@@ -176,14 +176,12 @@ function AlertBell() {
   );
 }
 
-// Small ops indicator. Pings /admin/ingestion/health every 60s in the
-// background (cached by react-query so /admin/health reuses the same query).
-// Renders an amber dot when any source is DEGRADED so operators can see
-// trouble without opening the page.
-// Operator-facing health indicator. Degraded sources show an amber dot;
-// disabled sources (paused after consecutive failures) show a red dot;
-// otherwise hidden. Both states are surfaced so an unattended source going
-// down doesn't fall off the radar.
+// Operator-facing health indicator. Drives off `display_status` (the
+// derived field), not the raw FSM `health_status` — that way a source
+// emitting INGESTION_HEALTH alerts while the FSM says HEALTHY (yfinance
+// high_loss_rate) or a source whose cron silently stopped (STALE) still
+// triggers the dot. DEFERRED is excluded — that's a known-not-running
+// state, not an incident.
 function HealthDot() {
   const { data } = useQuery({
     queryKey: ["admin-health"],
@@ -191,19 +189,25 @@ function HealthDot() {
     refetchInterval: 60_000,
   });
   const sources = data?.sources ?? [];
-  const degraded = sources.filter((s) => s.health_status === "DEGRADED").length;
-  const disabled = sources.filter((s) => s.health_status === "DISABLED").length;
+  const disabled = sources.filter((s) => s.display_status === "DISABLED").length;
+  const degraded = sources.filter((s) => s.display_status === "DEGRADED").length;
+  const stale = sources.filter((s) => s.display_status === "STALE").length;
   const tone =
-    degraded > 0
-      ? "text-[var(--warning)]"
-      : disabled > 0
-        ? "text-[var(--negative)]"
+    disabled > 0
+      ? "text-[var(--negative)]"
+      : degraded > 0 || stale > 0
+        ? "text-[var(--warning)]"
         : "text-[var(--text-secondary)]";
   const dotColor =
-    degraded > 0 ? "bg-[var(--warning)]" : disabled > 0 ? "bg-[var(--negative)]" : null;
+    disabled > 0
+      ? "bg-[var(--negative)]"
+      : degraded > 0 || stale > 0
+        ? "bg-[var(--warning)]"
+        : null;
   const titleParts = [`Ingestion health · ${sources.length} sources`];
-  if (degraded > 0) titleParts.push(`${degraded} degraded`);
   if (disabled > 0) titleParts.push(`${disabled} disabled`);
+  if (degraded > 0) titleParts.push(`${degraded} degraded`);
+  if (stale > 0) titleParts.push(`${stale} stale`);
   return (
     <Link
       to="/admin/health"
