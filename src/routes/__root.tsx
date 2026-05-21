@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -9,18 +10,19 @@ import {
 
 import appCss from "../styles.css?url";
 import { TopNav } from "@/components/TopNav";
+import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-0)]">
+    <div className="flex min-h-[60vh] items-center justify-center bg-[var(--bg-0)]">
       <div className="text-center">
         <div className="num text-6xl text-[var(--text-primary)]">404</div>
         <div className="mt-2 text-xs uppercase tracking-wider text-[var(--text-secondary)]">
           Route not found
         </div>
         <a href="/" className="mt-4 inline-block text-xs text-[var(--cyan)] hover:underline">
-          ← back to dashboard
+          ← Back to dashboard
         </a>
       </div>
     </div>
@@ -30,20 +32,45 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const [showDetails, setShowDetails] = useState(false);
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-0)]">
+    <div className="flex min-h-[60vh] items-center justify-center bg-[var(--bg-0)]">
       <div className="max-w-md rounded border border-[var(--border)] bg-[var(--bg-1)] p-6">
-        <div className="text-xs uppercase tracking-wider text-[var(--negative)]">runtime error</div>
-        <div className="mt-2 font-mono text-xs text-[var(--text-secondary)]">{error.message}</div>
+        <div className="text-sm text-[var(--text-primary)]">Something broke loading this page.</div>
+        <p className="mt-1 text-xs text-[var(--text-secondary)]">
+          You can retry, or head back to the dashboard.
+        </p>
+        <div className="mt-4 flex gap-2">
+          <button
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
+            className="rounded bg-[var(--cyan)] px-3 py-1 text-xs font-medium text-black hover:bg-[var(--cyan)]/85"
+          >
+            Try again
+          </button>
+          <a
+            href="/"
+            className="rounded bg-[var(--bg-2)] px-3 py-1 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border)] hover:bg-[var(--bg-0)]"
+          >
+            Back to dashboard
+          </a>
+        </div>
         <button
-          onClick={() => {
-            router.invalidate();
-            reset();
-          }}
-          className="mt-4 rounded bg-[var(--bg-2)] px-3 py-1 text-xs text-[var(--text-primary)] hover:bg-[var(--border)]"
+          type="button"
+          onClick={() => setShowDetails((s) => !s)}
+          className="mt-4 text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
         >
-          retry
+          {showDetails ? "Hide" : "Show"} technical details
         </button>
+        {showDetails && (
+          <pre className="mt-2 max-h-48 overflow-auto rounded bg-[var(--bg-0)] p-2 font-mono text-[10px] text-[var(--text-tertiary)]">
+            {error.message}
+            {error.stack && "\n\n"}
+            {error.stack}
+          </pre>
+        )}
       </div>
     </div>
   );
@@ -57,7 +84,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "CongressTrade Intelligence" },
       {
         name: "description",
-        content: "Internal: signals from US government officials' stock trades.",
+        content:
+          "Open intelligence platform linking congressional, federal-official, and SCOTUS trading disclosures to votes, hearings, contracts, lobbying, and news. Research only — not financial advice.",
       },
       { name: "robots", content: "noindex, nofollow" },
     ],
@@ -96,11 +124,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-[var(--bg-0)]">
+      <div className="flex min-h-screen flex-col bg-[var(--bg-0)]">
         <TopNav />
-        <main className="mx-auto max-w-[1600px] px-4 py-4">
+        <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-4">
           <Outlet />
         </main>
+        <Footer />
         <Toaster theme="dark" position="bottom-right" />
       </div>
     </QueryClientProvider>

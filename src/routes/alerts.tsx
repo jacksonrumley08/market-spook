@@ -6,8 +6,10 @@ import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { acknowledgeAlert, listAlerts } from "@/api/client";
 import {
+  ACTIVE_ALERT_KINDS,
   ALERT_KINDS,
   ALERT_STATUSES,
+  alertKindDescription,
   alertKindLabel,
   kindColor,
   type AlertStatusLiteral,
@@ -59,14 +61,83 @@ function fmtScore(score: number | null): string {
   return score.toFixed(1);
 }
 
-// score_v2 ranges roughly 0..100 in practice. Color hot/cold so the eye can
-// scan the rank visually without a sparkline.
+// score_v2 is clamped 0..100 server-side (see app/alerts/scoring.py:SCORE_V2_MAX).
+// Color hot/cold so the eye can scan the rank visually without a sparkline.
 function scoreClass(score: number | null): string {
   if (score == null) return "text-[var(--text-tertiary)]";
   if (score >= 80) return "text-[var(--red)]";
   if (score >= 60) return "text-[var(--amber)]";
   if (score >= 40) return "text-[var(--text-primary)]";
   return "text-[var(--text-secondary)]";
+}
+
+// Surface-level explainer of the score's range, factors, and bucket
+// thresholds — answers the harsh-client audit's "score_v2 has no anchor /
+// no legend" finding. Rendered as a small "?" pill near the page title; the
+// popover sits at the top of the page so it's discoverable before the user
+// scans the first score column.
+function ScoreLegend() {
+  return (
+    <details className="group relative inline-block text-[10px]">
+      <summary className="cursor-pointer list-none rounded border border-[var(--border)] bg-[var(--bg-1)] px-2 py-0.5 text-[var(--text-secondary)] hover:border-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
+        Score 0–100 · how is this computed?
+      </summary>
+      <div className="absolute right-0 z-30 mt-1 w-[420px] rounded border border-[var(--border)] bg-[var(--bg-1)] p-3 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-lg">
+        <div className="text-[var(--text-primary)]">
+          <strong>score_v2</strong> is a composite ranking, capped at 100.
+        </div>
+        <p className="mt-1.5">
+          Higher = more notable. Computed at alert emission then refreshed on
+          every score recompute. Pure ranking signal — relative ordering is what
+          matters; the absolute number is interpretable but not denominated in
+          dollars or return.
+        </p>
+        <div className="mt-2 rounded bg-[var(--bg-0)] p-2 font-mono text-[10px] text-[var(--text-tertiary)]">
+          score = base × quality × (1 + max(0, vol_z) × 0.1) × decay × geo
+        </div>
+        <ul className="mt-2 space-y-0.5">
+          <li>
+            <span className="text-[var(--text-primary)]">base</span> — per-kind
+            constant (e.g. VOTE_TRADE 70-90, HIGH_VALUE_CONTRACT 120 pre-cap)
+          </li>
+          <li>
+            <span className="text-[var(--text-primary)]">quality</span> —
+            member filing-quality multiplier in [0.5, 1.5]
+          </li>
+          <li>
+            <span className="text-[var(--text-primary)]">vol_z</span> —
+            relative-volume z-score (Slice 7); zero if missing
+          </li>
+          <li>
+            <span className="text-[var(--text-primary)]">decay</span> —
+            exp(-days/30); half-life ≈ 21 days
+          </li>
+          <li>
+            <span className="text-[var(--text-primary)]">geo</span> — 1.10× when
+            in-district VOTE / STATEMENT or high-cohesion CLUSTER (Slice 16)
+          </li>
+        </ul>
+        <div className="mt-2 flex items-center gap-3 text-[10px] uppercase tracking-wider">
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-[var(--red)]" />
+            ≥80
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-[var(--amber)]" />
+            60–80
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-[var(--text-primary)]" />
+            40–60
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-[var(--text-secondary)]" />
+            &lt;40
+          </span>
+        </div>
+      </div>
+    </details>
+  );
 }
 
 function AlertsPage() {
@@ -103,7 +174,7 @@ function AlertsPage() {
   // [status, kind] so flipping status fires 15 small parallel hits once, then
   // stale-while-revalidates for a minute.
   const kindCountQueries = useQueries({
-    queries: ALERT_KINDS.map((k) => ({
+    queries: ACTIVE_ALERT_KINDS.map((k) => ({
       queryKey: ["alerts-count", status, k] as const,
       queryFn: () => listAlerts({ status, kind: k, limit: COUNT_PROBE_LIMIT, offset: 0 }),
       staleTime: 60_000,
@@ -169,6 +240,7 @@ function AlertsPage() {
             )}
           </p>
         </div>
+        <ScoreLegend />
       </div>
 
       {/* Status filter — segmented control */}
@@ -202,7 +274,7 @@ function AlertsPage() {
         >
           All
         </button>
-        {ALERT_KINDS.map((k, i) => {
+        {ACTIVE_ALERT_KINDS.map((k, i) => {
           const q = kindCountQueries[i];
           const countItems = q.data?.items.length ?? 0;
           const more = q.data?.has_more ?? false;
@@ -263,8 +335,8 @@ function AlertsPage() {
                 <span
                   title={
                     a.score_v2 == null
-                      ? "Legacy alert — pre-Slice-11 scoring"
-                      : "Composite score (score_v2)"
+                      ? "Older alert without a composite score"
+                      : "Overall priority — higher = more notable"
                   }
                   className={cn("num w-12 text-right tabular-nums", scoreClass(a.score_v2))}
                 >
@@ -275,11 +347,12 @@ function AlertsPage() {
                 </span>
                 <span
                   className={cn(
-                    "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider ring-1",
+                    "rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wider ring-1",
                     kindColor(a.kind),
                   )}
+                  title={alertKindDescription(a.kind) ?? a.kind}
                 >
-                  {a.kind}
+                  {alertKindLabel(a.kind)}
                 </span>
                 <span className="flex-1 truncate text-[var(--text-primary)]">{a.summary}</span>
               </button>

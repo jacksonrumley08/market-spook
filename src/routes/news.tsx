@@ -51,9 +51,9 @@ function NewsPage() {
       <div className="flex items-baseline justify-between">
         <div>
           <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">News</h1>
-          <p className="num text-[10px] text-[var(--text-tertiary)]">
-            page {page} · {items.length} articles · GDELT-sourced, used by NEWS_TRADE_PROXIMITY
-            alerts
+          <p className="text-[10px] text-[var(--text-tertiary)]">
+            Page {page} · {items.length} articles · News articles that may trigger “traded near
+            major news” alerts when they mention companies that members trade.
           </p>
         </div>
         <Link
@@ -61,7 +61,7 @@ function NewsPage() {
           search={{ status: "OPEN", kind: "NEWS_TRADE_PROXIMITY", page: 1 }}
           className="rounded px-2 py-1 text-[10px] uppercase tracking-wider text-[var(--text-secondary)] ring-1 ring-[var(--border)] hover:text-[var(--text-primary)]"
         >
-          view alerts →
+          View news-trade alerts →
         </Link>
       </div>
 
@@ -78,7 +78,7 @@ function NewsPage() {
         )}
         {items.map((n) => {
           const tone = parseTone(n.tone);
-          const headline = n.headline ?? "(no headline)";
+          const headline = n.headline ?? "Untitled article";
           const companies = n.mentioned_companies as Array<Record<string, unknown>>;
           const firstCompany = companies[0];
           const firstCompanyName =
@@ -130,9 +130,10 @@ function NewsPage() {
               {tone != null && (
                 <span
                   className={cn("num w-10 text-right text-[10px]", toneClass(tone))}
-                  title="GDELT tone score"
+                  title={`Sentiment tone ${tone >= 0 ? "+" : ""}${tone.toFixed(1)} (−10 strongly negative to +10 strongly positive)`}
                 >
-                  t{tone.toFixed(1)}
+                  {tone >= 0 ? "+" : ""}
+                  {tone.toFixed(1)}
                 </span>
               )}
               <RelTime iso={n.ingested_at} className="text-[10px]" />
