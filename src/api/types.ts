@@ -893,3 +893,63 @@ export interface TransactionOut {
   hearing_proximity?: HearingProximity | null;
   ticker_resolution_confidence?: number | null;
 }
+
+export interface TickerListItem {
+  id: string;
+  symbol: string;
+  exchange?: string | null;
+  instrument_type: string;
+  company_id?: string | null;
+  company_name?: string | null;
+  resolved: boolean;
+}
+
+export interface TickerActivityTransaction {
+  transaction_id: number;
+  official_id: string;
+  official_name: string;
+  party?: string | null;
+  state?: string | null;
+  transaction_date: string;
+  transaction_type: string;
+  amount_min_usd?: number | string | null;
+  amount_max_usd?: number | string | null;
+}
+
+export interface TickerActiveAlert {
+  alert_id: number;
+  kind: string;
+  severity: string;
+  score_v2?: number | string | null;
+  created_at: string;
+  official_id?: string | null;
+  official_name?: string | null;
+}
+
+export interface TickerActiveCluster {
+  cluster_id: string;
+  committee_name: string;
+  direction: string;
+  member_count: number;
+  window_start: string;
+  window_end: string;
+}
+
+export interface TickerDetailOut {
+  symbol: string;
+  id: string;
+  exchange?: string | null;
+  instrument_type: string;
+  company_id?: string | null;
+  company_name?: string | null;
+  gics_sector?: string | null;
+  gics_industry?: string | null;
+  hq_state?: string | null;
+  resolved: boolean;
+  n_transactions_lifetime: number;
+  n_alerts_open: number;
+  n_active_clusters: number;
+  recent_transactions?: TickerActivityTransaction[];
+  active_alerts?: TickerActiveAlert[];
+  active_clusters?: TickerActiveCluster[];
+}

@@ -296,7 +296,14 @@ export interface AlertOut {
   summary: string;
   score_v2: number | null;
   member_id?: string;
+  // Only set when the alert payload carries a real ticker symbol; never
+  // falls back to company_name. Used as the symbol for /tickers/$symbol
+  // drill-through, so a non-empty value MUST be a valid ticker route param.
   ticker?: string;
+  // Display label when ticker is missing (e.g. VOTE/NEWS alerts whose
+  // payload only carries company_id + company_name). Rendered as plain
+  // text — no drill-through to /tickers.
+  company_name?: string | null;
   created_at: string;
   acknowledged_at: string | null;
   resolved_at: string | null;

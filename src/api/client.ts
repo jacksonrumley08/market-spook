@@ -15,6 +15,8 @@ import mockIngestionHealth from "./mocks/ingestion_health.json";
 import type {
   AcknowledgeAlertResponse,
   AlertOut as WireAlert,
+  TickerDetailOut as WireTickerDetail,
+  TickerListItem as WireTickerListItem,
   BacktestPreset,
   BacktestPresetsResponse,
   BacktestRunRequest,
@@ -86,7 +88,8 @@ const ENDPOINTS = {
   // No backend list for /committees yet — listCommittees degrades to mocks.
   // No backend /committees/flow/top — getCommitteeFlowTop returns [] in real-API mode.
   clustersActive: "/clusters/active",
-  // No backend /tickers list/detail — ticker fetchers fall back to mocks.
+  tickers: "/tickers",
+  ticker: (symbol: string) => `/tickers/${encodeURIComponent(symbol)}`,
   leaderboard: "/leaderboard",
   alerts: "/alerts",
   alertAcknowledge: (id: string) => `/alerts/${id}/acknowledge`,
@@ -340,18 +343,57 @@ type WireTickerFixture = {
   gics_industry: string;
 };
 
+// Mock-mode getTicker still works against the 10-symbol fixture. Real-API
+// mode uses the new /tickers/{symbol} endpoint that returns TickerDetailOut.
 export async function getTicker(symbol: string): Promise<TickerOut> {
-  const w = (mockTickers as unknown as WireTickerFixture[]).find(
-    (x) => x.symbol === symbol.toUpperCase(),
-  );
-  if (!w) throw new Error(`Ticker ${symbol} not available yet`);
-  return adaptTicker(w);
+  if (API_CONFIG.useMocks) {
+    const w = (mockTickers as unknown as WireTickerFixture[]).find(
+      (x) => x.symbol === symbol.toUpperCase(),
+    );
+    if (!w) throw new Error(`Ticker ${symbol} not available yet`);
+    return adaptTicker(w);
+  }
+  // The real-API shape diverges from the old fixture (no OHLC). We project
+  // it into a backwards-compatible TickerOut with empty ohlc — the
+  // tickers.$symbol route now reads the wire shape directly via
+  // getTickerDetail() so this fallback is only for any stray callers.
+  const detail = await realFetch<WireTickerDetail>(ENDPOINTS.ticker(symbol));
+  return {
+    symbol: detail.symbol,
+    company_name: detail.company_name ?? detail.symbol,
+    sector: detail.gics_sector ?? "",
+    gics: detail.gics_industry ?? "",
+    ohlc: [],
+    congressional_activity: [],
+    active_clusters: [],
+  };
+}
+
+// New real-API surface — returns TickerDetailOut shape directly.
+export async function getTickerDetail(symbol: string): Promise<WireTickerDetail> {
+  if (API_CONFIG.useMocks) {
+    throw new Error(
+      `getTickerDetail not implemented in mock mode (use getTicker fallback)`,
+    );
+  }
+  return realFetch<WireTickerDetail>(ENDPOINTS.ticker(symbol));
 }
 
 export async function listTickerSymbols(): Promise<{ symbol: string; company_name: string }[]> {
-  return (mockTickers as unknown as WireTickerFixture[]).map((t) => ({
+  if (API_CONFIG.useMocks) {
+    return (mockTickers as unknown as WireTickerFixture[]).map((t) => ({
+      symbol: t.symbol,
+      company_name: t.company_name,
+    }));
+  }
+  // Pull a healthy page of resolved tickers for CmdK typeahead. resolved_only
+  // because unresolved symbols would render without a company name.
+  const page = await realFetch<WirePage>(
+    `${ENDPOINTS.tickers}?resolved_only=true&limit=500`,
+  );
+  return ((page?.items ?? []) as WireTickerListItem[]).map((t) => ({
     symbol: t.symbol,
-    company_name: t.company_name,
+    company_name: t.company_name ?? t.symbol,
   }));
 }
 

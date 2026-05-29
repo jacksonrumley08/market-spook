@@ -299,38 +299,92 @@ export function adaptLeaderboardEntry(
 }
 
 // ---------- Alerts ----------
-// Canonical kinds — extracted from the alert's payload when present, otherwise
-// derived from the alert kind. The UI's "summary" is a short, kind-aware line
-// pulled from the same payload.
+// Build a one-line summary from the alert payload. The previous implementation
+// substituted "Member", "a company", "a position" when name fields were absent
+// — which happens to be the case for ~100% of NEWS / STATEMENT / SCOTUS alerts
+// — and produced rows like "Member traded a company near a news event". This
+// version pulls the most informative payload field for each kind and avoids
+// English placeholder fallbacks; missing names are signalled by an em-dash
+// only on rows where they would otherwise be the sole content.
 function alertSummary(kind: string, payload: Record<string, unknown>): string {
   const p = payload as Record<string, unknown>;
   const officialName = (p.official_name ?? p.member_name) as string | undefined;
   const companyName = (p.company_name ?? p.client_name) as string | undefined;
   const symbol = (p.ticker_symbol ?? p.symbol) as string | undefined;
+  const subject = officialName ?? "Trade";
+  const target = companyName ?? symbol;
   switch (kind) {
     case "VOTE_TRADE_INCONSISTENCY":
-      return `${officialName ?? "Member"} traded ${companyName ?? symbol ?? "a position"} near ${p.legis_num ?? "a related vote"}`;
+      if (p.vote_question) return `Voted on ${p.legis_num ?? "a bill"}: “${p.vote_question}”`;
+      return target
+        ? `${subject} traded ${target} near a related vote`
+        : `${subject} traded near a related vote`;
     case "CONTRACT_AWARD_PROXIMITY":
-    case "HIGH_VALUE_CONTRACT":
-      return `${officialName ?? "Member"} traded ${companyName ?? "a contractor"} near a federal award`;
-    case "LOBBYING_TRADE_OVERLAP":
-      return `${officialName ?? "Member"} traded ${companyName ?? "a lobbying client"}`;
-    case "CLUSTER_THRESHOLD":
-      return `Cluster: ${p.member_count ?? "?"} members on ${symbol ?? p.ticker_symbol ?? "a ticker"}`;
+    case "HIGH_VALUE_CONTRACT": {
+      const recipients = Array.isArray(p.recipient_names) ? (p.recipient_names as string[]) : [];
+      const who = recipients[0] ?? companyName;
+      return who
+        ? `${subject} traded ${who} near a federal contract award`
+        : `${subject} traded near a federal contract award`;
+    }
+    case "LOBBYING_TRADE_OVERLAP": {
+      const client = p.client_name ?? p.registrant_name;
+      return client
+        ? `${subject} traded — lobbying overlap with ${client}`
+        : `${subject} traded same week as a lobbying filing`;
+    }
+    case "CLUSTER_THRESHOLD": {
+      const ticker = symbol ?? "a ticker";
+      const cnt = p.member_count != null ? `${p.member_count} members` : "Multiple members";
+      return `${cnt} on ${ticker}${p.committee_name ? ` (${p.committee_name})` : ""}`;
+    }
     case "FOMC_BLACKOUT":
-      return `${officialName ?? "Fed official"} traded in the FOMC blackout window`;
-    case "NEWS_TRADE_PROXIMITY":
-      return `${officialName ?? "Member"} traded ${companyName ?? "a company"} near a news event`;
-    case "STATEMENT_TRADE_CONTRADICTION":
-      return `${officialName ?? "Member"} traded against a recent statement`;
-    case "SCOTUS_CONGRESSIONAL_OVERLAP":
-      return `Justice + member co-trading ${companyName ?? symbol ?? "a ticker"}`;
-    case "STAFFER_TRADE_PROXIMITY":
-      return `Staffer trade near member's committee jurisdiction`;
-    case "STATE_OFFICIAL_TRADE_PROXIMITY":
-      return `State official trade overlap`;
-    case "INGESTION_HEALTH":
-      return `Ingestion health: ${p.source_name ?? "a source"} ${p.event_type ?? "event"}`;
+      return `${officialName ?? "Fed official"} traded inside the FOMC blackout window`;
+    case "NEWS_TRADE_PROXIMITY": {
+      const headline = p.headline as string | undefined;
+      if (headline) return `News: “${headline.slice(0, 120)}${headline.length > 120 ? "…" : ""}”`;
+      const days = p.proximity_days;
+      return `${subject} traded ${typeof days === "number" ? `${Math.abs(days)}d ${days >= 0 ? "after" : "before"}` : "near"} a news event`;
+    }
+    case "STATEMENT_TRADE_CONTRADICTION": {
+      const kindRaw = p.contradiction_kind as string | undefined;
+      const sector = p.gics_sector as string | undefined;
+      if (kindRaw)
+        return `Statement clash: ${kindRaw.replace(/_/g, " ")}${sector ? ` · ${sector}` : ""}`;
+      return `${subject} traded against a recent public statement`;
+    }
+    case "SCOTUS_CONGRESSIONAL_OVERLAP": {
+      const dir = p.justice_trade_direction as string | undefined;
+      const same = p.same_direction as boolean | undefined;
+      return target
+        ? `Justice + Congress co-trade on ${target}${same ? " (same direction)" : ""}${dir ? ` · justice ${dir.toLowerCase()}` : ""}`
+        : `Justice + Congress trade overlap${same ? " (same direction)" : ""}`;
+    }
+    case "STAFFER_TRADE_PROXIMITY": {
+      const overlay = p.overlay_kind as string | undefined;
+      const sector = p.matched_sector as string | undefined;
+      return overlay
+        ? `Senior staffer trade — ${overlay.replace(/_/g, " ").toLowerCase()}${sector ? ` · ${sector}` : ""}`
+        : `Senior staffer trade overlaps member's committee`;
+    }
+    case "STATE_OFFICIAL_TRADE_PROXIMITY": {
+      const office = p.office_type as string | undefined;
+      const state = p.state as string | undefined;
+      const label = office
+        ? office
+            .replace(/_/g, " ")
+            .toLowerCase()
+            .replace(/^./, (c) => c.toUpperCase())
+        : "State official";
+      return state
+        ? `${label} (${state}) trade overlaps member's jurisdiction`
+        : `${label} trade overlap`;
+    }
+    case "INGESTION_HEALTH": {
+      const src = p.source_name ?? p.source;
+      const ev = p.event_type ?? "issue";
+      return src ? `Data source “${src}” — ${ev}` : `Data source ${ev}`;
+    }
     default:
       return kind;
   }
@@ -339,9 +393,11 @@ function alertSummary(kind: string, payload: Record<string, unknown>): string {
 export function adaptAlert(w: WireAlert): UiAlert {
   const payload = (w.payload ?? {}) as Record<string, unknown>;
   const memberIdRaw = (payload.official_id ?? payload.member_id) as string | undefined;
-  const tickerRaw = (payload.ticker_symbol ?? payload.symbol ?? payload.company_name) as
-    | string
-    | undefined;
+  // Real ticker symbol only — never fall back to company_name, because the
+  // drill-through Link uses this as the /tickers/$symbol route param and
+  // "Adobe Inc." 404s. company_name lives on its own field for plain-text display.
+  const tickerSymbol = (payload.ticker_symbol ?? payload.symbol) as string | undefined;
+  const companyName = (payload.company_name ?? null) as string | null;
   // score_v2 ships as a Decimal-string (e.g. "89.5414") or null when an alert
   // pre-dates the Slice-11 composite scorer. Coerce to a number for sort/display
   // and preserve null so the UI can flag legacy-unscored rows.
@@ -366,7 +422,8 @@ export function adaptAlert(w: WireAlert): UiAlert {
     summary: alertSummary(w.kind, payload),
     score_v2,
     member_id: w.official_id ?? memberIdRaw,
-    ticker: tickerRaw,
+    ticker: tickerSymbol,
+    company_name: companyName,
     created_at: w.created_at,
     acknowledged_at: w.acknowledged_at ?? null,
     resolved_at: w.resolved_at ?? null,

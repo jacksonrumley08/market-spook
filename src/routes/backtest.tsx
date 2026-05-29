@@ -64,13 +64,13 @@ function BacktestPage() {
     <div className="space-y-4">
       <header>
         <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">
-          Backtest
+          Strategy backtest
         </h1>
         <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--text-tertiary)]">
-          Four canonical reference strategies. The headline result (Q1&nbsp;vote-trade
-          inconsistency) reproduces the platform's empirically validated Sharpe&nbsp;0.678 finding
-          (SPEC&nbsp;§17). Re-run any preset to confirm the numbers against fresh data — the alert
-          layer's measured edge is the Sharpe gap vs the null baseline.
+          Four pre-built trading strategies built on our alert data. The featured one — “Voted
+          against own holdings” traded by top-quartile members — has historically beaten a control
+          group of the same members' randomly-chosen trades. Click <em>Run</em> on any strategy to
+          confirm the numbers against fresh market data.
         </p>
       </header>
 
@@ -183,6 +183,11 @@ function PresetCard({
   const qc = useQueryClient();
   const cached = runId ? qc.getQueryData<BacktestRunResponse>(["backtest-run", runId]) : undefined;
   const sharpe = cached?.metrics?.sharpe ?? null;
+  // Some presets ship reference n_trades=0 with a note explaining why (e.g.
+  // Cluster fire — sparse historical data). Running them just returns an
+  // all-zeros stat grid that reads as a crashed run. Disable Run + surface
+  // the note instead.
+  const isUnrunnable = preset.reference.n_trades === 0 && preset.reference.note != null && !runId;
 
   return (
     <div
@@ -212,13 +217,18 @@ function PresetCard({
 
       <div className="mt-3 grid grid-cols-2 gap-2 border-t border-[var(--border)] pt-2 text-[10px]">
         <div>
-          <div className="uppercase text-[var(--text-tertiary)]">Ref. Sharpe</div>
+          <div
+            className="uppercase text-[var(--text-tertiary)]"
+            title="Sharpe ratio = average return divided by volatility. Higher is better. 1.0+ is considered excellent."
+          >
+            Past Sharpe
+          </div>
           <div className="num text-sm text-[var(--text-primary)]">
             {preset.reference.sharpe == null ? "—" : preset.reference.sharpe.toFixed(2)}
           </div>
         </div>
         <div>
-          <div className="uppercase text-[var(--text-tertiary)]">Ref. return</div>
+          <div className="uppercase text-[var(--text-tertiary)]">Past return</div>
           <div
             className={clsx(
               "num text-sm",
@@ -256,11 +266,20 @@ function PresetCard({
         </div>
       )}
 
+      {isUnrunnable && (
+        <div className="mt-2 rounded bg-[var(--warning)]/10 px-2 py-1.5 text-[10px] leading-snug text-[var(--warning)] ring-1 ring-[var(--warning)]/30">
+          {preset.reference.note}
+        </div>
+      )}
+
       <div className="mt-3 flex gap-1">
         <button
           type="button"
           onClick={onRun}
-          disabled={isRunning}
+          disabled={isRunning || isUnrunnable}
+          title={
+            isUnrunnable ? "This strategy has no historical trades to backtest yet." : undefined
+          }
           className={clsx(
             "flex-1 rounded px-2 py-1.5 text-[11px] font-medium transition",
             preset.headline
@@ -268,7 +287,7 @@ function PresetCard({
               : "bg-[var(--bg-2)] text-[var(--text-primary)] ring-1 ring-[var(--border)] hover:bg-[var(--bg-0)] disabled:opacity-60",
           )}
         >
-          {isRunning ? "Running…" : runId ? "Re-run" : "Run backtest"}
+          {isRunning ? "Running…" : isUnrunnable ? "No data yet" : runId ? "Re-run" : "Run"}
         </button>
         {runId && (
           <button
@@ -276,7 +295,7 @@ function PresetCard({
             onClick={onSelect}
             className="rounded bg-[var(--bg-2)] px-2 py-1.5 text-[11px] text-[var(--text-secondary)] ring-1 ring-[var(--border)] hover:text-[var(--text-primary)]"
           >
-            View
+            Open results
           </button>
         )}
       </div>
@@ -333,11 +352,26 @@ function ComparisonPanel({
             <thead className="text-[10px] uppercase text-[var(--text-tertiary)]">
               <tr className="border-b border-[var(--border)]">
                 <th className="px-3 py-1.5 text-left">Strategy</th>
-                <th className="px-3 py-1.5 text-right">n_trades</th>
+                <th className="px-3 py-1.5 text-right">Trades</th>
                 <th className="px-3 py-1.5 text-right">Total return</th>
-                <th className="px-3 py-1.5 text-right">Sharpe</th>
-                <th className="px-3 py-1.5 text-right">Sortino</th>
-                <th className="px-3 py-1.5 text-right">Max DD</th>
+                <th
+                  className="px-3 py-1.5 text-right"
+                  title="Sharpe ratio = return divided by volatility. Higher is better; 1.0+ is excellent."
+                >
+                  Sharpe
+                </th>
+                <th
+                  className="px-3 py-1.5 text-right"
+                  title="Sortino ratio = like Sharpe but only penalizes downside swings. Higher is better."
+                >
+                  Sortino
+                </th>
+                <th
+                  className="px-3 py-1.5 text-right"
+                  title="Worst drawdown — the biggest peak-to-trough drop in the portfolio."
+                >
+                  Worst drawdown
+                </th>
                 <th className="px-3 py-1.5 text-right">Win rate</th>
                 <th className="px-3 py-1.5 text-right">Avg hold</th>
               </tr>
@@ -372,10 +406,10 @@ function ComparisonPanel({
                       preset.headline && "text-[var(--cyan)]",
                     )}
                   >
-                    {run.metrics?.sharpe?.toFixed(3) ?? "—"}
+                    {run.metrics?.sharpe?.toFixed(2) ?? "—"}
                   </td>
                   <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
-                    {run.metrics?.sortino?.toFixed(3) ?? "—"}
+                    {run.metrics?.sortino?.toFixed(2) ?? "—"}
                   </td>
                   <td className="num px-3 py-1.5 text-right text-[var(--negative)]">
                     {run.metrics ? `-${(run.metrics.max_drawdown * 100).toFixed(2)}%` : "—"}
@@ -395,7 +429,7 @@ function ComparisonPanel({
         {sharpeGap != null && (
           <div className="border-t border-[var(--cyan)]/30 bg-[var(--cyan)]/5 px-3 py-3">
             <div className="text-[10px] uppercase tracking-wider text-[var(--cyan)]">
-              Empirical edge
+              How much the alert filter helps
             </div>
             <div className="mt-1 flex flex-wrap items-baseline gap-6">
               <div>
@@ -404,7 +438,7 @@ function ComparisonPanel({
                   {sharpeGap.toFixed(2)}
                 </div>
                 <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
-                  Sharpe gap (headline − null)
+                  Risk-adjusted return gain
                 </div>
               </div>
               {returnGap != null && (
@@ -416,17 +450,17 @@ function ComparisonPanel({
                     )}
                   >
                     {returnGap >= 0 ? "+" : ""}
-                    {(returnGap * 100).toFixed(1)}pp
+                    {(returnGap * 100).toFixed(1)}%
                   </div>
                   <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
-                    Return gap
+                    Extra total return
                   </div>
                 </div>
               )}
               <p className="max-w-md text-[11px] leading-snug text-[var(--text-secondary)]">
-                The alert layer's measured value-add over Q1-leaderboard universe selection alone.
-                Same window, same hold period, same universe — the only difference is the
-                VOTE_TRADE_INCONSISTENCY alert filter.
+                Compared to the control group (the same top-quartile members' randomly-chosen trades
+                over the same window), the alert-filtered strategy earned more and was less
+                volatile. Same universe, same hold period — only the alert filter differs.
               </p>
             </div>
           </div>
@@ -463,7 +497,13 @@ function RunDetail({ runId, preset }: { runId: string; preset: BacktestPreset | 
   return (
     <section className="space-y-3">
       <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
-        Run detail · <span className="num">{runId.slice(0, 8)}</span>
+        Run details
+        {preset?.name ? (
+          <>
+            {" "}
+            · <span>{preset.name}</span>
+          </>
+        ) : null}
       </div>
 
       <div
@@ -474,8 +514,11 @@ function RunDetail({ runId, preset }: { runId: string; preset: BacktestPreset | 
       >
         <div className="flex flex-wrap items-end gap-6">
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
-              Annualized Sharpe
+            <div
+              className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]"
+              title="Sharpe ratio = average return divided by volatility. 1.0+ is considered excellent."
+            >
+              Risk-adjusted return (Sharpe)
             </div>
             <div
               className={clsx(
@@ -484,22 +527,22 @@ function RunDetail({ runId, preset }: { runId: string; preset: BacktestPreset | 
                 sharpe == null && "text-[var(--text-tertiary)]",
               )}
             >
-              {sharpe == null ? "—" : sharpe.toFixed(3)}
+              {sharpe == null ? "—" : sharpe.toFixed(2)}
             </div>
             {preset?.reference.sharpe != null && metrics && (
               <div className="mt-1 text-[10px] text-[var(--text-tertiary)]">
-                Reference {preset.reference.sharpe.toFixed(2)}{" "}
+                vs. {preset.reference.sharpe.toFixed(2)} historical{" "}
                 {sharpeDeltaFromRef != null && (
                   <span
                     className={clsx(
                       "num",
-                      Math.abs(sharpeDeltaFromRef) <= 0.02
+                      Math.abs(sharpeDeltaFromRef) <= 0.1
                         ? "text-[var(--positive)]"
                         : "text-[var(--warning)]",
                     )}
                   >
-                    (Δ {sharpeDeltaFromRef >= 0 ? "+" : ""}
-                    {sharpeDeltaFromRef.toFixed(3)})
+                    (off by {sharpeDeltaFromRef >= 0 ? "+" : ""}
+                    {sharpeDeltaFromRef.toFixed(2)})
                   </span>
                 )}
               </div>
@@ -508,9 +551,9 @@ function RunDetail({ runId, preset }: { runId: string; preset: BacktestPreset | 
 
           {isHeadline && sharpe != null && (
             <div className="rounded bg-[var(--cyan)]/10 px-3 py-2 text-[11px] text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30">
-              Platform's load-bearing finding — SPEC §17.
+              This is our flagship result.
               <br />
-              Re-running reproduces the validated empirical edge.
+              Each run uses fresh market data and should reproduce a similar Sharpe.
             </div>
           )}
         </div>
@@ -527,13 +570,18 @@ function RunDetail({ runId, preset }: { runId: string; preset: BacktestPreset | 
               value={fmtPctRaw(metrics.annualized_return * 100)}
               cls={signClass(metrics.annualized_return)}
             />
-            <Stat label="Sortino" value={metrics.sortino?.toFixed(2) ?? "—"} />
             <Stat
-              label="Max drawdown"
+              label="Downside-risk return"
+              value={metrics.sortino?.toFixed(2) ?? "—"}
+              hint="Sortino ratio — like Sharpe, but only penalizes downside swings."
+            />
+            <Stat
+              label="Worst drawdown"
               value={`-${(metrics.max_drawdown * 100).toFixed(2)}%`}
               cls="text-[var(--negative)]"
+              hint="Biggest peak-to-trough drop in the simulated portfolio."
             />
-            <Stat label="n_trades" value={metrics.n_trades.toLocaleString()} />
+            <Stat label="Trades" value={metrics.n_trades.toLocaleString()} />
             <Stat label="Winners / losers" value={`${metrics.n_winners} / ${metrics.n_losers}`} />
             <Stat label="Win rate" value={`${(metrics.win_rate * 100).toFixed(1)}%`} />
             <Stat label="Final equity" value={fmtUSD(parseFloat(metrics.final_equity))} />
@@ -553,10 +601,16 @@ function RunDetail({ runId, preset }: { runId: string; preset: BacktestPreset | 
               </span>
             </div>
             <div>
-              Strategy <span className="num text-[var(--text-secondary)]">{run.strategy_name}</span>
+              Strategy{" "}
+              <span className="text-[var(--text-secondary)]">
+                {preset?.name ?? run.strategy_name}
+              </span>
             </div>
             <div>
-              Status <span className="num text-[var(--text-secondary)]">{run.status}</span>
+              Status{" "}
+              <span className="text-[var(--text-secondary)]">
+                {run.status.charAt(0).toUpperCase() + run.status.slice(1).toLowerCase()}
+              </span>
             </div>
           </div>
         )}
@@ -574,10 +628,23 @@ function RunDetail({ runId, preset }: { runId: string; preset: BacktestPreset | 
   );
 }
 
-function Stat({ label, value, cls }: { label: string; value: string; cls?: string }) {
+function Stat({
+  label,
+  value,
+  cls,
+  hint,
+}: {
+  label: string;
+  value: string;
+  cls?: string;
+  hint?: string;
+}) {
   return (
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-2">
-      <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
+      <div
+        className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]"
+        title={hint}
+      >
         {label}
       </div>
       <div className={clsx("num mt-1 text-base", cls ?? "text-[var(--text-primary)]")}>{value}</div>
@@ -624,7 +691,7 @@ function TradesTable({
         </div>
       ) : items.length === 0 ? (
         <div className="px-3 py-8 text-center text-xs text-[var(--text-tertiary)]">
-          No trades persisted for this run.
+          No trades recorded for this run.
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -633,13 +700,13 @@ function TradesTable({
               <tr className="border-b border-[var(--border)]">
                 <th className="px-3 py-1.5 text-left">Ticker</th>
                 <th className="px-3 py-1.5 text-left">Member</th>
-                <th className="px-3 py-1.5 text-left">Entry</th>
-                <th className="px-3 py-1.5 text-left">Exit</th>
-                <th className="px-3 py-1.5 text-right">Entry px</th>
-                <th className="px-3 py-1.5 text-right">Exit px</th>
+                <th className="px-3 py-1.5 text-left">Bought</th>
+                <th className="px-3 py-1.5 text-left">Sold</th>
+                <th className="px-3 py-1.5 text-right">Buy price</th>
+                <th className="px-3 py-1.5 text-right">Sell price</th>
                 <th className="px-3 py-1.5 text-right">P&amp;L</th>
                 <th className="px-3 py-1.5 text-right">Return</th>
-                <th className="px-3 py-1.5 text-left">Source</th>
+                <th className="px-3 py-1.5 text-left">Triggered by</th>
               </tr>
             </thead>
             <tbody>
@@ -648,9 +715,7 @@ function TradesTable({
                   key={t.id}
                   className="border-b border-[var(--border)]/40 hover:bg-[var(--bg-2)]"
                 >
-                  <td className="num px-3 py-1.5 text-[var(--cyan)]">
-                    {t.ticker_symbol ?? t.ticker_id.slice(0, 8)}
-                  </td>
+                  <td className="num px-3 py-1.5 text-[var(--cyan)]">{t.ticker_symbol ?? "—"}</td>
                   <td className="px-3 py-1.5 text-[var(--text-secondary)]">
                     {t.official_name ?? "—"}
                   </td>
@@ -668,12 +733,8 @@ function TradesTable({
                   <td className={clsx("num px-3 py-1.5 text-right", signClass(t.return_pct))}>
                     {fmtPctRaw(t.return_pct * 100)}
                   </td>
-                  <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                    {t.source_alert_id
-                      ? `alert #${t.source_alert_id}`
-                      : t.source_transaction_id
-                        ? `tx #${t.source_transaction_id}`
-                        : "—"}
+                  <td className="px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
+                    {t.source_alert_id ? "Alert" : t.source_transaction_id ? "Trade" : "—"}
                   </td>
                 </tr>
               ))}

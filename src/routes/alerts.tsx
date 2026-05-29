@@ -6,8 +6,10 @@ import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { acknowledgeAlert, listAlerts } from "@/api/client";
 import {
+  ACTIVE_ALERT_KINDS,
   ALERT_KINDS,
   ALERT_STATUSES,
+  alertKindDescription,
   alertKindLabel,
   kindColor,
   type AlertStatusLiteral,
@@ -103,7 +105,7 @@ function AlertsPage() {
   // [status, kind] so flipping status fires 15 small parallel hits once, then
   // stale-while-revalidates for a minute.
   const kindCountQueries = useQueries({
-    queries: ALERT_KINDS.map((k) => ({
+    queries: ACTIVE_ALERT_KINDS.map((k) => ({
       queryKey: ["alerts-count", status, k] as const,
       queryFn: () => listAlerts({ status, kind: k, limit: COUNT_PROBE_LIMIT, offset: 0 }),
       staleTime: 60_000,
@@ -202,7 +204,7 @@ function AlertsPage() {
         >
           All
         </button>
-        {ALERT_KINDS.map((k, i) => {
+        {ACTIVE_ALERT_KINDS.map((k, i) => {
           const q = kindCountQueries[i];
           const countItems = q.data?.items.length ?? 0;
           const more = q.data?.has_more ?? false;
@@ -263,8 +265,8 @@ function AlertsPage() {
                 <span
                   title={
                     a.score_v2 == null
-                      ? "Legacy alert — pre-Slice-11 scoring"
-                      : "Composite score (score_v2)"
+                      ? "Older alert without a composite score"
+                      : "Overall priority — higher = more notable"
                   }
                   className={cn("num w-12 text-right tabular-nums", scoreClass(a.score_v2))}
                 >
@@ -275,11 +277,12 @@ function AlertsPage() {
                 </span>
                 <span
                   className={cn(
-                    "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider ring-1",
+                    "rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wider ring-1",
                     kindColor(a.kind),
                   )}
+                  title={alertKindDescription(a.kind) ?? a.kind}
                 >
-                  {a.kind}
+                  {alertKindLabel(a.kind)}
                 </span>
                 <span className="flex-1 truncate text-[var(--text-primary)]">{a.summary}</span>
               </button>
@@ -295,7 +298,7 @@ function AlertsPage() {
                   member →
                 </Link>
               )}
-              {a.ticker && (
+              {a.ticker ? (
                 <Link
                   onClick={(e) => e.stopPropagation()}
                   to="/tickers/$symbol"
@@ -304,7 +307,14 @@ function AlertsPage() {
                 >
                   {a.ticker}
                 </Link>
-              )}
+              ) : a.company_name ? (
+                <span
+                  className="text-[10px] text-[var(--text-secondary)]"
+                  title="No ticker resolved for this company — drill-through unavailable"
+                >
+                  {a.company_name}
+                </span>
+              ) : null}
               <RelTime iso={a.created_at} />
               {a.status === "OPEN" ? (
                 <button

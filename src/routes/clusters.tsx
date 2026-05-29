@@ -46,9 +46,11 @@ function ClustersPage() {
                   >
                     {c.ticker}
                   </Link>
-                  <span className="text-[10px] text-[var(--text-tertiary)] truncate">
-                    {c.company_name}
-                  </span>
+                  {c.company_name && c.company_name !== c.ticker && (
+                    <span className="text-[10px] text-[var(--text-tertiary)] truncate">
+                      {c.company_name}
+                    </span>
+                  )}
                 </div>
                 <Link
                   to="/committees/$id"
@@ -66,18 +68,20 @@ function ClustersPage() {
                     : "bg-[var(--negative)]/15 text-[var(--negative)] ring-[var(--negative)]/30")
                 }
               >
-                {c.member_count} {c.direction}
+                {c.member_count} {c.direction === "buy" ? "buys" : "sells"}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <Sparkline
-                data={c.size_series}
-                width={120}
-                height={24}
-                color="var(--cluster-active)"
-              />
-              <span className="num text-[10px] text-[var(--text-tertiary)]">cluster size</span>
-            </div>
+            {c.size_series.length > 1 && (
+              <div className="flex items-center gap-2">
+                <Sparkline
+                  data={c.size_series}
+                  width={120}
+                  height={24}
+                  color="var(--cluster-active)"
+                />
+                <span className="num text-[10px] text-[var(--text-tertiary)]">cluster size</span>
+              </div>
+            )}
             <div className="flex flex-wrap gap-1">
               {c.members.slice(0, 6).map((m) => (
                 <Link
@@ -95,35 +99,39 @@ function ClustersPage() {
                 </span>
               )}
             </div>
-            <div className="space-y-1 border-t border-[var(--border)] pt-2 text-[10px] text-[var(--text-secondary)]">
-              {c.predictive_context.contracts.length > 0 && (
-                <div className="flex items-center gap-1.5">
-                  <span className="rounded bg-[var(--blue)]/15 px-1 text-[9px] font-mono uppercase text-[var(--blue)]">
-                    contract
-                  </span>
-                  <span className="num">
-                    ${(c.predictive_context.contracts[0].award_value / 1e6).toFixed(0)}M
-                  </span>
-                  <span>{c.predictive_context.contracts[0].agency}</span>
-                </div>
-              )}
-              {c.predictive_context.hearings.length > 0 && (
-                <div className="flex items-center gap-1.5">
-                  <span className="rounded bg-[var(--cyan)]/15 px-1 text-[9px] font-mono uppercase text-[var(--cyan)]">
-                    hearing
-                  </span>
-                  <span className="truncate">{c.predictive_context.hearings[0].topic}</span>
-                </div>
-              )}
-              {c.predictive_context.lobbying.length > 0 && (
-                <div className="flex items-center gap-1.5">
-                  <span className="rounded bg-[var(--amber)]/15 px-1 text-[9px] font-mono uppercase text-[var(--amber)]">
-                    lobby
-                  </span>
-                  <span className="truncate">{c.predictive_context.lobbying[0].registrant}</span>
-                </div>
-              )}
-            </div>
+            {(c.predictive_context.contracts.length > 0 ||
+              c.predictive_context.hearings.length > 0 ||
+              c.predictive_context.lobbying.length > 0) && (
+              <div className="space-y-1 border-t border-[var(--border)] pt-2 text-[10px] text-[var(--text-secondary)]">
+                {c.predictive_context.contracts.length > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="rounded bg-[var(--blue)]/15 px-1 text-[9px] uppercase text-[var(--blue)]">
+                      contract
+                    </span>
+                    <span className="num">
+                      ${(c.predictive_context.contracts[0].award_value / 1e6).toFixed(0)}M
+                    </span>
+                    <span>{c.predictive_context.contracts[0].agency}</span>
+                  </div>
+                )}
+                {c.predictive_context.hearings.length > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="rounded bg-[var(--cyan)]/15 px-1 text-[9px] uppercase text-[var(--cyan)]">
+                      hearing
+                    </span>
+                    <span className="truncate">{c.predictive_context.hearings[0].topic}</span>
+                  </div>
+                )}
+                {c.predictive_context.lobbying.length > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="rounded bg-[var(--amber)]/15 px-1 text-[9px] uppercase text-[var(--amber)]">
+                      lobby
+                    </span>
+                    <span className="truncate">{c.predictive_context.lobbying[0].registrant}</span>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <RelTime iso={c.formed_at} />
               <Link
