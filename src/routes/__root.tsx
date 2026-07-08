@@ -35,7 +35,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <div className="text-xs uppercase tracking-wider text-[var(--negative)]">runtime error</div>
         <div className="mt-2 font-mono text-xs text-[var(--text-secondary)]">{error.message}</div>
         <button
-          onClick={() => { router.invalidate(); reset(); }}
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
           className="mt-4 rounded bg-[var(--bg-2)] px-3 py-1 text-xs text-[var(--text-primary)] hover:bg-[var(--border)]"
         >
           retry
@@ -51,7 +54,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "CongressTrade Intelligence" },
-      { name: "description", content: "Internal: signals from US government officials' stock trades." },
+      {
+        name: "description",
+        content: "Internal: signals from US government officials' stock trades.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
     links: [
@@ -90,8 +96,17 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen bg-[var(--bg-0)]">
+        {/* Keyboard-only skip-link (WCAG 2.4.1 Bypass Blocks). Hidden from
+            sighted users until Tab focuses it, then becomes a top-left
+            pill anchored above the nav. */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-[var(--bg-2)] focus:px-3 focus:py-1 focus:text-xs focus:text-[var(--text-primary)] focus:ring-2 focus:ring-[var(--cyan)]"
+        >
+          Skip to content
+        </a>
         <TopNav />
-        <main className="mx-auto max-w-[1600px] px-4 py-4">
+        <main id="main" className="mx-auto max-w-[1600px] px-4 py-4">
           <Outlet />
         </main>
       </div>
