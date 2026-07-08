@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { getLeaderboard } from "@/api/client";
 import type { LeaderboardEntry, LeaderboardKind } from "@/api/types-ui";
 import { PartyChip } from "@/components/PartyChip";
-import { fmtPctRaw, signClass } from "@/lib/format";
+import { fmtPctDecimal, signClass } from "@/lib/format";
 import { SkeletonRows } from "@/components/SkeletonRows";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ const VISIBLE_KINDS: VisibleKind[] = [
 ];
 
 const fmtPct1 = (v: number) => `${(v * 100).toFixed(1)}%`;
-const fmtPct0 = (v: number) => `${(v * 100).toFixed(0)}`;
+const fmtPct0 = (v: number) => `${(v * 100).toFixed(0)}%`;
 
 type TabMeta = {
   kind: VisibleKind;
@@ -37,33 +37,35 @@ type TabMeta = {
 const TABS: TabMeta[] = [
   {
     kind: "composite",
-    label: "Composite",
+    label: "Overall",
     select: (r) => r.composite_score,
-    fmt: (v) => v.toFixed(3),
+    fmt: (v) => v.toFixed(2),
     description:
-      "Slice-9 composite: 0.4·α + 0.3·hit_rate + 0.2·filing_quality + 0.1·alert_density. Bayesian-shrunk toward priors; ~0.5 = neutral.",
+      "Overall score — combines after-trade returns, win rate, disclosure quality, and alert frequency. Higher = more notable trader.",
   },
   {
     kind: "alpha",
-    label: "Alpha 90d",
+    label: "90-day return",
     select: (r) => r.alpha_90d,
-    fmt: (v) => fmtPctRaw(v),
+    fmt: (v) => fmtPctDecimal(v, 2),
     cls: signClass,
-    description: "Mean 90-day excess return vs sector ETF.",
+    description:
+      "Average 90-day return after a trade, above what a sector ETF returned the same period.",
   },
   {
     kind: "hit_rate",
-    label: "Hit rate 90d",
+    label: "Win rate",
     select: (r) => r.hit_rate_90d,
     fmt: fmtPct1,
-    description: "% of BUYs with positive 90d excess return.",
+    description: "Share of buy trades that beat the sector benchmark over 90 days.",
   },
   {
     kind: "filing_quality",
-    label: "Filing quality",
+    label: "Disclosure quality",
     select: (r) => r.filing_quality_score,
     fmt: fmtPct0,
-    description: "0–100 composite of late-filing rate, vagueness, completeness, amendment rate.",
+    description:
+      "How well the member discloses trades — timeliness, specificity, completeness, corrections.",
   },
   {
     kind: "late_filer",
@@ -71,7 +73,8 @@ const TABS: TabMeta[] = [
     select: (r) => r.late_filing_rate,
     fmt: fmtPct0,
     cls: (v) => (v > 0.3 ? "text-[var(--warning)]" : ""),
-    description: "Fraction of trades filed >45d after the trade. Lower = better.",
+    description:
+      "Share of trades disclosed more than 45 days after the trade (the STOCK Act deadline). Lower is better.",
   },
   {
     kind: "vagueness",
@@ -79,7 +82,7 @@ const TABS: TabMeta[] = [
     select: (r) => r.vagueness_score_avg,
     fmt: fmtPct0,
     cls: (v) => (v > 0.4 ? "text-[var(--warning)]" : ""),
-    description: "Average asset-description vagueness, 0 = always specific. Lower = better.",
+    description: "How precisely the member describes their trades. Lower = more specific.",
   },
 ];
 
@@ -148,13 +151,17 @@ function LeaderboardsPage() {
       <div className="flex items-baseline justify-between">
         <div>
           <h1 className="text-xs uppercase tracking-[0.18em] text-[var(--text-secondary)]">
-            Leaderboards
+            Member rankings
           </h1>
-          <p className="num text-[10px] text-[var(--text-tertiary)]">
-            {sufficientCount} ranked · {insufficientCount} small-n · top quartile accented
+          <p
+            className="text-[10px] text-[var(--text-tertiary)]"
+            title="Ranking requires ≥10 lifetime trades AND at least one alpha-eligible buy. A member with 234 lifetime trades but no alpha-eligible buys is excluded from the ranking even though their lifetime count is large."
+          >
+            {sufficientCount} ranked · {insufficientCount} below the sample threshold · top 25%
+            highlighted
           </p>
         </div>
-        <p className="num max-w-[420px] text-right text-[10px] text-[var(--text-tertiary)]">
+        <p className="max-w-[420px] text-right text-[10px] text-[var(--text-tertiary)]">
           {meta.description}
         </p>
       </div>
@@ -239,18 +246,18 @@ function LeaderboardsPage() {
                       </Link>
                       {insufficient && (
                         <span
-                          className="num ml-2 text-[9px] uppercase text-[var(--text-tertiary)]"
-                          title="Insufficient sample (n < 10 lifetime trades). Rank suppressed."
+                          className="ml-2 text-[9px] uppercase text-[var(--text-tertiary)]"
+                          title="Insufficient sample for a reliable estimate: ranking requires ≥10 lifetime trades AND ≥1 alpha-eligible buy. A 234-trade member can still be excluded if none of those trades were eligible for the alpha calculation."
                         >
-                          small n={r.n_trades_lifetime}
+                          low data ({r.n_trades_lifetime})
                         </span>
                       )}
                       {q1 && (
                         <span
-                          className="num ml-2 rounded bg-[var(--cyan)]/15 px-1 py-0.5 text-[8px] font-mono uppercase text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30"
-                          title="Top quartile on this metric — Slice-7 analysis: ~66% of critical signals concentrate here."
+                          className="ml-2 rounded bg-[var(--cyan)]/15 px-1 py-0.5 text-[8px] uppercase text-[var(--cyan)] ring-1 ring-[var(--cyan)]/30"
+                          title="Top 25% on this metric. Most platform alerts concentrate on these members."
                         >
-                          Q1
+                          Top 25%
                         </span>
                       )}
                     </td>

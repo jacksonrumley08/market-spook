@@ -27,7 +27,13 @@ import {
 import { PartyChip } from "@/components/PartyChip";
 import { FlagRow } from "@/components/FlagBadge";
 import { RelTime } from "@/components/RelTime";
-import { fmtPctRaw, fmtUSDRange, signClass } from "@/lib/format";
+import {
+  fmtPctDecimal,
+  fmtUSDRange,
+  ownerTypeLabel,
+  signClass,
+  transactionTypeLabel,
+} from "@/lib/format";
 import { SkeletonRows } from "@/components/SkeletonRows";
 
 export const Route = createFileRoute("/members/$id")({
@@ -171,21 +177,24 @@ function MemberDetail() {
               ))}
             </div>
             <div className="num mt-2 text-[10px] text-[var(--text-tertiary)]">
-              {member.tenure_years}y tenure · {member.bioguide_id}
+              {member.tenure_years > 0 && <>{member.tenure_years}y tenure · </>}
+              <span title="Library of Congress bioguide identifier">{member.bioguide_id}</span>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             <HeaderScore
-              label="α 180d"
+              label="180-day return"
+              hint="Average 180-day excess return above the sector ETF, after trades were disclosed."
               loading={alphaQuery.isLoading}
               insufficient={!alphaSufficient}
               n={alpha180?.n_trades ?? 0}
               value={parseDecimal(alpha180?.mean_alpha ?? null)}
-              format={(v) => fmtPctRaw(v)}
+              format={(v) => fmtPctDecimal(v, 2)}
               colorize
             />
             <HeaderScore
-              label="Hit rate 90d"
+              label="Win rate (90d)"
+              hint="Share of buy trades that beat the sector benchmark over 90 days."
               loading={alphaQuery.isLoading}
               insufficient={!alphaSufficient}
               n={alpha90?.n_trades ?? 0}
@@ -193,7 +202,8 @@ function MemberDetail() {
               format={(v) => `${(v * 100).toFixed(0)}%`}
             />
             <HeaderScore
-              label="Filing q."
+              label="Disclosure quality"
+              hint="How well this member discloses trades — timeliness, specificity, completeness, corrections."
               loading={qualityQuery.isLoading}
               insufficient={(quality?.n_transactions ?? 0) === 0}
               n={quality?.n_transactions ?? 0}
@@ -201,7 +211,8 @@ function MemberDetail() {
               format={(v) => `${(v * 100).toFixed(0)}%`}
             />
             <HeaderScore
-              label="Vagueness"
+              label="Disclosure vagueness"
+              hint="Higher = vaguer trade descriptions (e.g. 'shares of X' without share counts)."
               loading={qualityQuery.isLoading}
               insufficient={(quality?.n_transactions ?? 0) === 0}
               n={quality?.n_transactions ?? 0}
@@ -213,20 +224,29 @@ function MemberDetail() {
         </div>
       </div>
 
-      {/* Six-sigma in-district concentration callout — SPEC §18 highlight */}
+      {/* Outsized in-district concentration callout — surfaced when z >= 3 */}
       {highZ && conc && (
         <div className="rounded border border-[var(--warning)] bg-[var(--warning)]/10 px-4 py-2">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--warning)]">
-              Six-sigma finding
+              Outlier finding
             </span>
             <span className="text-sm text-[var(--text-primary)]">
-              In-district concentration{" "}
+              Trades own-district companies far more than average —{" "}
               <span className="num font-medium text-[var(--warning)]">
-                z = {conc.z_score_vs_baseline!.toFixed(2)}σ
+                {conc.in_district_trade_count} of {conc.total_trade_count}
               </span>{" "}
-              vs the universe baseline · {conc.in_district_trade_count} of {conc.total_trade_count}{" "}
-              trades in {conc.state}-{conc.district_num} companies
+              trades involve companies headquartered in {conc.state}-{conc.district_num}.
+              <span
+                className="num ml-1 text-[10px] text-[var(--text-tertiary)]"
+                title={`Member's in-district trade share is ${(conc.district_concentration_ratio! * 100).toFixed(2)}% vs the ${(conc.baseline_mean_ratio! * 100).toFixed(2)}% cross-member baseline. The z-score expresses that gap in standard deviations.`}
+              >
+                ({conc.z_score_vs_baseline!.toFixed(1)}σ above district baseline
+                {conc.baseline_mean_ratio && conc.baseline_mean_ratio > 0
+                  ? ` — ${(conc.district_concentration_ratio! / conc.baseline_mean_ratio).toFixed(1)}× the typical rate`
+                  : ""}
+                )
+              </span>
             </span>
           </div>
         </div>
@@ -261,85 +281,89 @@ function MemberDetail() {
             data={quality ?? null}
           />
 
-          <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
-            <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-              Sector tilt
+          {member.sector_tilt.length > 0 && (
+            <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
+              <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+                Sector tilt
+              </div>
+              <div className="mt-3 flex items-center gap-4">
+                <div style={{ width: 140, height: 140 }}>
+                  <ResponsiveContainer>
+                    <PieChart>
+                      <Pie
+                        data={member.sector_tilt}
+                        dataKey="weight"
+                        innerRadius={36}
+                        outerRadius={64}
+                        stroke="var(--bg-1)"
+                        strokeWidth={1}
+                      >
+                        {member.sector_tilt.map((_, i) => (
+                          <Cell key={i} fill={SECTOR_COLORS[i % SECTOR_COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex-1 space-y-1">
+                  {member.sector_tilt.slice(0, 6).map((s, i) => (
+                    <div key={s.sector} className="flex items-center gap-2 text-[11px]">
+                      <span
+                        className="h-2 w-2 rounded-sm"
+                        style={{ background: SECTOR_COLORS[i % SECTOR_COLORS.length] }}
+                      />
+                      <span className="flex-1 truncate">{s.sector}</span>
+                      <span className="num text-[var(--text-secondary)]">
+                        {(s.weight * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="mt-3 flex items-center gap-4">
-              <div style={{ width: 140, height: 140 }}>
+          )}
+
+          {member.hearing_proximity.length > 0 && (
+            <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
+              <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+                Trades near committee hearings
+              </div>
+              <div className="mt-3" style={{ height: 140 }}>
                 <ResponsiveContainer>
-                  <PieChart>
-                    <Pie
-                      data={member.sector_tilt}
-                      dataKey="weight"
-                      innerRadius={36}
-                      outerRadius={64}
-                      stroke="var(--bg-1)"
-                      strokeWidth={1}
-                    >
-                      {member.sector_tilt.map((_, i) => (
-                        <Cell key={i} fill={SECTOR_COLORS[i % SECTOR_COLORS.length]} />
+                  <BarChart data={member.hearing_proximity}>
+                    <XAxis
+                      dataKey="proximity_days"
+                      tick={{ fontSize: 9, fill: "var(--text-tertiary)" }}
+                      stroke="var(--border)"
+                    />
+                    <YAxis hide />
+                    <RTooltip
+                      contentStyle={{
+                        background: "var(--bg-2)",
+                        border: "1px solid var(--border)",
+                        fontSize: 11,
+                      }}
+                      labelFormatter={(v) => `${v >= 0 ? "+" : ""}${v} days`}
+                    />
+                    <Bar dataKey="count">
+                      {member.hearing_proximity.map((p, i) => (
+                        <Cell
+                          key={i}
+                          fill={
+                            p.signed > 0.1
+                              ? "var(--positive)"
+                              : p.signed < -0.1
+                                ? "var(--negative)"
+                                : "var(--text-tertiary)"
+                          }
+                        />
                       ))}
-                    </Pie>
-                  </PieChart>
+                    </Bar>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex-1 space-y-1">
-                {member.sector_tilt.slice(0, 6).map((s, i) => (
-                  <div key={s.sector} className="flex items-center gap-2 text-[11px]">
-                    <span
-                      className="h-2 w-2 rounded-sm"
-                      style={{ background: SECTOR_COLORS[i % SECTOR_COLORS.length] }}
-                    />
-                    <span className="flex-1 truncate">{s.sector}</span>
-                    <span className="num text-[var(--text-secondary)]">
-                      {(s.weight * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
             </div>
-          </div>
-
-          <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
-            <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-              Hearing-trade proximity
-            </div>
-            <div className="mt-3" style={{ height: 140 }}>
-              <ResponsiveContainer>
-                <BarChart data={member.hearing_proximity}>
-                  <XAxis
-                    dataKey="proximity_days"
-                    tick={{ fontSize: 9, fill: "var(--text-tertiary)" }}
-                    stroke="var(--border)"
-                  />
-                  <YAxis hide />
-                  <RTooltip
-                    contentStyle={{
-                      background: "var(--bg-2)",
-                      border: "1px solid var(--border)",
-                      fontSize: 11,
-                    }}
-                    labelFormatter={(v) => `${v >= 0 ? "+" : ""}${v}d`}
-                  />
-                  <Bar dataKey="count">
-                    {member.hearing_proximity.map((p, i) => (
-                      <Cell
-                        key={i}
-                        fill={
-                          p.signed > 0.1
-                            ? "var(--positive)"
-                            : p.signed < -0.1
-                              ? "var(--negative)"
-                              : "var(--text-tertiary)"
-                        }
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Right col */}
@@ -427,7 +451,7 @@ function MemberDetail() {
                         </td>
                         <td
                           className={
-                            "px-3 py-1.5 num text-[10px] uppercase " +
+                            "px-3 py-1.5 text-[10px] " +
                             (t.type === "buy"
                               ? "text-[var(--positive)]"
                               : t.type === "sell"
@@ -435,13 +459,13 @@ function MemberDetail() {
                                 : "text-[var(--text-secondary)]")
                           }
                         >
-                          {t.type}
+                          {transactionTypeLabel(t.type)}
                         </td>
                         <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
                           {fmtUSDRange(t.amount_min, t.amount_max)}
                         </td>
-                        <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                          {t.owner_type}
+                        <td className="px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
+                          {ownerTypeLabel(t.owner_type)}
                         </td>
                         <td className="px-3 py-1.5">
                           <FlagRow flags={t.flags} />
@@ -464,6 +488,7 @@ function MemberDetail() {
 
 function HeaderScore({
   label,
+  hint,
   loading,
   insufficient,
   n,
@@ -473,6 +498,7 @@ function HeaderScore({
   warningWhen,
 }: {
   label: string;
+  hint?: string;
   loading: boolean;
   insufficient: boolean;
   n: number;
@@ -483,14 +509,20 @@ function HeaderScore({
 }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
+      <div
+        className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]"
+        title={hint}
+      >
         {label}
       </div>
       <div className="num mt-0.5 text-2xl">
         {loading ? (
           <span className="text-[var(--text-tertiary)]">—</span>
         ) : insufficient || value == null ? (
-          <span className="text-[var(--text-tertiary)]" title={`insufficient sample (n=${n})`}>
+          <span
+            className="text-[var(--text-tertiary)]"
+            title={`Only ${n} trade${n === 1 ? "" : "s"} on record — need 10 minimum for a reliable estimate.`}
+          >
             <span className="text-[var(--text-secondary)]">—</span>
           </span>
         ) : (
@@ -508,7 +540,9 @@ function HeaderScore({
         )}
       </div>
       {!loading && (insufficient || value == null) && (
-        <div className="num text-[9px] text-[var(--text-tertiary)]">n={n} · insufficient</div>
+        <div className="text-[9px] text-[var(--text-tertiary)]">
+          low data ({n} trade{n === 1 ? "" : "s"})
+        </div>
       )}
     </div>
   );
@@ -527,11 +561,14 @@ function AlphaPanel({
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
       <div className="flex items-baseline justify-between">
         <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-          Alpha (Slice 7)
+          Excess return vs benchmark
         </div>
         {data && (
-          <div className="num text-[9px] text-[var(--text-tertiary)]">
-            benchmark: {data.benchmark}
+          <div
+            className="text-[9px] text-[var(--text-tertiary)]"
+            title="The portfolio of trades is compared against a sector ETF; if no sector ETF is available, against the S&P 500."
+          >
+            vs. sector ETF
           </div>
         )}
       </div>
@@ -539,7 +576,7 @@ function AlphaPanel({
         <div className="mt-3 grid grid-cols-2 gap-3">
           {ALPHA_HORIZONS.map((h) => (
             <div key={h} className="rounded bg-[var(--bg-2)] p-2.5">
-              <div className="num text-[10px] text-[var(--text-tertiary)]">α {h}d</div>
+              <div className="text-[10px] text-[var(--text-tertiary)]">{h}-day return</div>
               <div className="mt-1 num text-sm text-[var(--text-tertiary)]">—</div>
             </div>
           ))}
@@ -557,19 +594,19 @@ function AlphaPanel({
             return (
               <div key={h} className="rounded bg-[var(--bg-2)] p-2.5">
                 <div className="flex items-baseline justify-between">
-                  <div className="num text-[10px] text-[var(--text-tertiary)]">α {h}d</div>
-                  <div className="num text-[9px] text-[var(--text-tertiary)]">n={n}</div>
+                  <div className="text-[10px] text-[var(--text-tertiary)]">{h}-day return</div>
+                  <div className="text-[9px] text-[var(--text-tertiary)]">
+                    {n} trade{n === 1 ? "" : "s"}
+                  </div>
                 </div>
                 {insufficient ? (
-                  <div className="mt-1 text-[10px] text-[var(--text-tertiary)]">
-                    insufficient sample
-                  </div>
+                  <div className="mt-1 text-[10px] text-[var(--text-tertiary)]">Low data</div>
                 ) : (
                   <div className="mt-1 flex items-baseline justify-between gap-2">
                     <div
                       className={"num text-sm " + (meanAlpha != null ? signClass(meanAlpha) : "")}
                     >
-                      {meanAlpha != null ? fmtPctRaw(meanAlpha) : "—"}
+                      {meanAlpha != null ? fmtPctDecimal(meanAlpha, 2) : "—"}
                     </div>
                     <div className="num text-[10px] text-[var(--text-secondary)]">
                       hit {hitRate != null ? `${(hitRate * 100).toFixed(0)}%` : "—"}
@@ -608,11 +645,11 @@ function DecayPanel({
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
       <div className="flex items-baseline justify-between">
         <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-          Post-disclosure decay (SPEC §4)
+          Mean excess return at each horizon after disclosure
         </div>
         {data && hasAnyData && (
           <div className="num text-[9px] text-[var(--text-tertiary)]">
-            n={data.points[0]?.n_trades ?? 0} BUYs
+            {data.points[0]?.n_trades ?? 0} buys analyzed
           </div>
         )}
       </div>
@@ -622,7 +659,7 @@ function DecayPanel({
         <div className="mt-3 text-xs text-[var(--text-tertiary)]">Decay curve unavailable.</div>
       ) : !hasAnyData ? (
         <div className="mt-3 text-xs text-[var(--text-tertiary)]">
-          insufficient sample to compute decay
+          Need at least 10 buy trades to compute this curve.
         </div>
       ) : (
         <div className="mt-3" style={{ height: 140 }}>
@@ -685,7 +722,7 @@ function ConcentrationPanel({
   return (
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
       <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-        District concentration (Slice 16)
+        Trading own district
       </div>
       {loading ? (
         <div className="mt-3 text-xs text-[var(--text-tertiary)]">—</div>
@@ -782,7 +819,7 @@ function QualityPanel({
     <div className="rounded border border-[var(--border)] bg-[var(--bg-1)] p-4">
       <div className="flex items-baseline justify-between">
         <div className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-          Filing quality (Slice 9)
+          Disclosure quality
         </div>
         {data && (
           <div className="num text-[9px] text-[var(--text-tertiary)]">

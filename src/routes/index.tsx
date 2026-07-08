@@ -15,7 +15,15 @@ import type { PredictiveFeedItem, ReactiveFeedItem, SignalFeedItem } from "@/api
 import { Sparkline } from "@/components/Sparkline";
 import { RelTime } from "@/components/RelTime";
 import { FlagRow } from "@/components/FlagBadge";
-import { fmtUSD, fmtUSDRange, signClass } from "@/lib/format";
+import { EmpiricalEdge } from "@/components/EmpiricalEdge";
+import {
+  fmtUSD,
+  fmtUSDRange,
+  ownerTypeLabel,
+  sentenceCaseEnum,
+  signClass,
+  transactionTypeLabel,
+} from "@/lib/format";
 import { SkeletonRows } from "@/components/SkeletonRows";
 import { cn } from "@/lib/utils";
 
@@ -96,6 +104,8 @@ function Dashboard() {
           Last update: {new Date().toISOString().slice(0, 16).replace("T", " ")}Z
         </p>
       </div>
+
+      <EmpiricalEdge />
 
       {/* Top row */}
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
@@ -241,7 +251,7 @@ function Dashboard() {
                   <td className="px-3 py-1.5">
                     <span
                       className={
-                        "num text-[10px] uppercase " +
+                        "text-[10px] " +
                         (t.type === "buy"
                           ? "text-[var(--positive)]"
                           : t.type === "sell"
@@ -249,14 +259,14 @@ function Dashboard() {
                             : "text-[var(--text-secondary)]")
                       }
                     >
-                      {t.type}
+                      {transactionTypeLabel(t.type)}
                     </span>
                   </td>
                   <td className="num px-3 py-1.5 text-right text-[var(--text-secondary)]">
                     {fmtUSDRange(t.amount_min, t.amount_max)}
                   </td>
-                  <td className="px-3 py-1.5 text-[10px] uppercase text-[var(--text-tertiary)]">
-                    {t.owner_type}
+                  <td className="px-3 py-1.5 text-[10px] text-[var(--text-tertiary)]">
+                    {ownerTypeLabel(t.owner_type)}
                   </td>
                   <td className="px-3 py-1.5">
                     <FlagRow flags={t.flags} />
@@ -462,14 +472,19 @@ function PredictiveRowBody({ item }: { item: PredictiveFeedItem }) {
                 to="/scotus/$justice"
                 params={{ justice: d.justice_id }}
                 className="text-[var(--text-primary)] hover:underline"
+                title="View justice disclosures"
               >
-                Justice
+                View justice →
               </Link>
             ) : (
-              "Justice"
+              <span className="text-[var(--text-tertiary)]">Justice</span>
             )}
             {" ↔ "}
-            {d.member_id ? <MemberLink id={d.member_id} name="Member" /> : "Member"}
+            {d.member_id && item.member_name ? (
+              <MemberLink id={d.member_id} name={item.member_name} />
+            ) : (
+              <span className="text-[var(--text-tertiary)]">—</span>
+            )}
           </span>
           <span className="flex-1 text-[11px] text-[var(--text-secondary)]">
             <DirectionChip d={d.justice_trade_direction} />
@@ -495,7 +510,7 @@ function PredictiveRowBody({ item }: { item: PredictiveFeedItem }) {
       return (
         <>
           <KindChip kind={item.signal_kind} />
-          <MemberLink id={item.member_id} name="Fed official" />
+          <MemberLink id={item.member_id} name={item.member_name ?? "Fed official"} />
           <span className="flex-1 truncate text-[11px] text-[var(--text-secondary)]">
             Trade inside FOMC blackout window
           </span>
@@ -507,7 +522,9 @@ function PredictiveRowBody({ item }: { item: PredictiveFeedItem }) {
           <KindChip kind={item.signal_kind} />
           <MemberLink id={item.member_id} name={item.member_name} />
           <span className="flex-1 truncate text-[11px] text-[var(--text-secondary)]">
-            {d.client_name ?? d.registrant_name ?? "Lobbying overlap"}
+            {d.client_name ?? d.registrant_name ?? (
+              <span className="text-[var(--text-tertiary)]">— (no client on filing)</span>
+            )}
             {d.issue_codes.length > 0 && (
               <span className="num ml-2 text-[10px] text-[var(--text-tertiary)]">
                 [{d.issue_codes.slice(0, 3).join(", ")}]
@@ -542,7 +559,9 @@ function PredictiveRowBody({ item }: { item: PredictiveFeedItem }) {
           <KindChip kind={item.signal_kind} />
           <MemberLink id={item.member_id} name={item.member_name} />
           <span className="flex-1 truncate text-[11px] text-[var(--text-secondary)]">
-            {d.recipient_names[0] ?? "Contract recipient"}
+            {d.recipient_names[0] ?? (
+              <span className="text-[var(--text-tertiary)]">— (recipient unresolved)</span>
+            )}
             {d.recipient_names.length > 1 && (
               <span className="num ml-1 text-[10px] text-[var(--text-tertiary)]">
                 +{d.recipient_names.length - 1}
@@ -572,9 +591,11 @@ function PredictiveRowBody({ item }: { item: PredictiveFeedItem }) {
         <>
           <KindChip kind={item.signal_kind} />
           <TickerLink symbol={d.ticker} />
-          <span className="num text-[10px] uppercase text-[var(--cluster-active)]">
-            {d.member_count ?? "?"} members
-          </span>
+          {d.member_count != null && (
+            <span className="num text-[10px] uppercase text-[var(--cluster-active)]">
+              {d.member_count} members
+            </span>
+          )}
           <span className="flex-1 truncate text-[11px] text-[var(--text-secondary)]">
             {d.committee_name}
             {d.member_names.length > 0 && (
@@ -602,9 +623,17 @@ function PredictiveRowBody({ item }: { item: PredictiveFeedItem }) {
       return (
         <>
           <KindChip kind={item.signal_kind} />
-          <span className="truncate text-xs text-[var(--text-secondary)]">Staffer</span>
+          <span className="truncate text-xs text-[var(--text-secondary)]">
+            {item.member_name ? (
+              <MemberLink id={item.member_id} name={item.member_name} />
+            ) : (
+              <span className="text-[var(--text-tertiary)]" title="Staffer name not yet plumbed">
+                Senior staffer
+              </span>
+            )}
+          </span>
           <span className="flex-1 truncate text-[11px] text-[var(--text-secondary)]">
-            {d.overlay_kind?.replace(/_/g, " ").toLowerCase()}
+            {sentenceCaseEnum(d.overlay_kind)}
             {d.matched_sector && ` · ${d.matched_sector}`}
           </span>
           {d.proximity_days != null && (
@@ -619,7 +648,7 @@ function PredictiveRowBody({ item }: { item: PredictiveFeedItem }) {
         <>
           <KindChip kind={item.signal_kind} />
           <span className="truncate text-xs text-[var(--text-secondary)]">
-            {d.office_type?.replace(/_/g, " ").toLowerCase() ?? "State official"}
+            {item.member_name ?? sentenceCaseEnum(d.office_type ?? "State official")}
             {d.state && (
               <span className="num ml-1 text-[10px] text-[var(--text-tertiary)]">[{d.state}]</span>
             )}
@@ -706,7 +735,7 @@ function FeedColumn({
         )}
         {!loading && items.length === 0 && (
           <div className="px-3 py-6 text-center text-[10px] uppercase tracking-wider text-[var(--text-tertiary)]">
-            no signals
+            No signals in this window.
           </div>
         )}
         {items.map((s, i) => (

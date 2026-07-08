@@ -14,7 +14,20 @@ export function Sparkline({
   const series = (data as (number | { v: number })[]).map((p, i) =>
     typeof p === "number" ? { v: p, i } : { v: p.v, i },
   );
-  if (series.length < 2) return <div style={{ width, height }} />;
+  if (series.length < 2) {
+    // Explicit no-data placeholder instead of an invisible 0-pixel div, which
+    // reads as "rendering bug" to users. The dashed em-dash matches the
+    // "—" pattern used in tabular columns elsewhere on the platform.
+    return (
+      <span
+        style={{ width, height }}
+        className="inline-flex items-center justify-center text-[10px] text-[var(--text-tertiary)]"
+        title="No series data"
+      >
+        —
+      </span>
+    );
+  }
   const first = series[0].v;
   const last = series[series.length - 1].v;
   const stroke =
